@@ -1,6 +1,7 @@
+
 import { Product } from './pos';
 
-// Since Customer is not exported from any file, we need to define it here
+// Customer type in sales module
 export interface Customer {
   id: string;
   name: string;

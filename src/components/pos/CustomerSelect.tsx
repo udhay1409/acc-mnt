@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { mockCustomers } from '@/data/mockProducts';
-import { Customer } from '@/models/pos';
+import { Customer as POSCustomer } from '@/models/pos';
+import { Customer as SalesCustomer } from '@/models/sales';
 import {
   Command,
   CommandEmpty,
@@ -35,9 +36,9 @@ const CustomerSelect: React.FC = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { state, setCustomer } = usePOS();
   const { toast } = useToast();
-  const [customers, setCustomers] = useState(mockCustomers);
+  const [customers, setCustomers] = useState<POSCustomer[]>(mockCustomers);
 
-  const handleSelectCustomer = (customer: Customer) => {
+  const handleSelectCustomer = (customer: POSCustomer) => {
     setCustomer(customer);
     setOpen(false);
   };
@@ -49,12 +50,12 @@ const CustomerSelect: React.FC = () => {
 
   const handleCustomerAdded = (formData: any) => {
     // Create a new customer with a unique ID
-    const newCustomer: Customer = {
+    const newCustomer: POSCustomer = {
       id: `C${uuidv4().substring(0, 5)}`, // Create a short unique ID starting with C
       name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address
+      email: formData.email || undefined, // Make sure email is undefined if not provided
+      phone: formData.phone || undefined, // Make sure phone is undefined if not provided
+      address: formData.address || undefined // Make sure address is undefined if not provided
     };
     
     // Add the new customer to the list
