@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Cash, CreditCard, Percent, Plus } from 'lucide-react';
+import { DollarSign, CreditCard, Percent, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PaymentSection: React.FC = () => {
@@ -89,8 +88,8 @@ const PaymentSection: React.FC = () => {
       return;
     }
     
-    const sale = completeSale();
-    if (sale) {
+    const result = completeSale();
+    if (result) {
       setShowChange(paymentMethod === 'cash' && cashAmount > totalAmount);
     }
   };
@@ -114,7 +113,7 @@ const PaymentSection: React.FC = () => {
         >
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="cash" className="flex items-center gap-2">
-              <Cash className="h-4 w-4" />
+              <DollarSign className="h-4 w-4" />
               Cash
             </TabsTrigger>
             <TabsTrigger value="card" className="flex items-center gap-2">

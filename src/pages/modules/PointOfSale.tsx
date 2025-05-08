@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { usePOS } from '@/contexts/POSContext';
 import { mockProducts } from '@/data/mockProducts';
-import { Print, Share } from 'lucide-react';
+import { Printer, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -62,7 +62,7 @@ const POSContent: React.FC = () => {
           </CardContent>
           <CardFooter className="pt-0 flex justify-end gap-2">
             <Button variant="outline" size="sm" onClick={handlePrint}>
-              <Print className="h-4 w-4 mr-2" />
+              <Printer className="h-4 w-4 mr-2" />
               Print
             </Button>
             <Button variant="outline" size="sm" onClick={handleShare}>
