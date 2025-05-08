@@ -83,8 +83,8 @@ const App = () => (
                 <Route path="/inventory" element={<Inventory />} />
               </Route>
               
-              {/* Sales Manager Routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin", "sales_manager"]} />}>
+              {/* Sales Manager Routes - Changed from "sales_manager" to just using ["admin"] */}
+              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
                 <Route path="/sales" element={<Sales />} />
               </Route>
               

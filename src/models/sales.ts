@@ -1,5 +1,14 @@
 
-import { Customer, Product } from './pos';
+import { Product } from './pos';
+
+// Since Customer is not exported from any file, we need to define it here
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+}
 
 // Common status types
 export type DocumentStatus = 'draft' | 'sent' | 'viewed' | 'approved' | 'rejected' | 'expired' | 'paid' | 'partially_paid' | 'overdue' | 'cancelled';
@@ -128,4 +137,3 @@ export interface DebitNote extends SalesDocumentBase {
   reason: string;
   purchaseInvoiceId?: string;
 }
-
