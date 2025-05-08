@@ -1,4 +1,3 @@
-
 import { Product } from './pos';
 
 // Since Customer is not exported from any file, we need to define it here
@@ -11,7 +10,20 @@ export interface Customer {
 }
 
 // Common status types
-export type DocumentStatus = 'draft' | 'sent' | 'viewed' | 'approved' | 'rejected' | 'expired' | 'paid' | 'partially_paid' | 'overdue' | 'cancelled';
+export type DocumentStatus = 
+  | 'draft' 
+  | 'sent' 
+  | 'viewed' 
+  | 'approved' 
+  | 'rejected' 
+  | 'expired' 
+  | 'paid' 
+  | 'partially_paid' 
+  | 'overdue' 
+  | 'cancelled'
+  | 'issued'
+  | 'pending'
+  | 'processed';
 
 // Base interface for sales documents
 interface SalesDocumentBase {
