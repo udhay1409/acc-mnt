@@ -18,14 +18,14 @@ import { Button } from '@/components/ui/button';
 import { Search, Filter } from 'lucide-react';
 
 const StockMovementHistory: React.FC = () => {
-  const [productFilter, setProductFilter] = useState<string>('');
-  const [typeFilter, setTypeFilter] = useState<string>('');
+  const [productFilter, setProductFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // Apply filters
   const filteredMovements = mockStockMovements.filter(movement => {
-    const matchesProduct = !productFilter || movement.productId === productFilter;
-    const matchesType = !typeFilter || movement.type === typeFilter;
+    const matchesProduct = productFilter === 'all' || movement.productId === productFilter;
+    const matchesType = typeFilter === 'all' || movement.type === typeFilter;
     const matchesSearch = !searchTerm || 
       movement.reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movement.notes?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -34,8 +34,8 @@ const StockMovementHistory: React.FC = () => {
   });
 
   const handleResetFilters = () => {
-    setProductFilter('');
-    setTypeFilter('');
+    setProductFilter('all');
+    setTypeFilter('all');
     setSearchTerm('');
   };
 
@@ -70,7 +70,7 @@ const StockMovementHistory: React.FC = () => {
                   <SelectValue placeholder="All Products" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Products</SelectItem>
+                  <SelectItem value="all">All Products</SelectItem>
                   {mockProducts.map(product => (
                     <SelectItem key={product.id} value={product.id}>
                       {product.name}
@@ -87,7 +87,7 @@ const StockMovementHistory: React.FC = () => {
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="purchase">Purchase</SelectItem>
                   <SelectItem value="sale">Sale</SelectItem>
                   <SelectItem value="adjustment">Adjustment</SelectItem>
