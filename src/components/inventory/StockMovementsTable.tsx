@@ -14,9 +14,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface StockMovementsTableProps {
   movements: StockMovement[];
+  showProductName?: boolean;
 }
 
-const StockMovementsTable: React.FC<StockMovementsTableProps> = ({ movements }) => {
+const StockMovementsTable: React.FC<StockMovementsTableProps> = ({ movements, showProductName = false }) => {
   const getMovementTypeColor = (type: string) => {
     switch (type) {
       case 'purchase':
@@ -34,6 +35,25 @@ const StockMovementsTable: React.FC<StockMovementsTableProps> = ({ movements }) 
     }
   };
 
+  const getReasonBadge = (reason: string) => {
+    switch (reason) {
+      case 'purchase':
+        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Purchase</Badge>;
+      case 'sale':
+        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Sale</Badge>;
+      case 'damage':
+        return <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">Damage</Badge>;
+      case 'correction':
+        return <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Correction</Badge>;
+      case 'return':
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Return</Badge>;
+      case 'transfer':
+        return <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">Transfer</Badge>;
+      default:
+        return <Badge variant="outline">{reason}</Badge>;
+    }
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -41,6 +61,8 @@ const StockMovementsTable: React.FC<StockMovementsTableProps> = ({ movements }) 
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Type</TableHead>
+            {showProductName && <TableHead>Product</TableHead>}
+            <TableHead>Reason</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Before</TableHead>
             <TableHead>After</TableHead>
@@ -51,7 +73,7 @@ const StockMovementsTable: React.FC<StockMovementsTableProps> = ({ movements }) 
         <TableBody>
           {movements.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+              <TableCell colSpan={showProductName ? 9 : 8} className="text-center py-8 text-muted-foreground">
                 No stock movements found for this product.
               </TableCell>
             </TableRow>
@@ -66,6 +88,10 @@ const StockMovementsTable: React.FC<StockMovementsTableProps> = ({ movements }) 
                   >
                     {movement.type.charAt(0).toUpperCase() + movement.type.slice(1)}
                   </Badge>
+                </TableCell>
+                {showProductName && <TableCell>Product Name</TableCell>}
+                <TableCell>
+                  {getReasonBadge(movement.reason || movement.type)}
                 </TableCell>
                 <TableCell className={movement.quantity > 0 ? 'text-green-600' : 'text-red-600'}>
                   {movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity}
