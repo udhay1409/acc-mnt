@@ -81,4 +81,3 @@ export interface WhatsAppBusinessAccount {
   verificationCode?: string;
   verifiedDate?: string;
 }
-

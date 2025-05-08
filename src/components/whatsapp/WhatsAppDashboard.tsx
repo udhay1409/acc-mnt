@@ -10,10 +10,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Users, Send, CheckCircle, RefreshCcw, ChevronRight, AlertCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { SignupStatus } from '@/models/whatsapp';
 
 const WhatsAppDashboard = () => {
-  const navigate = useNavigate();
   
   const checkWhatsAppStatus = () => {
     toast({
@@ -29,7 +28,7 @@ const WhatsAppDashboard = () => {
   };
 
   // Simulated verification status - this would come from your API
-  const verificationStatus = 'pending'; // 'pending', 'verified', 'rejected'
+  const verificationStatus: SignupStatus = 'pending'; // Use the correct type
 
   return (
     <div className="space-y-6">
