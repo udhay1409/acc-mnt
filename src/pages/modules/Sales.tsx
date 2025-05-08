@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -34,13 +35,39 @@ import ReceiptsList from '@/components/sales/ReceiptsList';
 import DebitNotesList from '@/components/sales/DebitNotesList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
+// Tab interface for structured tab data
+interface SalesTab {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
 const Sales = () => {
+  // State for active tab
+  const [activeTab, setActiveTab] = useState('customers');
+  
   // State for each tab's search query
   const [retainerSearchQuery, setRetainerSearchQuery] = useState('');
   const [ordersSearchQuery, setOrdersSearchQuery] = useState('');
   
   const retainerInvoices = getRetainerInvoices();
   const salesOrders = getSalesOrders();
+
+  // Define all sales tabs with icons
+  const salesTabs: SalesTab[] = [
+    { id: 'customers', label: 'Customers', icon: <Users className="h-4 w-4" /> },
+    { id: 'estimates', label: 'Estimates', icon: <FileText className="h-4 w-4" /> },
+    { id: 'retainer', label: 'Retainer', icon: <Calendar className="h-4 w-4" /> },
+    { id: 'orders', label: 'Orders', icon: <ShoppingCart className="h-4 w-4" /> },
+    { id: 'challans', label: 'Challans', icon: <Truck className="h-4 w-4" /> },
+    { id: 'invoices', label: 'Invoices', icon: <FileText className="h-4 w-4" /> },
+    { id: 'payments', label: 'Payments', icon: <Wallet className="h-4 w-4" /> },
+    { id: 'recurring', label: 'Recurring', icon: <Repeat className="h-4 w-4" /> },
+    { id: 'credits', label: 'Credits', icon: <FilePlus className="h-4 w-4" /> },
+    { id: 'returns', label: 'Returns', icon: <FileX className="h-4 w-4" /> },
+    { id: 'receipts', label: 'Receipts', icon: <Receipt className="h-4 w-4" /> },
+    { id: 'debits', label: 'Debits', icon: <FileMinus className="h-4 w-4" /> },
+  ];
 
   return (
     <div className="space-y-6">
@@ -53,21 +80,21 @@ const Sales = () => {
       
       <Separator />
       
-      <Tabs defaultValue="customers" className="w-full">
-        <TabsList className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-12 w-full h-auto">
-          <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="estimates">Estimates</TabsTrigger>
-          <TabsTrigger value="retainer">Retainer</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="challans">Challans</TabsTrigger>
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
-          <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="recurring">Recurring</TabsTrigger>
-          <TabsTrigger value="credits">Credits</TabsTrigger>
-          <TabsTrigger value="returns">Returns</TabsTrigger>
-          <TabsTrigger value="receipts">Receipts</TabsTrigger>
-          <TabsTrigger value="debits">Debits</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="overflow-x-auto">
+          <TabsList className="inline-flex min-w-full md:grid md:grid-cols-6 lg:grid-cols-12 h-auto">
+            {salesTabs.map((tab) => (
+              <TabsTrigger 
+                key={tab.id} 
+                value={tab.id}
+                className="flex items-center gap-2 px-4 py-2"
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
         
         <div className="mt-4">
           <TabsContent value="customers">
