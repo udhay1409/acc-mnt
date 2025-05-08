@@ -475,6 +475,74 @@ export const mockCreditNotes: CreditNote[] = [
   }
 ];
 
+// Mock Sales Returns
+export const mockSalesReturns: SalesReturn[] = [
+  {
+    id: "SR1001",
+    number: "SR-1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 28), // April 28, 2025
+    dueDate: undefined,
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    reason: "Product arrived damaged in transit",
+    invoiceId: "INV1001",
+    returnCondition: "damaged",
+    restockStatus: "disposed",
+    status: "processed",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 28)
+  },
+  {
+    id: "SR1002",
+    number: "SR-1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 4, 8), // May 8, 2025
+    dueDate: undefined,
+    items: createSalesItems(2),
+    ...calculateTotals(createSalesItems(2)),
+    reason: "Wrong items were shipped",
+    invoiceId: "INV1002",
+    returnCondition: "wrong_item",
+    restockStatus: "restocked",
+    status: "processed",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 8)
+  },
+  {
+    id: "SR1003",
+    number: "SR-1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 4, 12), // May 12, 2025
+    dueDate: undefined,
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    reason: "Item does not match description",
+    invoiceId: "INV1005",
+    returnCondition: "not_as_described",
+    restockStatus: "pending",
+    status: "pending",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 12)
+  },
+  {
+    id: "SR1004",
+    number: "SR-1004",
+    customer: mockCustomers[3],
+    date: new Date(2025, 4, 15), // May 15, 2025
+    dueDate: undefined,
+    items: createSalesItems(3),
+    ...calculateTotals(createSalesItems(3)),
+    reason: "Customer ordered wrong size",
+    invoiceId: "INV1006",
+    returnCondition: "other",
+    restockStatus: "restocked",
+    status: "pending",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 15)
+  }
+];
+
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
 export const getEstimates = () => mockEstimates;
@@ -487,5 +555,8 @@ export const getRecurringInvoices = () => mockRecurringInvoices;
 
 // Export function for credit notes
 export const getCreditNotes = () => mockCreditNotes;
+
+// Export function for sales returns
+export const getSalesReturns = () => mockSalesReturns;
 
 // Additional export functions for other document types would be defined here

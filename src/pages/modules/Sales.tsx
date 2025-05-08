@@ -29,6 +29,7 @@ import DeliveryChallansList from '@/components/sales/DeliveryChallansList';
 import PaymentsList from '@/components/sales/PaymentsList';
 import RecurringInvoicesList from '@/components/sales/RecurringInvoicesList';
 import CreditNotesList from '@/components/sales/CreditNotesList';
+import SalesReturnsList from '@/components/sales/SalesReturnsList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 const Sales = () => {
@@ -121,15 +122,7 @@ const Sales = () => {
           </TabsContent>
           
           <TabsContent value="returns">
-            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <FileX className="h-10 w-10 text-muted-foreground" />
-                <h3 className="text-lg font-medium">Sales Returns</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  This feature is coming soon. You'll be able to process and manage returned items.
-                </p>
-              </div>
-            </div>
+            <SalesReturnsList />
           </TabsContent>
           
           <TabsContent value="receipts">
