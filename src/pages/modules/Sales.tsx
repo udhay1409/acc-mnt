@@ -17,7 +17,8 @@ import {
   ShoppingCart, 
   Calendar, 
   Wallet,
-  Repeat
+  Repeat,
+  Receipt
 } from 'lucide-react';
 
 // Import our sales components
@@ -30,6 +31,7 @@ import PaymentsList from '@/components/sales/PaymentsList';
 import RecurringInvoicesList from '@/components/sales/RecurringInvoicesList';
 import CreditNotesList from '@/components/sales/CreditNotesList';
 import SalesReturnsList from '@/components/sales/SalesReturnsList';
+import ReceiptsList from '@/components/sales/ReceiptsList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 const Sales = () => {
@@ -126,15 +128,7 @@ const Sales = () => {
           </TabsContent>
           
           <TabsContent value="receipts">
-            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <FileText className="h-10 w-10 text-muted-foreground" />
-                <h3 className="text-lg font-medium">Receipts</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  This feature is coming soon. You'll be able to generate and track payment receipts.
-                </p>
-              </div>
-            </div>
+            <ReceiptsList />
           </TabsContent>
           
           <TabsContent value="debits">

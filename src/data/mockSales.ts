@@ -543,6 +543,65 @@ export const mockSalesReturns: SalesReturn[] = [
   }
 ];
 
+// Mock Receipts
+export const mockReceipts: Receipt[] = [
+  {
+    id: "RCP1001",
+    number: "RCP-1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 20), // April 20, 2025
+    paymentId: "PAY1001",
+    amount: 2500.00,
+    paymentMethod: "bank_transfer",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 20)
+  },
+  {
+    id: "RCP1002",
+    number: "RCP-1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 3, 25), // April 25, 2025
+    paymentId: "PAY1002",
+    amount: 1750.50,
+    paymentMethod: "credit_card",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 25)
+  },
+  {
+    id: "RCP1003",
+    number: "RCP-1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 4, 1), // May 1, 2025
+    paymentId: "PAY1003",
+    amount: 3000.00,
+    paymentMethod: "cash",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 1)
+  },
+  {
+    id: "RCP1004",
+    number: "RCP-1004",
+    customer: mockCustomers[3],
+    date: new Date(2025, 4, 5), // May 5, 2025
+    paymentId: "PAY1004",
+    amount: 500.00,
+    paymentMethod: "online",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 5)
+  },
+  {
+    id: "RCP1005",
+    number: "RCP-1005",
+    customer: mockCustomers[4],
+    date: new Date(2025, 4, 10), // May 10, 2025
+    paymentId: "PAY1005",
+    amount: 1250.75,
+    paymentMethod: "check",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 10)
+  }
+];
+
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
 export const getEstimates = () => mockEstimates;
@@ -558,5 +617,8 @@ export const getCreditNotes = () => mockCreditNotes;
 
 // Export function for sales returns
 export const getSalesReturns = () => mockSalesReturns;
+
+// Export function for receipts
+export const getReceipts = () => mockReceipts;
 
 // Additional export functions for other document types would be defined here
