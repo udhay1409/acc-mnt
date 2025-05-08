@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -25,6 +24,7 @@ import EstimatesList from '@/components/sales/EstimatesList';
 import InvoicesList from '@/components/sales/InvoicesList';
 import DocumentList from '@/components/sales/DocumentList';
 import DeliveryChallansList from '@/components/sales/DeliveryChallansList';
+import PaymentsList from '@/components/sales/PaymentsList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 const Sales = () => {
@@ -105,15 +105,7 @@ const Sales = () => {
           </TabsContent>
           
           <TabsContent value="payments">
-            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <Wallet className="h-10 w-10 text-muted-foreground" />
-                <h3 className="text-lg font-medium">Payments Received</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  This feature is coming soon. You'll be able to track and manage payments from customers.
-                </p>
-              </div>
-            </div>
+            <PaymentsList />
           </TabsContent>
           
           <TabsContent value="recurring">

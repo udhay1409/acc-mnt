@@ -275,6 +275,69 @@ export const mockDeliveryChallans: DeliveryChallan[] = [
   }
 ];
 
+// Mock Payments
+export const mockPayments: Payment[] = [
+  {
+    id: "PAY1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 20), // April 20, 2025
+    amount: 2500.00,
+    paymentMethod: "bank_transfer",
+    reference: "TRF98765432",
+    description: "Payment for Invoice INV-1001",
+    invoiceIds: ["INV1001"],
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 20)
+  },
+  {
+    id: "PAY1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 3, 25), // April 25, 2025
+    amount: 1750.50,
+    paymentMethod: "credit_card",
+    reference: "CC-AUTH-12345",
+    description: "Credit card payment",
+    invoiceIds: ["INV1002"],
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 25)
+  },
+  {
+    id: "PAY1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 4, 1), // May 1, 2025
+    amount: 3000.00,
+    paymentMethod: "cash",
+    description: "Cash payment for monthly retainer",
+    invoiceIds: ["RET1001"],
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 1)
+  },
+  {
+    id: "PAY1004",
+    customer: mockCustomers[3],
+    date: new Date(2025, 4, 5), // May 5, 2025
+    amount: 500.00,
+    paymentMethod: "online",
+    reference: "PAYPAL-87654321",
+    description: "Online payment via PayPal",
+    invoiceIds: ["INV1005"],
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 5)
+  },
+  {
+    id: "PAY1005",
+    customer: mockCustomers[4],
+    date: new Date(2025, 4, 10), // May 10, 2025
+    amount: 1250.75,
+    paymentMethod: "check",
+    reference: "CHECK #4567",
+    description: "Check payment for creative services",
+    invoiceIds: ["INV1006", "INV1007"],
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 10)
+  }
+];
+
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
 export const getEstimates = () => mockEstimates;
@@ -282,5 +345,6 @@ export const getInvoices = () => mockInvoices;
 export const getRetainerInvoices = () => mockRetainerInvoices;
 export const getSalesOrders = () => mockSalesOrders;
 export const getDeliveryChallans = () => mockDeliveryChallans;
+export const getPayments = () => mockPayments;
 
 // Additional export functions for other document types would be defined here
