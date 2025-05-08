@@ -24,7 +24,7 @@ import UserManagement from "@/pages/UserManagement";
 import PointOfSale from "@/pages/modules/PointOfSale";
 import Accounting from "@/pages/modules/Accounting";
 import Inventory from "@/pages/modules/Inventory";
-import Sales from "@/pages/modules/Sales"; // New Sales module
+import Sales from "@/pages/modules/Sales";
 import Purchases from "@/pages/modules/Purchases";
 import CRM from "@/pages/modules/CRM";
 import TaxManagement from "@/pages/modules/TaxManagement";
@@ -36,76 +36,80 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            
-            {/* Protected Routes */}
-            <Route element={<AppLayout />}>
-              {/* Redirect root to dashboard */}
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
               
-              {/* All authenticated users can access dashboard */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+              {/* Protected Routes */}
+              <Route element={<AppLayout />}>
+                {/* Redirect root to dashboard */}
+                <Route path="/" element={<Navigate to="/dashboard" />} />
+                
+                {/* All authenticated users can access dashboard */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
+                
+                {/* Role-specific routes */}
+                
+                {/* Admin Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  <Route path="/users" element={<UserManagement />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Route>
+                
+                {/* Cashier Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin", "cashier"]} />}>
+                  <Route path="/pos" element={<PointOfSale />} />
+                </Route>
+                
+                {/* Accountant Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin", "accountant"]} />}>
+                  <Route path="/accounting" element={<Accounting />} />
+                  <Route path="/tax" element={<TaxManagement />} />
+                  <Route path="/reports" element={<Reports />} />
+                </Route>
+                
+                {/* Inventory Manager Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin", "inventory_manager"]} />}>
+                  <Route path="/inventory" element={<Inventory />} />
+                </Route>
+                
+                {/* Sales Manager Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  <Route path="/sales" element={<Sales />} />
+                </Route>
+                
+                {/* Purchase Manager Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin", "purchase_manager"]} />}>
+                  <Route path="/purchases" element={<Purchases />} />
+                </Route>
+                
+                {/* CRM Routes - Accessible to multiple roles */}
+                <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
+                  <Route path="/crm" element={<CRM />} />
+                </Route>
+                
+                {/* 404 Not Found */}
+                <Route path="*" element={<NotFound />} />
               </Route>
-              
-              {/* Role-specific routes */}
-              
-              {/* Admin Routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                <Route path="/users" element={<UserManagement />} />
-                <Route path="/settings" element={<SettingsPage />} />
-              </Route>
-              
-              {/* Cashier Routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin", "cashier"]} />}>
-                <Route path="/pos" element={<PointOfSale />} />
-              </Route>
-              
-              {/* Accountant Routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin", "accountant"]} />}>
-                <Route path="/accounting" element={<Accounting />} />
-                <Route path="/tax" element={<TaxManagement />} />
-                <Route path="/reports" element={<Reports />} />
-              </Route>
-              
-              {/* Inventory Manager Routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin", "inventory_manager"]} />}>
-                <Route path="/inventory" element={<Inventory />} />
-              </Route>
-              
-              {/* Sales Manager Routes - Changed from "sales_manager" to just using ["admin"] */}
-              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                <Route path="/sales" element={<Sales />} />
-              </Route>
-              
-              {/* Purchase Manager Routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin", "purchase_manager"]} />}>
-                <Route path="/purchases" element={<Purchases />} />
-              </Route>
-              
-              {/* CRM Routes - Accessible to multiple roles */}
-              <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
-                <Route path="/crm" element={<CRM />} />
-              </Route>
-              
-              {/* 404 Not Found */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+        
+        {/* Toast components placed at the app root */}
+        <Toaster />
+        <Sonner />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
