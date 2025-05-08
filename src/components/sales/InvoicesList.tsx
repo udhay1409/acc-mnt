@@ -17,30 +17,53 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, FileText, Users } from 'lucide-react';
+import { Search, Plus, FileText, Users, Eye, Wallet, Calendar } from 'lucide-react';
 import { Invoice } from '@/models/sales';
 import { getInvoices } from '@/data/mockSales';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/ui/use-toast';
 
-const statusColors: Record<string, string> = {
-  draft: "bg-gray-200 text-gray-800",
-  sent: "bg-blue-100 text-blue-800",
-  viewed: "bg-yellow-100 text-yellow-800",
-  paid: "bg-green-100 text-green-800",
-  partially_paid: "bg-emerald-100 text-emerald-800",
-  overdue: "bg-red-100 text-red-800",
-  cancelled: "bg-slate-100 text-slate-800"
+const statusColors: Record<string, { bg: string, text: string }> = {
+  draft: { bg: "bg-slate-100", text: "text-slate-800" },
+  sent: { bg: "bg-blue-100", text: "text-blue-800" },
+  viewed: { bg: "bg-yellow-100", text: "text-yellow-800" },
+  paid: { bg: "bg-green-100", text: "text-green-800" },
+  partially_paid: { bg: "bg-emerald-100", text: "text-emerald-800" },
+  overdue: { bg: "bg-red-100", text: "text-red-800" },
+  cancelled: { bg: "bg-slate-100", text: "text-slate-800" }
 };
 
 const InvoicesList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const invoices = getInvoices();
+  const { toast } = useToast();
   
   const filteredInvoices = invoices.filter(invoice => 
     invoice.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
     invoice.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleCreateInvoice = () => {
+    toast({
+      title: "Create Invoice",
+      description: "Opening invoice creation form"
+    });
+  };
+
+  const handleViewInvoice = (invoice: Invoice) => {
+    toast({
+      title: "View Invoice",
+      description: `Viewing invoice ${invoice.number}`
+    });
+  };
+
+  const handleRecordPayment = (invoice: Invoice) => {
+    toast({
+      title: "Record Payment",
+      description: `Recording payment for invoice ${invoice.number}`
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -55,19 +78,22 @@ const InvoicesList = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button className="w-full sm:w-auto">
+        <Button className="w-full sm:w-auto" onClick={handleCreateInvoice}>
           <Plus className="mr-2 h-4 w-4" /> Create Invoice
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Invoices</CardTitle>
+      <Card className="border shadow-sm">
+        <CardHeader className="bg-muted/40">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" /> 
+            Invoices
+          </CardTitle>
           <CardDescription>Manage your sales invoices</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/20">
               <TableRow>
                 <TableHead>Number</TableHead>
                 <TableHead>Customer</TableHead>
@@ -75,13 +101,13 @@ const InvoicesList = () => {
                 <TableHead>Due Date</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredInvoices.length > 0 ? (
                 filteredInvoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
+                  <TableRow key={invoice.id} className="hover:bg-muted/20">
                     <TableCell className="font-medium">
                       <div className="flex items-center">
                         <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -91,29 +117,65 @@ const InvoicesList = () => {
                     <TableCell>
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                        {invoice.customer.name}
+                        <span className="hover:text-primary cursor-pointer">
+                          {invoice.customer.name}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell>{format(invoice.date, 'MMM dd, yyyy')}</TableCell>
-                    <TableCell>{format(invoice.dueDate || invoice.date, 'MMM dd, yyyy')}</TableCell>
-                    <TableCell className="font-medium">${invoice.total.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Badge className={statusColors[invoice.paymentStatus] || "bg-gray-100"}>
+                      <div className="flex items-center">
+                        <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                        {format(invoice.date, 'MMM dd, yyyy')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={`flex items-center ${invoice.paymentStatus === 'overdue' ? 'text-red-600' : ''}`}>
+                        <Calendar className={`h-4 w-4 mr-2 ${invoice.paymentStatus === 'overdue' ? 'text-red-600' : 'text-muted-foreground'}`} />
+                        {format(invoice.dueDate || invoice.date, 'MMM dd, yyyy')}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      ${invoice.total.toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`${statusColors[invoice.paymentStatus].bg} ${statusColors[invoice.paymentStatus].text}`}>
                         {invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1).replace('_', ' ')}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">View</Button>
-                        <Button variant="outline" size="sm">Record Payment</Button>
+                      <div className="flex justify-end space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center"
+                          onClick={() => handleViewInvoice(invoice)}
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-1" />
+                          View
+                        </Button>
+                        {(invoice.paymentStatus !== 'paid') && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="flex items-center"
+                            onClick={() => handleRecordPayment(invoice)}
+                          >
+                            <Wallet className="h-3.5 w-3.5 mr-1" />
+                            Payment
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No invoices found. Try adjusting your search.
+                  <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center">
+                      <FileText className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                      <p className="mb-2">No invoices found</p>
+                      <p className="text-sm">Try adjusting your search or create a new invoice</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}

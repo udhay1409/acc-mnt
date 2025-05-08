@@ -17,35 +17,18 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, FileText, Users } from 'lucide-react';
+import { Search, Plus, FileText, Users, Eye, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/ui/use-toast';
 
-export const statusColors: Record<string, string> = {
-  draft: "bg-gray-200 text-gray-800",
-  sent: "bg-blue-100 text-blue-800",
-  viewed: "bg-yellow-100 text-yellow-800",
-  approved: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
-  paid: "bg-green-100 text-green-800",
-  partially_paid: "bg-emerald-100 text-emerald-800",
-  overdue: "bg-red-100 text-red-800",
-  cancelled: "bg-slate-100 text-slate-800",
-  unfulfilled: "bg-orange-100 text-orange-800",
-  partially_fulfilled: "bg-yellow-100 text-yellow-800",
-  fulfilled: "bg-green-100 text-green-800",
-  pending: "bg-blue-100 text-blue-800",
-  processed: "bg-green-100 text-green-800",
-  expired: "bg-orange-100 text-orange-800",
-};
-
+// Simplified interface for the document structure
 interface Document {
   id: string;
   number: string;
-  customer: {
-    name: string;
-  };
+  customer: { name: string; id: string };
   date: Date;
+  dueDate?: Date;
   total: number;
   status: string;
 }
@@ -57,10 +40,22 @@ interface DocumentListProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   createButtonText: string;
-  showDueDates?: boolean;
-  showExpiryDates?: boolean;
   additionalButtonText?: string;
+  showDueDates?: boolean;
 }
+
+const statusColors: Record<string, { bg: string, text: string }> = {
+  draft: { bg: "bg-slate-100", text: "text-slate-800" },
+  sent: { bg: "bg-blue-100", text: "text-blue-800" },
+  viewed: { bg: "bg-yellow-100", text: "text-yellow-800" },
+  approved: { bg: "bg-green-100", text: "text-green-800" },
+  rejected: { bg: "bg-red-100", text: "text-red-800" },
+  expired: { bg: "bg-orange-100", text: "text-orange-800" },
+  paid: { bg: "bg-green-100", text: "text-green-800" },
+  partially_paid: { bg: "bg-emerald-100", text: "text-emerald-800" },
+  overdue: { bg: "bg-red-100", text: "text-red-800" },
+  cancelled: { bg: "bg-slate-100", text: "text-slate-800" }
+};
 
 const DocumentList: React.FC<DocumentListProps> = ({
   title,
@@ -69,14 +64,36 @@ const DocumentList: React.FC<DocumentListProps> = ({
   searchQuery,
   setSearchQuery,
   createButtonText,
+  additionalButtonText,
   showDueDates = false,
-  showExpiryDates = false,
-  additionalButtonText
 }) => {
+  const { toast } = useToast();
+  
   const filteredDocuments = documents.filter(doc => 
     doc.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleCreate = () => {
+    toast({
+      title: `Create ${title.slice(0, -1)}`,
+      description: `Opening ${title.toLowerCase().slice(0, -1)} creation form`
+    });
+  };
+
+  const handleView = (doc: Document) => {
+    toast({
+      title: `View ${title.slice(0, -1)}`,
+      description: `Viewing ${title.toLowerCase().slice(0, -1)} ${doc.number}`
+    });
+  };
+
+  const handleAdditionalAction = (doc: Document) => {
+    toast({
+      title: additionalButtonText || "Action",
+      description: `Performing ${additionalButtonText?.toLowerCase()} for ${doc.number}`
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -91,34 +108,36 @@ const DocumentList: React.FC<DocumentListProps> = ({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button className="w-full sm:w-auto">
+        <Button className="w-full sm:w-auto" onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" /> {createButtonText}
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
+      <Card className="border shadow-sm">
+        <CardHeader className="bg-muted/40">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" /> 
+            {title}
+          </CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/20">
               <TableRow>
                 <TableHead>Number</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Date</TableHead>
                 {showDueDates && <TableHead>Due Date</TableHead>}
-                {showExpiryDates && <TableHead>Expiry Date</TableHead>}
                 <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredDocuments.length > 0 ? (
                 filteredDocuments.map((doc) => (
-                  <TableRow key={doc.id}>
+                  <TableRow key={doc.id} className="hover:bg-muted/20">
                     <TableCell className="font-medium">
                       <div className="flex items-center">
                         <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -128,25 +147,46 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     <TableCell>
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                        {doc.customer.name}
+                        <span className="hover:text-primary cursor-pointer">
+                          {doc.customer.name}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell>{format(doc.date, 'MMM dd, yyyy')}</TableCell>
-                    {/* @ts-ignore */}
-                    {showDueDates && <TableCell>{doc.dueDate ? format(doc.dueDate, 'MMM dd, yyyy') : '-'}</TableCell>}
-                    {/* @ts-ignore */}
-                    {showExpiryDates && <TableCell>{doc.expiryDate ? format(doc.expiryDate, 'MMM dd, yyyy') : '-'}</TableCell>}
+                    <TableCell>
+                      {format(doc.date, 'MMM dd, yyyy')}
+                    </TableCell>
+                    {showDueDates && (
+                      <TableCell>
+                        {doc.dueDate ? format(doc.dueDate, 'MMM dd, yyyy') : '-'}
+                      </TableCell>
+                    )}
                     <TableCell className="font-medium">${doc.total.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Badge className={statusColors[doc.status] || "bg-gray-100"}>
+                      <Badge className={`${statusColors[doc.status]?.bg || 'bg-gray-100'} ${statusColors[doc.status]?.text || 'text-gray-800'}`}>
                         {doc.status.charAt(0).toUpperCase() + doc.status.slice(1).replace('_', ' ')}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">View</Button>
+                      <div className="flex justify-end space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="flex items-center"
+                          onClick={() => handleView(doc)}
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-1" />
+                          View
+                        </Button>
                         {additionalButtonText && (
-                          <Button variant="outline" size="sm">{additionalButtonText}</Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="flex items-center"
+                            onClick={() => handleAdditionalAction(doc)}
+                          >
+                            <ArrowRight className="h-3.5 w-3.5 mr-1" />
+                            {additionalButtonText.split(' ')[0]}
+                          </Button>
                         )}
                       </div>
                     </TableCell>
@@ -154,11 +194,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell 
-                    colSpan={7 + (showDueDates ? 1 : 0) + (showExpiryDates ? 1 : 0)} 
-                    className="text-center py-8 text-muted-foreground"
-                  >
-                    No {title.toLowerCase()} found. Try adjusting your search.
+                  <TableCell colSpan={showDueDates ? 7 : 6} className="text-center py-10 text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center">
+                      <FileText className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                      <p className="mb-2">No {title.toLowerCase()} found</p>
+                      <p className="text-sm">Try adjusting your search or create a new {title.toLowerCase().slice(0, -1)}</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}

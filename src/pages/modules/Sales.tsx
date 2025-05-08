@@ -72,22 +72,22 @@ const Sales = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Sales Management</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Sales Management</h1>
+        <p className="text-muted-foreground mt-1">
           Manage your sales documents, customers and related transactions
         </p>
       </div>
       
-      <Separator />
+      <Separator className="my-4" />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="overflow-x-auto">
-          <TabsList className="inline-flex min-w-full md:grid md:grid-cols-6 lg:grid-cols-12 h-auto">
+        <div className="bg-muted/30 rounded-lg p-1 overflow-x-auto">
+          <TabsList className="inline-flex min-w-full h-auto bg-transparent p-0 gap-1">
             {salesTabs.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id}
-                className="flex items-center gap-2 px-4 py-2"
+                className="flex items-center gap-2 px-3 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
               >
                 {tab.icon}
                 <span>{tab.label}</span>
@@ -96,7 +96,7 @@ const Sales = () => {
           </TabsList>
         </div>
         
-        <div className="mt-4">
+        <div className="mt-6">
           <TabsContent value="customers">
             <CustomersList />
           </TabsContent>
