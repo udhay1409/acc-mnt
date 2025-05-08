@@ -34,10 +34,10 @@ const POSContent: React.FC = () => {
   };
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="space-y-4">
-        <Card>
-          <CardHeader>
+        <Card className="shadow-sm">
+          <CardHeader className="pb-2">
             <CardTitle>Point of Sale</CardTitle>
             <CardDescription>Add items to cart and process payment</CardDescription>
           </CardHeader>
@@ -50,17 +50,19 @@ const POSContent: React.FC = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle>Cart</CardTitle>
-            <CardDescription>
-              {state.cart.length} item(s) in cart
-            </CardDescription>
+            <CardTitle className="flex justify-between items-center">
+              <span>Cart</span>
+              <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-1 rounded-md">
+                {state.cart.length} item(s)
+              </span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Cart />
           </CardContent>
-          <CardFooter className="pt-0 flex justify-end gap-2">
+          <CardFooter className="pt-0 flex justify-end gap-2 border-t p-4">
             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Printer className="h-4 w-4 mr-2" />
               Print

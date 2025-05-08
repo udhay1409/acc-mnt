@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Barcode, CreditCard, Search } from 'lucide-react';
+import { Barcode, Search } from 'lucide-react';
 import { usePOS } from '@/contexts/POSContext';
 import { toast } from 'sonner';
 
@@ -24,7 +24,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onProductFound }) => {
     if (product) {
       onProductFound(product.id);
       setQuery('');
-      toast.success(`Product found: ${product.name}`);
+      toast.success(`Added: ${product.name}`);
     } else {
       toast.error('Product not found');
     }
@@ -37,26 +37,25 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onProductFound }) => {
   };
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex space-x-2">
-        <div className="relative flex-grow">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Barcode className="h-5 w-5 text-gray-400" />
-          </div>
-          <Input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="pl-10"
-            placeholder="Scan barcode or search product"
-          />
+    <div className="flex space-x-2">
+      <div className="relative flex-grow">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <Barcode className="h-5 w-5 text-gray-400" />
         </div>
-        <Button onClick={handleSearch}>
-          <Search className="h-4 w-4 mr-2" />
-          Find
-        </Button>
+        <Input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="pl-10 bg-white dark:bg-gray-950"
+          placeholder="Scan barcode or search product"
+          autoComplete="off"
+        />
       </div>
+      <Button onClick={handleSearch}>
+        <Search className="h-4 w-4 mr-2" />
+        Find
+      </Button>
     </div>
   );
 };
