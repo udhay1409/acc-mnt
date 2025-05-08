@@ -21,7 +21,12 @@ import {
   Receipt,
   Users
 } from 'lucide-react';
-import PlaceholderPage from '../PlaceholderPage';
+
+// Import our purchases components
+import VendorsList from '@/components/purchases/VendorsList';
+import ExpensesList from '@/components/purchases/ExpensesList';
+import BillsList from '@/components/purchases/BillsList';
+import { Textarea } from '@/components/ui/textarea';
 
 // Tab interface for structured tab data
 interface PurchasesTab {
@@ -77,11 +82,27 @@ const Purchases = () => {
         </div>
         
         <div className="mt-4">
-          {purchasesTabs.map((tab) => (
-            <TabsContent key={tab.id} value={tab.id}>
-              <PlaceholderContent tabId={tab.id} tabLabel={tab.label} />
-            </TabsContent>
-          ))}
+          {/* Render actual components for the tabs we've implemented */}
+          <TabsContent value="vendors">
+            <VendorsList />
+          </TabsContent>
+          
+          <TabsContent value="expenses">
+            <ExpensesList />
+          </TabsContent>
+          
+          <TabsContent value="bills">
+            <BillsList />
+          </TabsContent>
+
+          {/* Placeholder content for tabs we haven't fully implemented yet */}
+          {purchasesTabs
+            .filter(tab => !['vendors', 'expenses', 'bills'].includes(tab.id))
+            .map((tab) => (
+              <TabsContent key={tab.id} value={tab.id}>
+                <PlaceholderContent tabId={tab.id} tabLabel={tab.label} />
+              </TabsContent>
+            ))}
         </div>
       </Tabs>
     </div>
