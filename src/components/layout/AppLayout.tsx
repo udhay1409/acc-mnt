@@ -15,7 +15,8 @@ import {
   LogOut,
   Menu,
   X,
-  Settings
+  Settings,
+  Receipt // Add Receipt icon for Sales
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -55,6 +56,12 @@ const navigationItems = [
     path: '/inventory', 
     icon: Package, 
     roles: ['admin', 'inventory_manager'] as UserRole[] 
+  },
+  { 
+    name: 'Sales', 
+    path: '/sales', 
+    icon: Receipt, 
+    roles: ['admin'] as UserRole[] 
   },
   { 
     name: 'Purchases', 

@@ -2,7 +2,8 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, BookOpen, Package, Truck, Users, Percent } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShoppingCart, BookOpen, Package, Truck, Users, Percent, Receipt } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -132,6 +133,18 @@ const Dashboard = () => {
               <CardTitle className="text-center text-sm">Inventory</CardTitle>
             </CardContent>
           </Card>
+        )}
+        
+        {/* Add Sales module quick access */}
+        {(user?.role === 'admin') && (
+          <Link to="/sales">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-6 flex flex-col items-center justify-center">
+                <Receipt className="h-10 w-10 text-bizblue-500 mb-2" />
+                <CardTitle className="text-center text-sm">Sales</CardTitle>
+              </CardContent>
+            </Card>
+          </Link>
         )}
         
         {(user?.role === 'admin' || user?.role === 'purchase_manager') && (
