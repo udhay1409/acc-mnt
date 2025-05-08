@@ -1,5 +1,5 @@
 
-import { ProductCategory, StockMovement } from "@/models/inventory";
+import { ProductCategory, StockMovement, StockMovementType } from "@/models/inventory";
 import { mockProducts } from "./mockProducts";
 
 export const mockCategories: ProductCategory[] = [
