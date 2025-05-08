@@ -46,12 +46,6 @@ const navigationItems = [
     roles: ['admin', 'cashier'] as UserRole[] 
   },
   { 
-    name: 'Accounting', 
-    path: '/accounting', 
-    icon: BookOpen, 
-    roles: ['admin', 'accountant'] as UserRole[] 
-  },
-  { 
     name: 'Inventory', 
     path: '/inventory', 
     icon: Package, 
@@ -68,6 +62,12 @@ const navigationItems = [
     path: '/purchases', 
     icon: Truck, 
     roles: ['admin', 'purchase_manager'] as UserRole[] 
+  },
+  { 
+    name: 'Accounting', 
+    path: '/accounting', 
+    icon: BookOpen, 
+    roles: ['admin', 'accountant'] as UserRole[] 
   },
   { 
     name: 'CRM', 
