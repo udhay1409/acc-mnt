@@ -74,9 +74,17 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, isOpen, onClose, onS
   const handleSubmit = (values: z.infer<typeof expenseSchema>) => {
     const submittedExpense: Expense = {
       id: expense?.id || uuidv4(),
-      ...values,
+      vendorId: values.vendorId,
       vendor: selectedVendor?.name || 'Unknown Vendor',
+      date: values.date,
+      dueDate: values.dueDate,
+      category: values.category,
+      amount: values.amount,
+      tax: values.tax,
       total,
+      status: values.status,
+      reference: values.reference,
+      notes: values.notes,
     };
 
     onSubmit(submittedExpense);

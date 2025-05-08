@@ -60,7 +60,14 @@ const VendorForm: React.FC<VendorFormProps> = ({ vendor, isOpen, onClose, onSubm
   const handleSubmit = (values: z.infer<typeof vendorSchema>) => {
     const submittedVendor: Vendor = {
       id: vendor?.id || uuidv4(),
-      ...values,
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      address: values.address,
+      taxId: values.taxId || '',
+      paymentTerms: values.paymentTerms,
+      creditLimit: values.creditLimit,
+      status: values.status,
       created: vendor?.created || new Date().toISOString().split('T')[0],
       balance: vendor?.balance || 0,
     };

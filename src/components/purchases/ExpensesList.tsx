@@ -95,7 +95,7 @@ const ExpensesList = () => {
   // Process expense (change status to processed)
   const handleProcessExpense = (expense: Expense) => {
     const updatedExpenses = expenses.map(e =>
-      e.id === expense.id ? { ...e, status: 'processed' } : e
+      e.id === expense.id ? { ...e, status: 'processed' as const } : e
     );
     setExpenses(updatedExpenses);
     toast({

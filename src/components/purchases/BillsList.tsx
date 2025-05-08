@@ -64,7 +64,7 @@ const BillsList = () => {
   // Handle mark as paid
   const handleMarkAsPaid = (bill: Bill) => {
     const updatedBills = bills.map(b =>
-      b.id === bill.id ? { ...b, status: 'paid' } : b
+      b.id === bill.id ? { ...b, status: 'paid' as const } : b
     );
     setBills(updatedBills);
     toast({
