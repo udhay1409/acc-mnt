@@ -2,22 +2,26 @@
 import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, AlertTriangle, History, Settings } from 'lucide-react';
+import { Package, AlertTriangle, History, Settings, Plus } from 'lucide-react';
 import ProductList from '@/components/inventory/ProductList';
 import ProductDetail from '@/components/inventory/ProductDetail';
 import LowStockAlert from '@/components/inventory/LowStockAlert';
 import CategoryDistribution from '@/components/inventory/CategoryDistribution';
 import StockMovementHistory from '@/components/inventory/StockMovementHistory';
 import StockAdjustment from '@/components/inventory/StockAdjustment';
+import AddProductDialog from '@/components/inventory/AddProductDialog';
 import { mockProducts } from '@/data/mockProducts';
 import { getProductMovements } from '@/data/mockInventory';
 import { ProductWithMovements } from '@/models/inventory';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { Product } from '@/models/pos';
 
 const Inventory = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('products');
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [addProductDialogOpen, setAddProductDialogOpen] = useState(false);
   
   const handleViewProduct = (productId: string) => {
     setSelectedProductId(productId);
@@ -28,15 +32,23 @@ const Inventory = () => {
   };
   
   const handleAddNewProduct = () => {
+    setAddProductDialogOpen(true);
+  };
+  
+  const handleProductAdded = (newProduct: Product) => {
+    // Add the new product to the list
+    setProducts([newProduct, ...products]);
+    
+    // Show a success toast
     toast({
-      title: "Add New Product",
-      description: "Product creation form will be available in a future update.",
+      title: "Product Added Successfully",
+      description: `${newProduct.name} has been added to your inventory.`,
     });
   };
   
   const selectedProduct = selectedProductId 
     ? {
-        ...mockProducts.find(p => p.id === selectedProductId)!,
+        ...products.find(p => p.id === selectedProductId)!,
         cost_price: 10.00, // mock data
         reorder_level: 5,  // mock data
         status: 'active' as const,
@@ -57,7 +69,7 @@ const Inventory = () => {
         </div>
         {!selectedProduct && activeTab === 'products' && (
           <Button onClick={handleAddNewProduct} className="gap-2">
-            <Package className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Add Product
           </Button>
         )}
@@ -95,24 +107,24 @@ const Inventory = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
                 <LowStockAlert 
-                  products={mockProducts} 
+                  products={products} 
                   onViewProduct={handleViewProduct} 
                 />
               </div>
               <div>
-                <CategoryDistribution products={mockProducts} />
+                <CategoryDistribution products={products} />
               </div>
             </div>
             
             <ProductList 
-              products={mockProducts} 
+              products={products} 
               onViewProduct={handleViewProduct} 
             />
           </TabsContent>
           
           <TabsContent value="alerts">
             <LowStockAlert 
-              products={mockProducts} 
+              products={products} 
               onViewProduct={handleViewProduct}
               expanded={true}
             />
@@ -127,6 +139,12 @@ const Inventory = () => {
           </TabsContent>
         </Tabs>
       )}
+
+      <AddProductDialog
+        open={addProductDialogOpen}
+        onOpenChange={setAddProductDialogOpen}
+        onProductAdded={handleProductAdded}
+      />
     </div>
   );
 };
