@@ -16,7 +16,9 @@ import {
   Menu,
   X,
   Settings,
-  Receipt // Add Receipt icon for Sales
+  Receipt,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -106,6 +108,7 @@ const AppLayout: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [sidebarMinimized, setSidebarMinimized] = useState(false);
 
   if (!user) {
     return <Outlet />;
@@ -121,6 +124,11 @@ const AppLayout: React.FC = () => {
     setSidebarOpen(prev => !prev);
   };
   
+  // Toggle sidebar minimized state (desktop only)
+  const toggleSidebarMinimized = () => {
+    setSidebarMinimized(prev => !prev);
+  };
+  
   // Get user initials for avatar
   const userInitials = user.name
     .split(' ')
@@ -134,16 +142,26 @@ const AppLayout: React.FC = () => {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed inset-y-0 left-0 z-20 flex w-64 flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out",
+          "fixed inset-y-0 left-0 z-20 flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
+          sidebarMinimized ? "w-16" : "w-64",
           isMobile && "shadow-xl"
         )}
       >
         {/* Sidebar Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">BizSuite</span>
-          </Link>
+        <div className={cn(
+          "flex h-16 items-center justify-between border-b border-sidebar-border",
+          sidebarMinimized ? "px-2" : "px-4"
+        )}>
+          {!sidebarMinimized ? (
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <span className="text-xl font-bold">BizSuite</span>
+            </Link>
+          ) : (
+            <Link to="/dashboard" className="flex w-full items-center justify-center">
+              <span className="text-xl font-bold">B</span>
+            </Link>
+          )}
           {isMobile && (
             <Button
               variant="ghost"
@@ -152,6 +170,21 @@ const AppLayout: React.FC = () => {
               className="text-sidebar-foreground hover:bg-sidebar-accent"
             >
               <X className="h-5 w-5" />
+            </Button>
+          )}
+          {!isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleSidebarMinimized}
+              className="text-sidebar-foreground hover:bg-sidebar-accent"
+              title={sidebarMinimized ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              {sidebarMinimized ? (
+                <ChevronRight className="h-5 w-5" />
+              ) : (
+                <ChevronLeft className="h-5 w-5" />
+              )}
             </Button>
           )}
         </div>
@@ -167,11 +200,13 @@ const AppLayout: React.FC = () => {
                     "flex items-center rounded-md px-3 py-2 text-sm font-medium",
                     location.pathname === item.path || location.pathname.startsWith(`${item.path}/`) 
                       ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    sidebarMinimized && "justify-center"
                   )}
+                  title={sidebarMinimized ? item.name : undefined}
                 >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  <span>{item.name}</span>
+                  <item.icon className={cn("h-5 w-5", !sidebarMinimized && "mr-3")} />
+                  {!sidebarMinimized && <span>{item.name}</span>}
                 </Link>
               </li>
             ))}
@@ -184,17 +219,22 @@ const AppLayout: React.FC = () => {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className="flex w-full items-center justify-start text-sidebar-foreground hover:bg-sidebar-accent px-3 py-2"
+                className={cn(
+                  "flex w-full items-center text-sidebar-foreground hover:bg-sidebar-accent px-3 py-2",
+                  sidebarMinimized && "justify-center px-1"
+                )}
               >
                 <Avatar className="h-8 w-8 mr-2">
                   <AvatarFallback className="bg-bizteal-500 text-white">
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium">{user.name}</span>
-                  <span className="text-xs capitalize">{user.role.replace("_", " ")}</span>
-                </div>
+                {!sidebarMinimized && (
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-medium">{user.name}</span>
+                    <span className="text-xs capitalize">{user.role.replace("_", " ")}</span>
+                  </div>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -215,7 +255,7 @@ const AppLayout: React.FC = () => {
       {/* Main Content */}
       <div className={cn(
         "flex flex-1 flex-col transition-all duration-300 ease-in-out",
-        sidebarOpen && !isMobile ? "ml-64" : "ml-0"
+        sidebarOpen && !isMobile ? (sidebarMinimized ? "ml-16" : "ml-64") : "ml-0"
       )}>
         {/* Top Navigation */}
         <header className="sticky top-0 z-10 h-16 bg-white shadow">

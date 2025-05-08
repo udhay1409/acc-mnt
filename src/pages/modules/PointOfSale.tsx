@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { usePOS } from '@/contexts/POSContext';
 import { mockProducts } from '@/data/mockProducts';
-import { Printer, Share, Grid2x2, Grid3x3, LayoutGrid, LayoutList } from 'lucide-react';
+import { Printer, Share, Grid2x2, Grid3x3, LayoutGrid, LayoutList, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -22,6 +22,7 @@ const POSContent: React.FC = () => {
   const { addToCart, state } = usePOS();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [gridSize, setGridSize] = useState<number>(3); // 2, 3, or 4 columns
+  const [isPOSView, setIsPOSView] = useState<boolean>(false);
   
   const handleProductFound = (productId: string) => {
     const product = mockProducts.find(p => p.id === productId);
@@ -38,12 +39,17 @@ const POSContent: React.FC = () => {
     toast.info("WhatsApp sharing will be implemented soon");
   };
 
+  const togglePOSView = () => {
+    setIsPOSView(!isPOSView);
+    toast.info(isPOSView ? "Exited POS view mode" : "Entered POS view mode");
+  };
+
   // Extract unique categories from products
   const categories = Array.from(new Set(mockProducts.map(product => product.category || 'Uncategorized')));
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-      <div className="lg:col-span-4 space-y-4">
+    <div className={`grid grid-cols-1 ${isPOSView ? '' : 'lg:grid-cols-7'} gap-6`}>
+      <div className={`${isPOSView ? 'hidden' : 'lg:col-span-4'} space-y-4`}>
         <Card className="shadow-sm">
           <CardHeader className="pb-2">
             <div className="flex justify-between items-center">
@@ -52,6 +58,15 @@ const POSContent: React.FC = () => {
                 <CardDescription>Add items to cart and process payment</CardDescription>
               </div>
               <div className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={togglePOSView}
+                  className="h-8 w-8"
+                  title="Toggle POS View"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                </Button>
                 <Button 
                   variant={viewMode === 'list' ? "secondary" : "ghost"} 
                   size="icon" 
@@ -126,15 +141,28 @@ const POSContent: React.FC = () => {
         </Card>
       </div>
       
-      <div className="lg:col-span-3 space-y-4">
+      <div className={`${isPOSView ? 'col-span-1' : 'lg:col-span-3'} space-y-4`}>
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="flex justify-between items-center">
-              <span>Cart</span>
-              <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-1 rounded-md">
-                {state.cart.length} item(s)
-              </span>
-            </CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Cart</CardTitle>
+              <div className="flex items-center gap-2">
+                {isPOSView && (
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={togglePOSView}
+                    className="h-8 w-8"
+                    title="Exit POS View"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </Button>
+                )}
+                <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-1 rounded-md">
+                  {state.cart.length} item(s)
+                </span>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <Cart />
@@ -151,8 +179,12 @@ const POSContent: React.FC = () => {
           </CardFooter>
         </Card>
         
-        <PaymentSection />
-        <HeldSales />
+        {!isPOSView && (
+          <>
+            <PaymentSection />
+            <HeldSales />
+          </>
+        )}
       </div>
     </div>
   );
