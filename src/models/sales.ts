@@ -80,6 +80,12 @@ export interface SalesOrder extends SalesDocumentBase {
 export interface DeliveryChallan extends SalesDocumentBase {
   isBillable: boolean;
   salesOrderId?: string;
+  vehicleNumber?: string;
+  driverName?: string;
+  transporterName?: string;
+  deliveryDate?: Date;
+  deliveryAddress: string;
+  deliveryStatus: 'pending' | 'in_transit' | 'delivered' | 'returned';
 }
 
 // Payment

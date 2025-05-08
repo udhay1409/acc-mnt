@@ -1,4 +1,3 @@
-
 import { 
   Customer, 
   Estimate, 
@@ -168,9 +167,6 @@ export const mockInvoices: Invoice[] = [
   }
 ];
 
-// More mock data for other document types would follow similar patterns
-// For this implementation, we'll provide just a couple of examples for each type
-
 // Mock RetainerInvoices
 export const mockRetainerInvoices: RetainerInvoice[] = [
   {
@@ -216,9 +212,68 @@ export const mockSalesOrders: SalesOrder[] = [
   }
 ];
 
-// For brevity, other mock data collections would be defined similarly
-// Mock collections for DeliveryChallan, Payment, RecurringInvoice, CreditNote, 
-// SalesReturn, Receipt, and DebitNote would follow the same pattern
+// Mock Delivery Challans
+export const mockDeliveryChallans: DeliveryChallan[] = [
+  {
+    id: "DC1001",
+    number: "DC-1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 10), // April 10, 2025
+    items: createSalesItems(3),
+    ...calculateTotals(createSalesItems(3)),
+    notes: "Please handle with care.",
+    status: "sent",
+    isBillable: true,
+    salesOrderId: "SO1001",
+    vehicleNumber: "TRK-1234",
+    driverName: "John Driver",
+    transporterName: "Swift Transport",
+    deliveryDate: new Date(2025, 3, 12), // April 12, 2025
+    deliveryAddress: "123 Business Avenue, Tech City, TC 54321",
+    deliveryStatus: "delivered",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 10)
+  },
+  {
+    id: "DC1002",
+    number: "DC-1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 3, 15), // April 15, 2025
+    items: createSalesItems(2),
+    ...calculateTotals(createSalesItems(2)),
+    notes: "Fragile items inside.",
+    status: "sent",
+    isBillable: false,
+    vehicleNumber: "TRK-5678",
+    driverName: "Mike Smith",
+    transporterName: "City Logistics",
+    deliveryDate: new Date(2025, 3, 17), // April 17, 2025
+    deliveryAddress: "456 Innovation Drive, Digital Valley, DV 98765",
+    deliveryStatus: "in_transit",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 15)
+  },
+  {
+    id: "DC1003",
+    number: "DC-1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 3, 18), // April 18, 2025
+    items: createSalesItems(4),
+    ...calculateTotals(createSalesItems(4)),
+    notes: "Priority delivery.",
+    status: "sent",
+    isBillable: true,
+    salesOrderId: "SO1002",
+    vehicleNumber: "TRK-9012",
+    driverName: "David Johnson",
+    transporterName: "Express Delivery",
+    deliveryDate: new Date(2025, 3, 19), // April 19, 2025
+    deliveryAddress: "789 Corporate Plaza, Business Park, BP 45678",
+    deliveryStatus: "pending",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 18)
+  }
+];
 
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
@@ -226,5 +281,6 @@ export const getEstimates = () => mockEstimates;
 export const getInvoices = () => mockInvoices;
 export const getRetainerInvoices = () => mockRetainerInvoices;
 export const getSalesOrders = () => mockSalesOrders;
+export const getDeliveryChallans = () => mockDeliveryChallans;
 
-// Additional export functions would be defined for other document types
+// Additional export functions for other document types would be defined here
