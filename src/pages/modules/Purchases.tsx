@@ -57,22 +57,22 @@ const Purchases = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Purchase Management</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Purchase Management</h1>
+        <p className="text-muted-foreground mt-1">
           Manage vendors, expenses, purchase orders, and bills
         </p>
       </div>
       
-      <Separator />
+      <Separator className="my-6" />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="overflow-x-auto">
-          <TabsList className="inline-flex min-w-full md:grid md:grid-cols-6 lg:grid-cols-11 h-auto">
+        <div className="bg-muted/30 rounded-lg p-1 overflow-x-auto">
+          <TabsList className="inline-flex min-w-full h-auto bg-transparent p-0 gap-1">
             {purchasesTabs.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id}
-                className="flex items-center gap-2 px-4 py-2"
+                className="flex items-center gap-2 px-3 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
               >
                 {tab.icon}
                 <span>{tab.label}</span>
@@ -81,17 +81,17 @@ const Purchases = () => {
           </TabsList>
         </div>
         
-        <div className="mt-4">
+        <div className="mt-6">
           {/* Render actual components for the tabs we've implemented */}
-          <TabsContent value="vendors">
+          <TabsContent value="vendors" className="m-0">
             <VendorsList />
           </TabsContent>
           
-          <TabsContent value="expenses">
+          <TabsContent value="expenses" className="m-0">
             <ExpensesList />
           </TabsContent>
           
-          <TabsContent value="bills">
+          <TabsContent value="bills" className="m-0">
             <BillsList />
           </TabsContent>
 
@@ -99,8 +99,8 @@ const Purchases = () => {
           {purchasesTabs
             .filter(tab => !['vendors', 'expenses', 'bills'].includes(tab.id))
             .map((tab) => (
-              <TabsContent key={tab.id} value={tab.id}>
-                <PlaceholderContent tabId={tab.id} tabLabel={tab.label} />
+              <TabsContent key={tab.id} value={tab.id} className="m-0">
+                <PlaceholderContent tabId={tab.id} tabLabel={tab.label} icon={tab.icon} />
               </TabsContent>
             ))}
         </div>
@@ -109,19 +109,32 @@ const Purchases = () => {
   );
 };
 
-// A placeholder component for each tab's content
-const PlaceholderContent = ({ tabId, tabLabel }: { tabId: string, tabLabel: string }) => {
+// A placeholder component for each tab's content with improved design
+const PlaceholderContent = ({ tabId, tabLabel, icon }: { tabId: string, tabLabel: string, icon: React.ReactNode }) => {
   return (
-    <div className="border rounded-lg p-8 text-center">
-      <h3 className="text-xl font-medium mb-2">{tabLabel} Module</h3>
-      <p className="text-muted-foreground mb-4">
-        This section will contain {tabLabel.toLowerCase()} management functionality.
-      </p>
-      <div className="flex justify-center">
-        <div className="bg-muted w-full max-w-2xl h-64 rounded-md flex items-center justify-center">
-          <p className="text-muted-foreground">
-            {tabLabel} content will be implemented here
-          </p>
+    <div className="border rounded-lg p-8 text-center bg-muted/10">
+      <div className="flex flex-col items-center justify-center max-w-lg mx-auto">
+        <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+          <div className="h-8 w-8 text-primary">
+            {icon}
+          </div>
+        </div>
+        <h3 className="text-xl font-medium mb-2">{tabLabel} Module</h3>
+        <p className="text-muted-foreground mb-6">
+          This section will allow you to manage {tabLabel.toLowerCase()} in your business.
+          Future updates will add functionality to this area.
+        </p>
+        <div className="flex justify-center w-full">
+          <div className="bg-muted/20 w-full max-w-2xl h-64 rounded-lg flex items-center justify-center border border-dashed border-muted-foreground/30">
+            <div className="text-center px-4">
+              <p className="text-muted-foreground mb-4">
+                The {tabLabel} module is under development
+              </p>
+              <button disabled className="bg-primary/70 text-primary-foreground px-4 py-2 rounded opacity-50 cursor-not-allowed">
+                Coming Soon
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -27,7 +27,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Pencil, Trash2, ArrowUpRight, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Pencil, Trash2, FileText, Search, ExternalLink } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 // Generic interface for documents
@@ -44,6 +45,7 @@ interface Document {
 interface PurchaseDocumentListProps {
   title: string;
   description: string;
+  icon?: React.ReactNode;
   documents: Document[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -63,11 +65,13 @@ interface PurchaseDocumentListProps {
       text: string;
     };
   };
+  emptyStateMessage?: string;
 }
 
 const PurchaseDocumentList: React.FC<PurchaseDocumentListProps> = ({
   title,
   description,
+  icon,
   documents,
   searchQuery,
   setSearchQuery,
@@ -77,6 +81,7 @@ const PurchaseDocumentList: React.FC<PurchaseDocumentListProps> = ({
   onView,
   additionalAction,
   statusColors,
+  emptyStateMessage = "No documents found. Try adjusting your search.",
 }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
@@ -104,128 +109,158 @@ const PurchaseDocumentList: React.FC<PurchaseDocumentListProps> = ({
     }
   };
 
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+  };
+
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center space-y-2 sm:space-y-0">
-          <div>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>{description}</CardDescription>
+      <Card className="border-t-4 border-t-primary shadow-sm">
+        <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center space-y-2 sm:space-y-0 pb-4">
+          <div className="flex items-center">
+            {icon}
+            <div>
+              <CardTitle className="text-xl font-bold">{title}</CardTitle>
+              <CardDescription className="text-sm">{description}</CardDescription>
+            </div>
           </div>
-          <Button onClick={onAdd}>
+          <Button onClick={onAdd} className="bg-primary hover:bg-primary/90 transition-colors">
             <Plus className="mr-2 h-4 w-4" /> Add {title.slice(0, -1)}
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
+          <div className="mb-4 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={`Search ${title.toLowerCase()}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
+              className="pl-9 max-w-sm transition-all focus-within:max-w-md"
             />
           </div>
 
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Reference</TableHead>
-                  <TableHead>Vendor</TableHead>
-                  <TableHead className="hidden md:table-cell">Date</TableHead>
-                  {documents.some(doc => doc.dueDate) && (
-                    <TableHead className="hidden md:table-cell">Due Date</TableHead>
-                  )}
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDocuments.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      No {title.toLowerCase()} found. Try adjusting your search.
-                    </TableCell>
+          <div className="rounded-md border overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead>Reference</TableHead>
+                    <TableHead>Vendor</TableHead>
+                    <TableHead className="hidden md:table-cell">Date</TableHead>
+                    {documents.some(doc => doc.dueDate) && (
+                      <TableHead className="hidden md:table-cell">Due Date</TableHead>
+                    )}
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ) : (
-                  filteredDocuments.map((doc) => (
-                    <TableRow key={doc.id}>
-                      <TableCell className="font-medium">{doc.reference}</TableCell>
-                      <TableCell>{doc.vendor}</TableCell>
-                      <TableCell className="hidden md:table-cell">{doc.date}</TableCell>
-                      {documents.some(d => d.dueDate) && (
-                        <TableCell className="hidden md:table-cell">{doc.dueDate || '-'}</TableCell>
-                      )}
-                      <TableCell>${doc.total.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            statusColors[doc.status]
-                              ? `${statusColors[doc.status].bg} ${statusColors[doc.status].text}`
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
-                          {doc.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          {onView && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => onView(doc)}
-                              title="View details"
-                            >
-                              <FileText className="h-4 w-4" />
-                            </Button>
-                          )}
-                          
-                          {additionalAction && 
-                           (!additionalAction.showFor || additionalAction.showFor(doc)) && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => additionalAction.onClick(doc)}
-                              title={additionalAction.label}
-                            >
-                              {additionalAction.icon}
-                            </Button>
-                          )}
-                          
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onEdit(doc)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setDocumentToDelete(doc);
-                              setDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
+                </TableHeader>
+                <TableBody>
+                  {filteredDocuments.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-32 text-center py-8 text-muted-foreground">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <div className="text-muted-foreground/60 border border-dashed border-muted-foreground/20 rounded-full p-6">
+                            <FileText className="h-8 w-8"/>
+                          </div>
+                          <div className="text-sm font-medium">{emptyStateMessage}</div>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                  ) : (
+                    filteredDocuments.map((doc) => (
+                      <TableRow key={doc.id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell className="font-medium">
+                          <div className="flex items-center">
+                            <span>{doc.reference}</span>
+                            {onView && (
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => onView(doc)} 
+                                className="ml-2 h-6 w-6 p-0"
+                              >
+                                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>{doc.vendor}</TableCell>
+                        <TableCell className="hidden md:table-cell">{doc.date}</TableCell>
+                        {documents.some(d => d.dueDate) && (
+                          <TableCell className="hidden md:table-cell">{doc.dueDate || '-'}</TableCell>
+                        )}
+                        <TableCell className="font-mono">{formatCurrency(doc.total)}</TableCell>
+                        <TableCell>
+                          <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                              statusColors[doc.status]
+                                ? `${statusColors[doc.status].bg} ${statusColors[doc.status].text}`
+                                : 'bg-gray-100 text-gray-800'
+                            }`}
+                          >
+                            {doc.status}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end space-x-1">
+                            {additionalAction && 
+                             (!additionalAction.showFor || additionalAction.showFor(doc)) && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => additionalAction.onClick(doc)}
+                                title={additionalAction.label}
+                                className="h-8 w-8 p-0"
+                              >
+                                {additionalAction.icon}
+                              </Button>
+                            )}
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onEdit(doc)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setDocumentToDelete(doc);
+                                setDeleteDialogOpen(true);
+                              }}
+                              className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          <div className="mt-4 text-xs text-muted-foreground text-right">
+            Total: {filteredDocuments.length} {filteredDocuments.length === 1 ? title.slice(0, -1).toLowerCase() : title.toLowerCase()}
           </div>
         </CardContent>
       </Card>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>

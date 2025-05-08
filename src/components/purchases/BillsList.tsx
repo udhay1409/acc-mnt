@@ -6,8 +6,9 @@ import {
 } from '@/data/mockPurchases';
 import { Bill } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
-import { CheckCircle, ArrowUpRight } from 'lucide-react';
+import { CheckCircle, ArrowUpRight, Receipt } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 const BillsList = () => {
   const [bills, setBills] = useState<Bill[]>(getBills());
@@ -16,9 +17,9 @@ const BillsList = () => {
   const [currentBill, setCurrentBill] = useState<Bill | null>(null);
   const { toast } = useToast();
   
-  // Helper to get status colors
+  // Enhanced status colors with better visual distinction
   const statusColors = {
-    'draft': { bg: 'bg-gray-100', text: 'text-gray-800' },
+    'draft': { bg: 'bg-slate-100', text: 'text-slate-800' },
     'pending': { bg: 'bg-yellow-100', text: 'text-yellow-800' },
     'approved': { bg: 'bg-blue-100', text: 'text-blue-800' },
     'paid': { bg: 'bg-green-100', text: 'text-green-800' },
@@ -30,7 +31,6 @@ const BillsList = () => {
   const handleAddBill = () => {
     setCurrentBill(null);
     setIsFormOpen(true);
-    // In a real app, this would open a form
     toast({
       title: "Add Bill",
       description: "This would open a bill creation form"
@@ -41,7 +41,6 @@ const BillsList = () => {
   const handleEditBill = (bill: Bill) => {
     setCurrentBill(bill);
     setIsFormOpen(true);
-    // In a real app, this would open a form with the bill data
     toast({
       title: "Edit Bill",
       description: `Editing bill ${bill.reference}`
@@ -78,6 +77,7 @@ const BillsList = () => {
     <PurchaseDocumentList
       title="Bills"
       description="Manage invoices from your vendors"
+      icon={<Receipt className="h-5 w-5 text-muted-foreground mr-2" />}
       documents={bills}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -92,6 +92,7 @@ const BillsList = () => {
         showFor: (bill) => bill.status === 'pending' || bill.status === 'approved' || bill.status === 'overdue'
       }}
       statusColors={statusColors}
+      emptyStateMessage="No bills found. Create your first bill to get started."
     />
   );
 };
