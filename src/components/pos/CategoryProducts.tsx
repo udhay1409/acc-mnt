@@ -44,6 +44,21 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
     4: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
   }[gridSize];
 
+  // Function to get placeholder image for products without images
+  const getProductImage = (product: Product) => {
+    if (product.image_url) return product.image_url;
+    
+    // Default placeholder based on product ID to ensure consistency
+    const imageId = Number(product.id) % 4;
+    const placeholders = [
+      'photo-1618160702438-9b02ab6515c9',
+      'photo-1582562124811-c09040d0a901',
+      'photo-1535268647677-300dbf3d78d1', 
+      'photo-1493962853295-0fd70327578a'
+    ];
+    return `https://images.unsplash.com/${placeholders[imageId]}?auto=format&fit=crop&w=200&h=200&q=80`;
+  };
+
   return (
     <div className="py-2">
       <ScrollArea className="h-[400px]">
@@ -54,6 +69,20 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
                 key={product.id} 
                 className="flex flex-col overflow-hidden border hover:border-primary/50 transition-colors cursor-pointer"
               >
+                <div 
+                  className="aspect-square bg-muted flex items-center justify-center overflow-hidden"
+                  onClick={() => handleViewProduct(product)}
+                >
+                  <img 
+                    src={getProductImage(product)}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback if image fails to load
+                      e.currentTarget.src = "https://placehold.co/200x200/e2e8f0/64748b?text=Product";
+                    }}
+                  />
+                </div>
                 <div className="p-3 flex-grow">
                   <div className="font-medium text-sm line-clamp-2">{product.name}</div>
                   <div className="text-xs text-muted-foreground mt-1">SKU: {product.sku}</div>
