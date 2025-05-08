@@ -20,11 +20,22 @@ import { Button } from '@/components/ui/button';
 import { Check, ChevronsDown, User, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import CustomerForm from '../sales/CustomerForm';
+import { v4 as uuidv4 } from 'uuid';
 
 const CustomerSelect: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { state, setCustomer } = usePOS();
   const { toast } = useToast();
+  const [customers, setCustomers] = useState(mockCustomers);
 
   const handleSelectCustomer = (customer: Customer) => {
     setCustomer(customer);
@@ -32,11 +43,34 @@ const CustomerSelect: React.FC = () => {
   };
 
   const handleAddNewCustomer = () => {
-    toast({
-      title: "Feature not available",
-      description: "Adding new customers will be implemented soon.",
-    });
     setOpen(false);
+    setAddDialogOpen(true);
+  };
+
+  const handleCustomerAdded = (formData: any) => {
+    // Create a new customer with a unique ID
+    const newCustomer: Customer = {
+      id: `C${uuidv4().substring(0, 5)}`, // Create a short unique ID starting with C
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address
+    };
+    
+    // Add the new customer to the list
+    setCustomers([newCustomer, ...customers]);
+    
+    // Select the new customer
+    setCustomer(newCustomer);
+    
+    // Show a success toast
+    toast({
+      title: "Customer Added",
+      description: `${newCustomer.name} has been added successfully.`,
+    });
+    
+    // Close the dialog
+    setAddDialogOpen(false);
   };
 
   return (
@@ -62,7 +96,7 @@ const CustomerSelect: React.FC = () => {
             <CommandList>
               <CommandEmpty>No customer found.</CommandEmpty>
               <CommandGroup heading="Customers">
-                {mockCustomers.map((customer) => (
+                {customers.map((customer) => (
                   <CommandItem
                     key={customer.id}
                     value={customer.name}
@@ -93,6 +127,21 @@ const CustomerSelect: React.FC = () => {
           </Command>
         </PopoverContent>
       </Popover>
+
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+            <DialogDescription>
+              Enter customer details below. Click save when you're done.
+            </DialogDescription>
+          </DialogHeader>
+          <CustomerForm 
+            onSubmit={handleCustomerAdded}
+            onCancel={() => setAddDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

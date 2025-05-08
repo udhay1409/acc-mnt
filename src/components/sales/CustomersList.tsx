@@ -21,11 +21,13 @@ import { Search, Plus, Mail, Phone, Edit, Eye, UserPlus, Users } from 'lucide-re
 import { Customer } from '@/models/sales';
 import { getCustomers } from '@/data/mockSales';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import AddCustomerDialog from './AddCustomerDialog';
 
 const CustomersList = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const customers = getCustomers();
+  const [customers, setCustomers] = useState<Customer[]>(getCustomers());
+  const [addCustomerDialogOpen, setAddCustomerDialogOpen] = useState(false);
   const { toast } = useToast();
   
   const filteredCustomers = customers.filter(customer => 
@@ -48,10 +50,12 @@ const CustomersList = () => {
   };
 
   const handleAddCustomer = () => {
-    toast({
-      title: "Add Customer",
-      description: "Opening customer creation form"
-    });
+    setAddCustomerDialogOpen(true);
+  };
+
+  const handleCustomerAdded = (newCustomer: Customer) => {
+    // Add the new customer to the list
+    setCustomers([newCustomer, ...customers]);
   };
 
   return (
@@ -160,6 +164,12 @@ const CustomersList = () => {
           </Table>
         </CardContent>
       </Card>
+
+      <AddCustomerDialog
+        open={addCustomerDialogOpen}
+        onOpenChange={setAddCustomerDialogOpen}
+        onCustomerAdded={handleCustomerAdded}
+      />
     </div>
   );
 };
