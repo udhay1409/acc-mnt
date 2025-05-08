@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, Mail, Phone, Edit, Eye, UserPlus } from 'lucide-react';
+import { Search, Plus, Mail, Phone, Edit, Eye, UserPlus, Users } from 'lucide-react';
 import { Customer } from '@/models/sales';
 import { getCustomers } from '@/data/mockSales';
 import { Badge } from '@/components/ui/badge';
