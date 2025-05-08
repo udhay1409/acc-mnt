@@ -430,6 +430,51 @@ export const mockRecurringInvoices: RecurringInvoice[] = [
   }
 ];
 
+// Mock Credit Notes
+export const mockCreditNotes: CreditNote[] = [
+  {
+    id: "CN1001",
+    number: "CN-1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 25), // April 25, 2025
+    dueDate: undefined,
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    reason: "Product returned due to manufacturing defect",
+    invoiceId: "INV1001",
+    status: "processed",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 25)
+  },
+  {
+    id: "CN1002",
+    number: "CN-1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 4, 5), // May 5, 2025
+    dueDate: undefined,
+    items: createSalesItems(2),
+    ...calculateTotals(createSalesItems(2)),
+    reason: "Service cancellation",
+    invoiceId: "INV1002",
+    status: "pending",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 5)
+  },
+  {
+    id: "CN1003",
+    number: "CN-1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 4, 10), // May 10, 2025
+    dueDate: undefined,
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    reason: "Pricing adjustment",
+    status: "issued",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 10)
+  }
+];
+
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
 export const getEstimates = () => mockEstimates;
@@ -439,5 +484,8 @@ export const getSalesOrders = () => mockSalesOrders;
 export const getDeliveryChallans = () => mockDeliveryChallans;
 export const getPayments = () => mockPayments;
 export const getRecurringInvoices = () => mockRecurringInvoices;
+
+// Export function for credit notes
+export const getCreditNotes = () => mockCreditNotes;
 
 // Additional export functions for other document types would be defined here
