@@ -24,6 +24,7 @@ import UserManagement from "@/pages/UserManagement";
 import PointOfSale from "@/pages/modules/PointOfSale";
 import Accounting from "@/pages/modules/Accounting";
 import Inventory from "@/pages/modules/Inventory";
+import Sales from "@/pages/modules/Sales"; // New Sales module
 import Purchases from "@/pages/modules/Purchases";
 import CRM from "@/pages/modules/CRM";
 import TaxManagement from "@/pages/modules/TaxManagement";
@@ -80,6 +81,11 @@ const App = () => (
               {/* Inventory Manager Routes */}
               <Route element={<ProtectedRoute allowedRoles={["admin", "inventory_manager"]} />}>
                 <Route path="/inventory" element={<Inventory />} />
+              </Route>
+              
+              {/* Sales Manager Routes */}
+              <Route element={<ProtectedRoute allowedRoles={["admin", "sales_manager"]} />}>
+                <Route path="/sales" element={<Sales />} />
               </Route>
               
               {/* Purchase Manager Routes */}
