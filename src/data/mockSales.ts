@@ -338,6 +338,98 @@ export const mockPayments: Payment[] = [
   }
 ];
 
+// Mock Recurring Invoices
+export const mockRecurringInvoices: RecurringInvoice[] = [
+  {
+    id: "REC1001",
+    number: "REC-1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 1), // April 1, 2025
+    dueDate: new Date(2025, 3, 15), // April 15, 2025
+    paymentDue: new Date(2025, 3, 15),
+    paymentTerms: "Net 15",
+    items: createSalesItems(2),
+    ...calculateTotals(createSalesItems(2)),
+    notes: "Monthly subscription service",
+    termsAndConditions: "Standard terms apply",
+    paymentStatus: "unpaid",
+    amountPaid: 0,
+    balanceDue: calculateTotals(createSalesItems(2)).total,
+    recurrenceInterval: "monthly",
+    nextGenerationDate: new Date(2025, 4, 1), // May 1, 2025
+    remainingOccurrences: 11, // For a 12-month contract
+    isActive: true,
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 1)
+  },
+  {
+    id: "REC1002",
+    number: "REC-1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 3, 5), // April 5, 2025
+    dueDate: new Date(2025, 3, 20), // April 20, 2025
+    paymentDue: new Date(2025, 3, 20),
+    paymentTerms: "Net 15",
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    notes: "Weekly maintenance service",
+    termsAndConditions: "Standard terms apply",
+    paymentStatus: "unpaid",
+    amountPaid: 0,
+    balanceDue: calculateTotals(createSalesItems(1)).total,
+    recurrenceInterval: "weekly",
+    nextGenerationDate: new Date(2025, 3, 12), // April 12, 2025
+    remainingOccurrences: 51, // For a year of weekly services
+    isActive: true,
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 5)
+  },
+  {
+    id: "REC1003",
+    number: "REC-1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 3, 10), // April 10, 2025
+    dueDate: new Date(2025, 4, 10), // May 10, 2025
+    paymentDue: new Date(2025, 4, 10),
+    paymentTerms: "Net 30",
+    items: createSalesItems(3),
+    ...calculateTotals(createSalesItems(3)),
+    notes: "Quarterly consulting services",
+    termsAndConditions: "Standard terms apply",
+    paymentStatus: "unpaid",
+    amountPaid: 0,
+    balanceDue: calculateTotals(createSalesItems(3)).total,
+    recurrenceInterval: "quarterly",
+    nextGenerationDate: new Date(2025, 6, 10), // July 10, 2025
+    remainingOccurrences: 0, // Unlimited occurrences
+    isActive: false, // Currently paused
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 10)
+  },
+  {
+    id: "REC1004",
+    number: "REC-1004",
+    customer: mockCustomers[3],
+    date: new Date(2025, 3, 15), // April 15, 2025
+    dueDate: new Date(2025, 4, 15), // May 15, 2025
+    paymentDue: new Date(2025, 4, 15),
+    paymentTerms: "Net 30",
+    items: createSalesItems(2),
+    ...calculateTotals(createSalesItems(2)),
+    notes: "Yearly subscription",
+    termsAndConditions: "Standard terms apply",
+    paymentStatus: "unpaid",
+    amountPaid: 0,
+    balanceDue: calculateTotals(createSalesItems(2)).total,
+    recurrenceInterval: "yearly",
+    nextGenerationDate: new Date(2026, 3, 15), // April 15, 2026
+    remainingOccurrences: 2, // 3-year contract
+    isActive: true,
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 15)
+  }
+];
+
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
 export const getEstimates = () => mockEstimates;
@@ -346,5 +438,6 @@ export const getRetainerInvoices = () => mockRetainerInvoices;
 export const getSalesOrders = () => mockSalesOrders;
 export const getDeliveryChallans = () => mockDeliveryChallans;
 export const getPayments = () => mockPayments;
+export const getRecurringInvoices = () => mockRecurringInvoices;
 
 // Additional export functions for other document types would be defined here

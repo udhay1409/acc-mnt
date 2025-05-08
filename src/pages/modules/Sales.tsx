@@ -15,7 +15,8 @@ import {
   Truck, 
   ShoppingCart, 
   Calendar, 
-  Wallet 
+  Wallet,
+  Repeat
 } from 'lucide-react';
 
 // Import our sales components
@@ -25,6 +26,7 @@ import InvoicesList from '@/components/sales/InvoicesList';
 import DocumentList from '@/components/sales/DocumentList';
 import DeliveryChallansList from '@/components/sales/DeliveryChallansList';
 import PaymentsList from '@/components/sales/PaymentsList';
+import RecurringInvoicesList from '@/components/sales/RecurringInvoicesList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 const Sales = () => {
@@ -109,15 +111,7 @@ const Sales = () => {
           </TabsContent>
           
           <TabsContent value="recurring">
-            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <Calendar className="h-10 w-10 text-muted-foreground" />
-                <h3 className="text-lg font-medium">Recurring Invoices</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  This feature is coming soon. You'll be able to set up and manage recurring invoices.
-                </p>
-              </div>
-            </div>
+            <RecurringInvoicesList />
           </TabsContent>
           
           <TabsContent value="credits">
