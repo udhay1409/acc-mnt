@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
   Tabs,
@@ -7,7 +7,6 @@ import {
   TabsList,
   TabsTrigger
 } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Users, 
   FileText, 
@@ -19,34 +18,22 @@ import {
   Calendar, 
   Wallet 
 } from 'lucide-react';
-import PlaceholderPage from '@/pages/PlaceholderPage';
 
-const SalesModuleTab = ({ 
-  icon, 
-  title, 
-  description 
-}: { 
-  icon: React.ReactNode; 
-  title: string; 
-  description: string;
-}) => (
-  <Card className="border-dashed h-full">
-    <CardHeader className="gap-2">
-      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary">
-        {icon}
-      </div>
-      <CardTitle className="text-xl">{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <p className="text-sm text-muted-foreground">
-        This feature will be implemented soon.
-      </p>
-    </CardContent>
-  </Card>
-);
+// Import our sales components
+import CustomersList from '@/components/sales/CustomersList';
+import EstimatesList from '@/components/sales/EstimatesList';
+import InvoicesList from '@/components/sales/InvoicesList';
+import DocumentList from '@/components/sales/DocumentList';
+import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 const Sales = () => {
+  // State for each tab's search query
+  const [retainerSearchQuery, setRetainerSearchQuery] = useState('');
+  const [ordersSearchQuery, setOrdersSearchQuery] = useState('');
+  
+  const retainerInvoices = getRetainerInvoices();
+  const salesOrders = getSalesOrders();
+
   return (
     <div className="space-y-6">
       <div>
@@ -76,99 +63,124 @@ const Sales = () => {
         
         <div className="mt-4">
           <TabsContent value="customers">
-            <SalesModuleTab 
-              icon={<Users className="h-6 w-6" />} 
-              title="Customer Management" 
-              description="Manage your customers and their information"
-            />
+            <CustomersList />
           </TabsContent>
           
           <TabsContent value="estimates">
-            <SalesModuleTab 
-              icon={<FileText className="h-6 w-6" />} 
-              title="Estimates" 
-              description="Create and manage sales estimates"
-            />
+            <EstimatesList />
           </TabsContent>
           
           <TabsContent value="retainer">
-            <SalesModuleTab 
-              icon={<FilePlus className="h-6 w-6" />} 
-              title="Retainer Invoices" 
+            <DocumentList
+              title="Retainer Invoices"
               description="Manage retainer invoices for regular clients"
+              documents={retainerInvoices}
+              searchQuery={retainerSearchQuery}
+              setSearchQuery={setRetainerSearchQuery}
+              createButtonText="Create Retainer Invoice"
+              showDueDates={true}
+              additionalButtonText="Record Payment"
             />
           </TabsContent>
           
           <TabsContent value="orders">
-            <SalesModuleTab 
-              icon={<ShoppingCart className="h-6 w-6" />} 
-              title="Sales Orders" 
+            <DocumentList
+              title="Sales Orders"
               description="Create and track sales orders"
+              documents={salesOrders}
+              searchQuery={ordersSearchQuery}
+              setSearchQuery={setOrdersSearchQuery}
+              createButtonText="Create Sales Order"
+              additionalButtonText="Convert to Invoice"
             />
           </TabsContent>
           
           <TabsContent value="challans">
-            <SalesModuleTab 
-              icon={<Truck className="h-6 w-6" />} 
-              title="Delivery Challans" 
-              description="Manage delivery documentation"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <Truck className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Delivery Challans</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to create and manage delivery documentation.
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="invoices">
-            <SalesModuleTab 
-              icon={<FileText className="h-6 w-6" />} 
-              title="Invoices" 
-              description="Create and manage customer invoices"
-            />
+            <InvoicesList />
           </TabsContent>
           
           <TabsContent value="payments">
-            <SalesModuleTab 
-              icon={<Wallet className="h-6 w-6" />} 
-              title="Payments Received" 
-              description="Track payments from customers"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <Wallet className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Payments Received</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to track and manage payments from customers.
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="recurring">
-            <SalesModuleTab 
-              icon={<Calendar className="h-6 w-6" />} 
-              title="Recurring Invoices" 
-              description="Set up automated recurring invoices"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <Calendar className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Recurring Invoices</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to set up and manage recurring invoices.
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="credits">
-            <SalesModuleTab 
-              icon={<FileMinus className="h-6 w-6" />} 
-              title="Credit Notes" 
-              description="Issue credit notes to customers"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <FileMinus className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Credit Notes</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to issue and manage credit notes.
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="returns">
-            <SalesModuleTab 
-              icon={<FileX className="h-6 w-6" />} 
-              title="Sales Returns" 
-              description="Process and manage returned items"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <FileX className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Sales Returns</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to process and manage returned items.
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="receipts">
-            <SalesModuleTab 
-              icon={<FileText className="h-6 w-6" />} 
-              title="Receipts" 
-              description="Generate and track payment receipts"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <FileText className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Receipts</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to generate and track payment receipts.
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="debits">
-            <SalesModuleTab 
-              icon={<FileMinus className="h-6 w-6" />} 
-              title="Debit Notes" 
-              description="Create and manage debit notes"
-            />
+            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <FileMinus className="h-10 w-10 text-muted-foreground" />
+                <h3 className="text-lg font-medium">Debit Notes</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  This feature is coming soon. You'll be able to create and manage debit notes.
+                </p>
+              </div>
+            </div>
           </TabsContent>
         </div>
       </Tabs>
