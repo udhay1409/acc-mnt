@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -46,7 +45,7 @@ import {
 } from '@/components/ui/form';
 import { 
   ArrowUpRight, 
-  Calendar, 
+  Calendar as CalendarIcon, 
   CheckCircle, 
   FilePlus, 
   Mail, 
@@ -62,6 +61,7 @@ import { toast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Calendar } from '@/components/ui/calendar';
 
 interface CampaignFormData {
   name: string;
@@ -205,7 +205,7 @@ const Campaigns = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Calendar className="h-8 w-8 text-amber-500 mr-2" />
+              <CalendarIcon className="h-8 w-8 text-amber-500 mr-2" />
               <div className="text-3xl font-bold">
                 {campaigns.filter(c => c.status === 'scheduled').length}
               </div>
@@ -405,7 +405,7 @@ const Campaigns = () => {
                               ) : (
                                 <span>Pick a date</span>
                               )}
-                              <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -415,6 +415,7 @@ const Campaigns = () => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
+                            className="p-3 pointer-events-auto"
                           />
                         </PopoverContent>
                       </Popover>
