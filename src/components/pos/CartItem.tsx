@@ -39,38 +39,38 @@ const CartItemRow: React.FC<CartItemProps> = ({ item }) => {
   };
 
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
-      <td className="py-3 px-2">
-        <div className="font-medium">{item.product.name}</div>
-        <div className="text-xs text-muted-foreground">SKU: {item.product.sku}</div>
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-900/50 text-sm">
+      <td className="py-1.5 px-2">
+        <div className="font-medium text-xs line-clamp-1">{item.product.name}</div>
+        <div className="text-xs text-muted-foreground line-clamp-1">SKU: {item.product.sku}</div>
       </td>
-      <td className="py-3 px-2">
+      <td className="py-1.5 px-1">
         <div className="flex items-center space-x-1">
           <Button 
             variant="outline" 
             size="icon" 
-            className="h-7 w-7" 
+            className="h-5 w-5" 
             onClick={handleQuantityDecrease}
           >
-            <Minus className="h-3 w-3" />
+            <Minus className="h-2.5 w-2.5" />
           </Button>
-          <span className="w-8 text-center">{item.quantity}</span>
+          <span className="w-5 text-center text-xs">{item.quantity}</span>
           <Button 
             variant="outline" 
             size="icon" 
-            className="h-7 w-7" 
+            className="h-5 w-5" 
             onClick={handleQuantityIncrease}
             disabled={item.quantity >= item.product.stock_quantity}
           >
-            <Plus className="h-3 w-3" />
+            <Plus className="h-2.5 w-2.5" />
           </Button>
         </div>
       </td>
-      <td className="py-3 px-2 text-right">${item.unit_price.toFixed(2)}</td>
-      <td className="py-3 px-2 text-right">
+      <td className="py-1.5 px-1 text-right text-xs">${item.unit_price.toFixed(2)}</td>
+      <td className="py-1.5 px-1 text-right">
         <Popover open={isDiscountPopoverOpen} onOpenChange={setIsDiscountPopoverOpen}>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="font-mono">
+            <Button variant="ghost" size="sm" className="h-5 w-8 p-0 text-xs">
               {item.discount_percent > 0 ? (
                 <span className="text-green-600 dark:text-green-400">{item.discount_percent}%</span>
               ) : (
@@ -78,12 +78,12 @@ const CartItemRow: React.FC<CartItemProps> = ({ item }) => {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-60">
-            <div className="grid gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="discount">Discount (%)</Label>
-                <div className="flex gap-2 items-center">
-                  <Percent className="h-4 w-4 text-muted-foreground" />
+          <PopoverContent className="w-52 p-3">
+            <div className="grid gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="discount" className="text-sm">Discount (%)</Label>
+                <div className="flex gap-1 items-center">
+                  <Percent className="h-3 w-3 text-muted-foreground" />
                   <Input
                     id="discount"
                     type="number"
@@ -91,15 +91,16 @@ const CartItemRow: React.FC<CartItemProps> = ({ item }) => {
                     max="100"
                     value={discountPercent}
                     onChange={(e) => setDiscountPercent(Number(e.target.value))}
+                    className="h-7"
                   />
                 </div>
               </div>
-              <Button onClick={handleApplyDiscount}>Apply Discount</Button>
+              <Button size="sm" onClick={handleApplyDiscount} className="h-7">Apply</Button>
             </div>
           </PopoverContent>
         </Popover>
       </td>
-      <td className="py-3 px-2 text-right font-medium">${item.total.toFixed(2)}</td>
+      <td className="py-1.5 px-1 text-right font-medium text-xs">${item.total.toFixed(2)}</td>
     </tr>
   );
 };

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { POSProvider } from '@/contexts/POSContext';
 import BarcodeScanner from '@/components/pos/BarcodeScanner';
 import ProductSearch from '@/components/pos/ProductSearch';
@@ -11,12 +11,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { usePOS } from '@/contexts/POSContext';
 import { mockProducts } from '@/data/mockProducts';
-import { Printer, Share } from 'lucide-react';
+import { Printer, Share, Grid2x2, Grid3x3, Grid4x4, LayoutList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import CategoryProducts from '@/components/pos/CategoryProducts';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const POSContent: React.FC = () => {
   const { addToCart, state } = usePOS();
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [gridSize, setGridSize] = useState<number>(3); // 2, 3, or 4 columns
   
   const handleProductFound = (productId: string) => {
     const product = mockProducts.find(p => p.id === productId);
@@ -32,24 +37,96 @@ const POSContent: React.FC = () => {
   const handleShare = () => {
     toast.info("WhatsApp sharing will be implemented soon");
   };
+
+  // Extract unique categories from products
+  const categories = Array.from(new Set(mockProducts.map(product => product.category || 'Uncategorized')));
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+      <div className="lg:col-span-4 space-y-4">
         <Card className="shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle>Point of Sale</CardTitle>
-            <CardDescription>Add items to cart and process payment</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Point of Sale</CardTitle>
+                <CardDescription>Add items to cart and process payment</CardDescription>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant={viewMode === 'list' ? "secondary" : "ghost"} 
+                  size="icon" 
+                  onClick={() => setViewMode('list')}
+                  className="h-8 w-8"
+                >
+                  <LayoutList className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant={viewMode === 'grid' && gridSize === 2 ? "secondary" : "ghost"} 
+                  size="icon" 
+                  onClick={() => {setViewMode('grid'); setGridSize(2);}}
+                  className="h-8 w-8"
+                >
+                  <Grid2x2 className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant={viewMode === 'grid' && gridSize === 3 ? "secondary" : "ghost"} 
+                  size="icon" 
+                  onClick={() => {setViewMode('grid'); setGridSize(3);}}
+                  className="h-8 w-8"
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant={viewMode === 'grid' && gridSize === 4 ? "secondary" : "ghost"} 
+                  size="icon" 
+                  onClick={() => {setViewMode('grid'); setGridSize(4);}}
+                  className="h-8 w-8"
+                >
+                  <Grid4x4 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col space-y-4">
-              <CustomerSelect />
-              <BarcodeScanner onProductFound={handleProductFound} />
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="w-full md:w-1/2">
+                  <CustomerSelect />
+                </div>
+                <div className="w-full md:w-1/2 flex gap-2">
+                  <div className="flex-grow">
+                    <BarcodeScanner onProductFound={handleProductFound} />
+                  </div>
+                </div>
+              </div>
               <ProductSearch />
             </div>
+            
+            <Tabs defaultValue={categories[0]} className="w-full">
+              <ScrollArea className="w-full">
+                <TabsList className="mb-2 w-full justify-start overflow-x-auto">
+                  {categories.map((category) => (
+                    <TabsTrigger key={category} value={category}>
+                      {category}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </ScrollArea>
+              {categories.map((category) => (
+                <TabsContent key={category} value={category} className="mt-0">
+                  <CategoryProducts 
+                    category={category} 
+                    viewMode={viewMode}
+                    gridSize={gridSize}
+                  />
+                </TabsContent>
+              ))}
+            </Tabs>
           </CardContent>
         </Card>
-        
+      </div>
+      
+      <div className="lg:col-span-3 space-y-4">
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="flex justify-between items-center">
@@ -73,9 +150,7 @@ const POSContent: React.FC = () => {
             </Button>
           </CardFooter>
         </Card>
-      </div>
-      
-      <div className="space-y-4">
+        
         <PaymentSection />
         <HeldSales />
       </div>

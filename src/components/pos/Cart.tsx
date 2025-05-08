@@ -28,11 +28,11 @@ const Cart: React.FC = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="h-[400px] flex items-center justify-center border-2 border-dashed rounded-md bg-gray-50 dark:bg-gray-800/30">
+      <div className="h-[320px] flex items-center justify-center border-2 border-dashed rounded-md bg-gray-50 dark:bg-gray-800/30">
         <div className="text-center">
-          <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+          <ShoppingBag className="h-10 w-10 mx-auto mb-2 text-muted-foreground" />
           <p className="text-muted-foreground font-medium">Cart is empty</p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Search for products or scan a barcode to add items
           </p>
         </div>
@@ -48,23 +48,23 @@ const Cart: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-grow border rounded-md overflow-hidden bg-white dark:bg-gray-950">
-        <ScrollArea className="h-[400px]">
+        <ScrollArea className="h-[320px]">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-muted sticky top-0 z-10">
-              <tr>
-                <th className="py-3 px-2 text-left text-xs font-medium uppercase tracking-wider">
+              <tr className="text-xs">
+                <th className="py-2 px-2 text-left font-medium uppercase tracking-wider">
                   Product
                 </th>
-                <th className="py-3 px-2 text-left text-xs font-medium uppercase tracking-wider">
+                <th className="py-2 px-1 text-left font-medium uppercase tracking-wider w-16">
                   Qty
                 </th>
-                <th className="py-3 px-2 text-right text-xs font-medium uppercase tracking-wider">
+                <th className="py-2 px-1 text-right font-medium uppercase tracking-wider w-14">
                   Price
                 </th>
-                <th className="py-3 px-2 text-right text-xs font-medium uppercase tracking-wider">
-                  Disc %
+                <th className="py-2 px-1 text-right font-medium uppercase tracking-wider w-12">
+                  Disc
                 </th>
-                <th className="py-3 px-2 text-right text-xs font-medium uppercase tracking-wider">
+                <th className="py-2 px-1 text-right font-medium uppercase tracking-wider w-16">
                   Total
                 </th>
               </tr>
@@ -78,9 +78,9 @@ const Cart: React.FC = () => {
         </ScrollArea>
       </div>
       
-      <div className="mt-4 space-y-3 bg-white dark:bg-gray-950 p-4 rounded-md border">
+      <div className="mt-3 space-y-2 bg-white dark:bg-gray-950 p-3 rounded-md border">
         <div className="flex justify-between items-center">
-          <Label htmlFor="globalDiscount">Global Discount (%)</Label>
+          <Label htmlFor="globalDiscount" className="text-sm">Discount (%)</Label>
           <div className="flex items-center space-x-2">
             <Input
               id="globalDiscount"
@@ -89,13 +89,13 @@ const Cart: React.FC = () => {
               max="100"
               value={globalDiscount}
               onChange={handleGlobalDiscountChange}
-              className="w-20 bg-white dark:bg-gray-950"
+              className="w-16 h-7 bg-white dark:bg-gray-950 text-sm"
             />
-            <span>%</span>
+            <span className="text-sm">%</span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-2 text-sm py-2">
+        <div className="grid grid-cols-2 gap-1 text-xs py-1">
           <div>Subtotal:</div>
           <div className="text-right">${subtotal.toFixed(2)}</div>
           
@@ -105,12 +105,12 @@ const Cart: React.FC = () => {
           <div>Discount:</div>
           <div className="text-right text-red-500">-${discount.toFixed(2)}</div>
           
-          <div className="font-bold text-base">Total:</div>
-          <div className="text-right font-bold text-base">${total.toFixed(2)}</div>
+          <div className="font-bold text-sm">Total:</div>
+          <div className="text-right font-bold text-sm">${total.toFixed(2)}</div>
         </div>
         
-        <div className="pt-2">
-          <Button variant="outline" onClick={clearCart} className="w-full">
+        <div className="pt-1">
+          <Button variant="outline" size="sm" onClick={clearCart} className="w-full text-xs h-7">
             Clear Cart
           </Button>
         </div>
