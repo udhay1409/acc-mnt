@@ -27,6 +27,7 @@ import Inventory from "@/pages/modules/Inventory";
 import Sales from "@/pages/modules/Sales";
 import Purchases from "@/pages/modules/Purchases";
 import CRM from "@/pages/modules/CRM";
+import WhatsApp from "@/pages/modules/WhatsApp";
 import TaxManagement from "@/pages/modules/TaxManagement";
 import Reports from "@/pages/modules/Reports";
 import SettingsPage from "@/pages/modules/Settings";
@@ -95,6 +96,11 @@ const App = () => {
                 {/* CRM Routes - Accessible to multiple roles */}
                 <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
                   <Route path="/crm" element={<CRM />} />
+                </Route>
+                
+                {/* WhatsApp Integration Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
+                  <Route path="/whatsapp" element={<WhatsApp />} />
                 </Route>
                 
                 {/* 404 Not Found */}
