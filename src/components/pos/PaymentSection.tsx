@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { Button } from '@/components/ui/button';
@@ -88,9 +89,11 @@ const PaymentSection: React.FC = () => {
       return;
     }
     
-    const result = completeSale();
-    if (result) {
-      setShowChange(paymentMethod === 'cash' && cashAmount > totalAmount);
+    completeSale();
+    
+    // Set change amount display for cash payments
+    if (paymentMethod === 'cash' && cashAmount > totalAmount) {
+      setShowChange(true);
     }
   };
   
