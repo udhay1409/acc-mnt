@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -32,6 +31,7 @@ import RecurringInvoicesList from '@/components/sales/RecurringInvoicesList';
 import CreditNotesList from '@/components/sales/CreditNotesList';
 import SalesReturnsList from '@/components/sales/SalesReturnsList';
 import ReceiptsList from '@/components/sales/ReceiptsList';
+import DebitNotesList from '@/components/sales/DebitNotesList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 const Sales = () => {
@@ -132,15 +132,7 @@ const Sales = () => {
           </TabsContent>
           
           <TabsContent value="debits">
-            <div className="flex items-center justify-center p-12 border rounded-lg border-dashed">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <FileMinus className="h-10 w-10 text-muted-foreground" />
-                <h3 className="text-lg font-medium">Debit Notes</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  This feature is coming soon. You'll be able to create and manage debit notes.
-                </p>
-              </div>
-            </div>
+            <DebitNotesList />
           </TabsContent>
         </div>
       </Tabs>

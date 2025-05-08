@@ -602,6 +602,65 @@ export const mockReceipts: Receipt[] = [
   }
 ];
 
+// Mock Debit Notes
+export const mockDebitNotes: DebitNote[] = [
+  {
+    id: "DN1001",
+    number: "DN-1001",
+    customer: mockCustomers[0],
+    date: new Date(2025, 3, 25), // April 25, 2025
+    dueDate: undefined,
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    reason: "Overcharged for services",
+    purchaseInvoiceId: "PINV1001",
+    status: "processed",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 3, 25)
+  },
+  {
+    id: "DN1002",
+    number: "DN-1002",
+    customer: mockCustomers[1],
+    date: new Date(2025, 4, 5), // May 5, 2025
+    dueDate: undefined,
+    items: createSalesItems(2),
+    ...calculateTotals(createSalesItems(2)),
+    reason: "Billing adjustment for incorrect pricing",
+    purchaseInvoiceId: "PINV1002",
+    status: "pending",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 5)
+  },
+  {
+    id: "DN1003",
+    number: "DN-1003",
+    customer: mockCustomers[2],
+    date: new Date(2025, 4, 10), // May 10, 2025
+    dueDate: undefined,
+    items: createSalesItems(1),
+    ...calculateTotals(createSalesItems(1)),
+    reason: "Defective product replacement",
+    status: "issued",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 10)
+  },
+  {
+    id: "DN1004",
+    number: "DN-1004",
+    customer: mockCustomers[3],
+    date: new Date(2025, 4, 15), // May 15, 2025
+    dueDate: undefined,
+    items: createSalesItems(3),
+    ...calculateTotals(createSalesItems(3)),
+    reason: "Tax calculation error correction",
+    purchaseInvoiceId: "PINV1003",
+    status: "draft",
+    createdBy: "Admin User",
+    createdAt: new Date(2025, 4, 15)
+  }
+];
+
 // Export functions to access mock data
 export const getCustomers = () => mockCustomers;
 export const getEstimates = () => mockEstimates;
@@ -620,5 +679,8 @@ export const getSalesReturns = () => mockSalesReturns;
 
 // Export function for receipts
 export const getReceipts = () => mockReceipts;
+
+// Export function for debit notes
+export const getDebitNotes = () => mockDebitNotes;
 
 // Additional export functions for other document types would be defined here
