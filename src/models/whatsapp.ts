@@ -3,6 +3,7 @@
 export type MessageType = 'text' | 'template' | 'media' | 'interactive';
 export type MessageStatus = 'sent' | 'delivered' | 'read' | 'failed';
 export type ContactStatus = 'active' | 'inactive' | 'blocked';
+export type SignupStatus = 'pending' | 'verified' | 'rejected';
 
 export interface WhatsAppMessage {
   id: string;
@@ -68,3 +69,16 @@ export interface WhatsAppSettings {
     emailNotifications: boolean;
   };
 }
+
+export interface WhatsAppBusinessAccount {
+  id: string;
+  businessPhone: string;
+  businessName: string;
+  businessCategory: string;
+  email: string;
+  signupDate: string;
+  status: SignupStatus;
+  verificationCode?: string;
+  verifiedDate?: string;
+}
+

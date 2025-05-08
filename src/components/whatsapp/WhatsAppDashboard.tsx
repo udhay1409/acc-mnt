@@ -8,10 +8,13 @@ import {
   CardDescription 
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Send, CheckCircle, RefreshCcw, ChevronRight } from 'lucide-react';
+import { MessageSquare, Users, Send, CheckCircle, RefreshCcw, ChevronRight, AlertCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const WhatsAppDashboard = () => {
+  const navigate = useNavigate();
+  
   const checkWhatsAppStatus = () => {
     toast({
       title: "WhatsApp Connection",
@@ -19,13 +22,22 @@ const WhatsAppDashboard = () => {
     });
   };
 
+  const goToSignup = () => {
+    // Access the setActiveTab function through the parent component
+    const event = new CustomEvent('whatsapp-tab-change', { detail: 'signup' });
+    document.dispatchEvent(event);
+  };
+
+  // Simulated verification status - this would come from your API
+  const verificationStatus = 'pending'; // 'pending', 'verified', 'rejected'
+
   return (
     <div className="space-y-6">
       {/* Connection status card */}
-      <Card className="border-green-200">
+      <Card className={verificationStatus === 'verified' ? "border-green-200" : "border-amber-200"}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Connection Status</CardTitle>
+            <CardTitle className="text-lg">Account Status</CardTitle>
             <Button 
               variant="outline" 
               size="sm" 
@@ -38,13 +50,32 @@ const WhatsAppDashboard = () => {
           <CardDescription>Your WhatsApp Business API connection</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 text-green-600">
-            <CheckCircle className="h-5 w-5" />
-            <span className="font-medium">Connected and Active</span>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Phone Number: +91 98765 43210
-          </p>
+          {verificationStatus === 'verified' ? (
+            <div className="flex items-center gap-2 text-green-600">
+              <CheckCircle className="h-5 w-5" />
+              <span className="font-medium">Connected and Active</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-amber-600">
+              <AlertCircle className="h-5 w-5" />
+              <span className="font-medium">Verification Pending</span>
+            </div>
+          )}
+          
+          {verificationStatus === 'verified' ? (
+            <p className="text-sm text-muted-foreground mt-2">
+              Phone Number: +91 98765 43210
+            </p>
+          ) : (
+            <div className="mt-2 space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Your WhatsApp Business account is awaiting verification. Please check your WhatsApp for a verification message.
+              </p>
+              <Button variant="outline" size="sm" onClick={goToSignup}>
+                Complete Registration
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -1,14 +1,30 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Users, MessageSquare, Send } from 'lucide-react';
+import { Settings, Users, MessageSquare, Send, UserPlus } from 'lucide-react';
 import WhatsAppDashboard from '@/components/whatsapp/WhatsAppDashboard';
 import WhatsAppContacts from '@/components/whatsapp/WhatsAppContacts';
 import WhatsAppSettings from '@/components/whatsapp/WhatsAppSettings';
 import WhatsAppBroadcast from '@/components/whatsapp/WhatsAppBroadcast';
+import WhatsAppSignup from '@/components/whatsapp/WhatsAppSignup';
 
 const WhatsApp = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  useEffect(() => {
+    // Add event listener for tab changes requested by child components
+    const handleTabChange = (event: CustomEvent) => {
+      if (event.detail && typeof event.detail === 'string') {
+        setActiveTab(event.detail);
+      }
+    };
+
+    document.addEventListener('whatsapp-tab-change', handleTabChange as EventListener);
+
+    return () => {
+      document.removeEventListener('whatsapp-tab-change', handleTabChange as EventListener);
+    };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -20,7 +36,7 @@ const WhatsApp = () => {
       </div>
 
       <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 mb-4">
+        <TabsList className="grid grid-cols-5 mb-4">
           <TabsTrigger value="dashboard" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" /> Dashboard
           </TabsTrigger>
@@ -29,6 +45,9 @@ const WhatsApp = () => {
           </TabsTrigger>
           <TabsTrigger value="broadcasts" className="flex items-center gap-2">
             <Send className="h-4 w-4" /> Broadcasts
+          </TabsTrigger>
+          <TabsTrigger value="signup" className="flex items-center gap-2">
+            <UserPlus className="h-4 w-4" /> Sign Up
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
             <Settings className="h-4 w-4" /> Settings
@@ -45,6 +64,10 @@ const WhatsApp = () => {
         
         <TabsContent value="broadcasts">
           <WhatsAppBroadcast />
+        </TabsContent>
+        
+        <TabsContent value="signup">
+          <WhatsAppSignup />
         </TabsContent>
         
         <TabsContent value="settings">
