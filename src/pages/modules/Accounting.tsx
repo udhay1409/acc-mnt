@@ -5,14 +5,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import ChartOfAccounts from '@/components/accounting/ChartOfAccounts';
 import JournalEntries from '@/components/accounting/JournalEntries';
-import { BookOpen, FileText, ChartBar } from 'lucide-react';
+import { BookOpen, FileText, BarChart3, PieChart } from 'lucide-react';
 
 const Accounting: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general-ledger');
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-bold tracking-tight">Accounting</h1>
         <p className="text-muted-foreground">
           Manage your business finances with double-entry bookkeeping
@@ -20,39 +20,63 @@ const Accounting: React.FC = () => {
       </div>
       <Separator />
       
-      <Tabs defaultValue="general-ledger" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="general-ledger" className="flex items-center">
-            <BookOpen className="mr-2 h-4 w-4" />
-            General Ledger
-          </TabsTrigger>
-          <TabsTrigger value="journal" className="flex items-center">
-            <FileText className="mr-2 h-4 w-4" />
-            Journal Entries
-          </TabsTrigger>
-          <TabsTrigger value="reports" className="flex items-center">
-            <ChartBar className="mr-2 h-4 w-4" />
-            Reports
-          </TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="general-ledger" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="bg-card rounded-lg p-1 border shadow-sm">
+          <TabsList className="w-full grid grid-cols-3 h-12">
+            <TabsTrigger value="general-ledger" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">General Ledger</span>
+              <span className="sm:hidden">Ledger</span>
+            </TabsTrigger>
+            <TabsTrigger value="journal" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Journal Entries</span>
+              <span className="sm:hidden">Journal</span>
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Financial Reports</span>
+              <span className="sm:hidden">Reports</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
         
-        <TabsContent value="general-ledger" className="space-y-4">
+        <TabsContent value="general-ledger" className="mt-6">
           <ChartOfAccounts accounts={mockAccounts} />
         </TabsContent>
         
-        <TabsContent value="journal" className="space-y-4">
+        <TabsContent value="journal" className="mt-6">
           <JournalEntries 
             transactions={mockTransactions}
             accounts={mockAccounts} 
           />
         </TabsContent>
         
-        <TabsContent value="reports" className="space-y-4">
-          <div className="rounded-md border border-dashed p-8 text-center">
-            <h3 className="text-lg font-medium">Financial Reports</h3>
-            <p className="text-muted-foreground mt-2">
-              Financial reports will be available in a future update.
-            </p>
+        <TabsContent value="reports" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="rounded-lg border shadow-sm p-6 bg-card text-center flex flex-col items-center justify-center gap-4 min-h-[200px]">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <PieChart className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium">Financial Reports</h3>
+                <p className="text-muted-foreground mt-2">
+                  Financial reports will be available in a future update.
+                </p>
+              </div>
+            </div>
+            
+            <div className="rounded-lg border shadow-sm p-6 bg-card text-center flex flex-col items-center justify-center gap-4 min-h-[200px]">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <BarChart3 className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium">Analytics Dashboard</h3>
+                <p className="text-muted-foreground mt-2">
+                  Business analytics will be available soon.
+                </p>
+              </div>
+            </div>
           </div>
         </TabsContent>
       </Tabs>

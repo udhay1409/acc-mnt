@@ -3,6 +3,8 @@ import React from 'react';
 import { Account, AccountType } from '@/models/accounting';
 import { TableCell, TableRow, TableHead, TableHeader, Table, TableBody } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Eye } from 'lucide-react';
 
 interface AccountsTableProps {
   accounts: Account[];
@@ -41,25 +43,41 @@ const AccountsTable: React.FC<AccountsTableProps> = ({
     }).format(amount);
   };
 
+  if (filteredAccounts.length === 0) {
+    return (
+      <div className="text-center p-8 text-muted-foreground">
+        No accounts found matching your criteria.
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md overflow-hidden">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted/50">
           <TableRow>
             <TableHead className="w-[100px]">Code</TableHead>
             <TableHead>Account Name</TableHead>
             <TableHead>Type</TableHead>
             <TableHead className="text-right">Balance</TableHead>
+            <TableHead className="w-[80px] text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredAccounts.map((account) => (
-            <TableRow key={account.id}>
+            <TableRow key={account.id} className="hover:bg-muted/50">
               <TableCell className="font-medium">{account.code}</TableCell>
               <TableCell>{account.name}</TableCell>
               <TableCell>{getAccountTypeBadge(account.type)}</TableCell>
-              <TableCell className="text-right font-mono">
+              <TableCell className={`text-right font-mono ${
+                account.balance >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}>
                 {formatCurrency(account.balance)}
+              </TableCell>
+              <TableCell className="text-center">
+                <Button size="icon" variant="ghost">
+                  <Eye className="h-4 w-4" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
