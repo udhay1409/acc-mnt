@@ -1,5 +1,5 @@
 
-import { ProductCategory, StockMovement, StockMovementType } from "@/models/inventory";
+import { ProductCategory, StockMovement, StockMovementType, MovementReason } from "@/models/inventory";
 import { mockProducts } from "./mockProducts";
 
 export const mockCategories: ProductCategory[] = [
@@ -45,6 +45,29 @@ mockProducts.forEach(product => {
     const types: StockMovementType[] = ['purchase', 'sale', 'adjustment', 'return', 'transfer'];
     const type = types[Math.floor(Math.random() * types.length)];
     
+    // Determine reason based on type (ensuring reason is compatible with type)
+    let reason: MovementReason;
+    switch (type) {
+      case 'purchase':
+        reason = 'purchase';
+        break;
+      case 'sale':
+        reason = 'sale';
+        break;
+      case 'return':
+        reason = 'return';
+        break;
+      case 'transfer':
+        reason = 'transfer';
+        break;
+      case 'adjustment':
+        // For adjustment, randomly pick between 'damage' and 'correction'
+        reason = Math.random() > 0.5 ? 'damage' : 'correction';
+        break;
+      default:
+        reason = 'correction'; // Fallback
+    }
+    
     let quantity = 0;
     if (type === 'purchase' || type === 'return') {
       quantity = 1 + Math.floor(Math.random() * 10);
@@ -64,6 +87,7 @@ mockProducts.forEach(product => {
       productId: product.id,
       date,
       type,
+      reason, // Add the required reason property
       quantity,
       beforeQuantity: baseStock + (i > 0 ? quantity : 0),
       afterQuantity: baseStock + quantity,
