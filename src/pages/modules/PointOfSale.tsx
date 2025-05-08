@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { usePOS } from '@/contexts/POSContext';
 import { mockProducts } from '@/data/mockProducts';
-import { Printer, Share, Grid2x2, Grid3x3, Grid4x4, LayoutList } from 'lucide-react';
+import { Printer, Share, Grid2x2, Grid3x3, LayoutGrid, LayoutList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -82,7 +82,7 @@ const POSContent: React.FC = () => {
                   onClick={() => {setViewMode('grid'); setGridSize(4);}}
                   className="h-8 w-8"
                 >
-                  <Grid4x4 className="h-4 w-4" />
+                  <LayoutGrid className="h-4 w-4" />
                 </Button>
               </div>
             </div>
