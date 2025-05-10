@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
-import { Shield, Building, Package, CreditCard, Settings, Mail } from 'lucide-react';
+import { Outlet, NavLink, Link } from 'react-router-dom';
+import { Shield, Building, Package, CreditCard, Settings, Mail, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
@@ -59,10 +59,16 @@ const SuperAdminLayout = () => {
             Super Admin
           </h1>
           <div className="flex items-center ml-auto gap-4">
+            <Button variant="outline" size="sm" className="mr-2" asChild>
+              <Link to="/">
+                <Home className="mr-2 h-4 w-4" />
+                Website
+              </Link>
+            </Button>
             <Button variant="outline" size="sm" asChild>
-              <NavLink to="/">
+              <Link to="/dashboard">
                 Return to Application
-              </NavLink>
+              </Link>
             </Button>
           </div>
         </header>

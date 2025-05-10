@@ -12,6 +12,9 @@ import AppLayout from "@/components/layout/AppLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import SuperAdminLayout from "@/pages/superadmin/SuperAdminLayout";
 
+// Super Website - Landing Page
+import SuperWebsite from "@/pages/SuperWebsite";
+
 // Auth Pages
 import Login from "@/pages/Login";
 import Unauthorized from "@/pages/Unauthorized";
@@ -59,6 +62,9 @@ const App = () => {
           <AuthProvider>
             <TenantProvider>
               <Routes>
+                {/* Home/Landing Page */}
+                <Route path="/" element={<SuperWebsite />} />
+                
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
@@ -76,10 +82,7 @@ const App = () => {
                 
                 {/* Protected Routes */}
                 <Route element={<AppLayout />}>
-                  {/* Redirect root to dashboard */}
-                  <Route path="/" element={<Navigate to="/dashboard" />} />
-                  
-                  {/* All authenticated users can access dashboard */}
+                  {/* Dashboard is now at /dashboard instead of / */}
                   <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                   </Route>
