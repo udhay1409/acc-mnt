@@ -4,6 +4,9 @@ import { Organization } from './organization';
 export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid' | 'incomplete' | 'incomplete_expired';
 export type PaymentGateway = 'razorpay' | 'stripe' | 'none';
 
+// Define available modules in the system
+export type ApplicationModule = 'inventory' | 'pos' | 'sales' | 'purchases' | 'accounting' | 'crm' | 'whatsapp' | 'reports';
+
 export interface SubscriptionPlan {
   id: string;
   name: string;
@@ -12,6 +15,8 @@ export interface SubscriptionPlan {
   currency: string; // e.g., "INR", "USD"
   interval: 'monthly' | 'quarterly' | 'yearly';
   features: string[];
+  userLimit: number; // Maximum number of users allowed
+  modules: ApplicationModule[]; // Available modules in this plan
   isPopular?: boolean;
   isActive: boolean;
   createdAt: string;

@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Building, Search, Plus, MoreHorizontal, Check, X, ArrowUpDown, Mail
+  Building, Search, Plus, MoreHorizontal, Check, X, ArrowUpDown, Mail, Package, Users, Grid3X3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,8 +32,46 @@ import {
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { OrganizationCreationRequest } from '@/models/superadmin';
 import { createOrganization } from '@/services/organizationService';
+
+// Mock plans for dropdown
+const subscriptionPlans = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    description: 'Essential features for small businesses',
+    userLimit: 10,
+    modules: ['inventory', 'pos', 'sales']
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    description: 'Perfect for growing businesses',
+    userLimit: 25,
+    modules: ['inventory', 'pos', 'sales', 'purchases', 'crm', 'reports']
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    description: 'Advanced features for larger operations',
+    userLimit: 0, // Unlimited
+    modules: ['inventory', 'pos', 'sales', 'purchases', 'accounting', 'crm', 'whatsapp', 'reports']
+  }
+];
+
+// Module display names
+const moduleNames = {
+  inventory: 'Inventory',
+  pos: 'POS',
+  sales: 'Sales',
+  purchases: 'Purchases',
+  accounting: 'Accounting',
+  crm: 'CRM',
+  whatsapp: 'WhatsApp',
+  reports: 'Reports'
+};
 
 // Mock data for organizations
 const organizations = [
@@ -41,6 +80,8 @@ const organizations = [
     name: 'ABC Corporation',
     admin: 'admin@abc-corp.com',
     subscription: 'Premium',
+    userLimit: 0, // Unlimited
+    enabledModules: ['inventory', 'pos', 'sales', 'purchases', 'accounting', 'crm', 'whatsapp', 'reports'],
     status: 'active',
     users: 24,
     created: '2023-01-15'
@@ -50,6 +91,8 @@ const organizations = [
     name: 'XYZ Industries',
     admin: 'admin@xyz.com',
     subscription: 'Standard',
+    userLimit: 25,
+    enabledModules: ['inventory', 'pos', 'sales', 'purchases', 'crm', 'reports'],
     status: 'active',
     users: 16,
     created: '2023-02-22'
@@ -59,6 +102,8 @@ const organizations = [
     name: '123 Enterprises',
     admin: 'admin@123ent.com',
     subscription: 'Basic',
+    userLimit: 10,
+    enabledModules: ['inventory', 'pos', 'sales'],
     status: 'suspended',
     users: 5,
     created: '2023-03-10'
@@ -67,7 +112,9 @@ const organizations = [
     id: '4',
     name: 'Tech Solutions',
     admin: 'admin@techsol.com',
-    subscription: 'Enterprise',
+    subscription: 'Premium',
+    userLimit: 0,
+    enabledModules: ['inventory', 'pos', 'sales', 'purchases', 'accounting', 'crm', 'whatsapp', 'reports'],
     status: 'active',
     users: 42,
     created: '2023-04-05'
@@ -77,6 +124,8 @@ const organizations = [
     name: 'Global Services',
     admin: 'admin@globalserv.com',
     subscription: 'Standard',
+    userLimit: 25,
+    enabledModules: ['inventory', 'pos', 'sales', 'purchases', 'crm', 'reports'],
     status: 'past_due',
     users: 11,
     created: '2023-05-18'
@@ -137,7 +186,7 @@ const OrganizationsList = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
         return <Badge variant="outline" className="bg-green-100 text-green-800">Active</Badge>;
@@ -148,6 +197,10 @@ const OrganizationsList = () => {
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
+  };
+
+  const getSelectedPlanDetails = () => {
+    return subscriptionPlans.find(plan => plan.id === newOrg.planId);
   };
 
   return (
@@ -192,8 +245,9 @@ const OrganizationsList = () => {
                 <TableHead>Name</TableHead>
                 <TableHead>Admin Email</TableHead>
                 <TableHead>Plan</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Users</TableHead>
+                <TableHead>Modules</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="w-[80px]"></TableHead>
               </TableRow>
@@ -208,9 +262,42 @@ const OrganizationsList = () => {
                     </div>
                   </TableCell>
                   <TableCell>{org.admin}</TableCell>
-                  <TableCell>{org.subscription}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      <Package className="mr-1 h-4 w-4 text-muted-foreground" />
+                      {org.subscription}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      <Users className="mr-1 h-4 w-4 text-muted-foreground" />
+                      {org.users}/{org.userLimit === 0 ? '∞' : org.userLimit}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex">
+                            <Badge variant="outline" className="bg-blue-50">
+                              {org.enabledModules.length} modules
+                            </Badge>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <div className="p-2">
+                            <p className="font-medium mb-1">Enabled Modules:</p>
+                            <ul className="list-disc pl-5 space-y-1">
+                              {org.enabledModules.map(module => (
+                                <li key={module}>{moduleNames[module] || module}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
                   <TableCell>{getStatusBadge(org.status)}</TableCell>
-                  <TableCell>{org.users}</TableCell>
                   <TableCell>{new Date(org.created).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -290,12 +377,46 @@ const OrganizationsList = () => {
                 value={newOrg.planId}
                 onChange={(e) => setNewOrg({...newOrg, planId: e.target.value})}
               >
-                <option value="basic">Basic</option>
-                <option value="standard">Standard</option>
-                <option value="premium">Premium</option>
-                <option value="enterprise">Enterprise</option>
+                {subscriptionPlans.map(plan => (
+                  <option key={plan.id} value={plan.id}>
+                    {plan.name} - {plan.userLimit === 0 ? "Unlimited Users" : `${plan.userLimit} Users`}
+                  </option>
+                ))}
               </select>
             </div>
+            
+            {/* Plan Details Preview */}
+            {getSelectedPlanDetails() && (
+              <div className="mt-2 p-3 border rounded-md bg-muted/20">
+                <h4 className="font-medium flex items-center">
+                  <Package className="h-4 w-4 mr-1" /> 
+                  {getSelectedPlanDetails()?.name} Plan Details
+                </h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {getSelectedPlanDetails()?.description}
+                </p>
+                
+                <div className="mt-3">
+                  <div className="flex items-center text-sm mb-1">
+                    <Users className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <span>{getSelectedPlanDetails()?.userLimit === 0 ? "Unlimited Users" : `${getSelectedPlanDetails()?.userLimit} Users`}</span>
+                  </div>
+                  
+                  <div className="flex items-center text-sm">
+                    <Grid3X3 className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <span>Available Modules: </span>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {getSelectedPlanDetails()?.modules.map(module => (
+                      <Badge key={module} variant="outline" className="text-xs">
+                        {moduleNames[module] || module}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>

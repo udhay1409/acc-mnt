@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Package, Plus, Check, Edit, Trash2, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
+import { Package, Plus, Check, Edit, Trash2, AlertCircle, CheckCircle2, XCircle, Users, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -16,10 +16,24 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { ApplicationModule, SubscriptionPlan } from '@/models/superadmin';
+
+// All available modules in the system
+const availableModules: {id: ApplicationModule, name: string}[] = [
+  { id: 'inventory', name: 'Inventory Management' },
+  { id: 'pos', name: 'Point of Sale' },
+  { id: 'sales', name: 'Sales Management' },
+  { id: 'purchases', name: 'Purchases & Expenses' },
+  { id: 'accounting', name: 'Accounting' },
+  { id: 'crm', name: 'CRM' },
+  { id: 'whatsapp', name: 'WhatsApp Integration' },
+  { id: 'reports', name: 'Reports & Analytics' }
+];
 
 // Mock subscription plans
-const initialPlans = [
+const initialPlans: SubscriptionPlan[] = [
   {
     id: "basic",
     name: "Basic",
@@ -28,12 +42,13 @@ const initialPlans = [
     currency: "INR",
     interval: "monthly",
     features: [
-      "10 Users",
       "Basic Inventory Management",
       "Simple POS System",
       "Standard Support",
       "5GB Storage"
     ],
+    userLimit: 10,
+    modules: ['inventory', 'pos', 'sales'],
     isActive: true,
     isPopular: false,
     createdAt: "2023-01-01T00:00:00.000Z",
@@ -47,7 +62,6 @@ const initialPlans = [
     currency: "INR",
     interval: "monthly",
     features: [
-      "25 Users",
       "Advanced Inventory Management",
       "Complete POS System",
       "Priority Support",
@@ -55,6 +69,8 @@ const initialPlans = [
       "CRM Integration",
       "Basic Reports"
     ],
+    userLimit: 25,
+    modules: ['inventory', 'pos', 'sales', 'purchases', 'crm', 'reports'],
     isActive: true,
     isPopular: true,
     createdAt: "2023-01-01T00:00:00.000Z",
@@ -68,7 +84,6 @@ const initialPlans = [
     currency: "INR",
     interval: "monthly",
     features: [
-      "Unlimited Users",
       "Complete Inventory Management",
       "Advanced POS System",
       "24/7 Priority Support",
@@ -78,6 +93,8 @@ const initialPlans = [
       "WhatsApp Integration",
       "Multi-branch Support"
     ],
+    userLimit: 0, // Unlimited users
+    modules: ['inventory', 'pos', 'sales', 'purchases', 'accounting', 'crm', 'whatsapp', 'reports'],
     isActive: true,
     isPopular: false,
     createdAt: "2023-01-01T00:00:00.000Z",
@@ -86,10 +103,10 @@ const initialPlans = [
 ];
 
 const SubscriptionPlans = () => {
-  const [plans, setPlans] = useState(initialPlans);
+  const [plans, setPlans] = useState<SubscriptionPlan[]>(initialPlans);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState(null);
+  const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleOpenCreateDialog = () => {
@@ -101,14 +118,18 @@ const SubscriptionPlans = () => {
       currency: "INR",
       interval: "monthly",
       features: [""],
+      userLimit: 10,
+      modules: [],
       isActive: true,
       isPopular: false,
+      createdAt: "",
+      updatedAt: ""
     });
     setIsEditMode(false);
     setIsDialogOpen(true);
   };
 
-  const handleOpenEditDialog = (plan) => {
+  const handleOpenEditDialog = (plan: SubscriptionPlan) => {
     setCurrentPlan({
       ...plan,
       features: [...plan.features]
@@ -117,12 +138,14 @@ const SubscriptionPlans = () => {
     setIsDialogOpen(true);
   };
 
-  const handleOpenDeleteDialog = (plan) => {
+  const handleOpenDeleteDialog = (plan: SubscriptionPlan) => {
     setCurrentPlan(plan);
     setIsDeleteDialogOpen(true);
   };
 
   const handleSavePlan = () => {
+    if (!currentPlan) return;
+    
     if (!currentPlan.name || !currentPlan.description || currentPlan.price <= 0) {
       toast.error("Please fill in all required fields");
       return;
@@ -133,6 +156,11 @@ const SubscriptionPlans = () => {
     
     if (features.length === 0) {
       toast.error("Please add at least one feature");
+      return;
+    }
+    
+    if (currentPlan.modules.length === 0) {
+      toast.error("Please select at least one module");
       return;
     }
 
@@ -156,29 +184,37 @@ const SubscriptionPlans = () => {
   };
 
   const handleDeletePlan = () => {
+    if (!currentPlan) return;
+    
     setPlans(plans.filter(p => p.id !== currentPlan.id));
     toast.success(`Plan "${currentPlan.name}" deleted successfully`);
     setIsDeleteDialogOpen(false);
   };
 
-  const handleTogglePlanStatus = (planId) => {
+  const handleTogglePlanStatus = (planId: string) => {
     setPlans(plans.map(plan => 
       plan.id === planId 
         ? { ...plan, isActive: !plan.isActive } 
         : plan
     ));
     const plan = plans.find(p => p.id === planId);
-    toast.success(`Plan "${plan.name}" ${plan.isActive ? 'deactivated' : 'activated'}`);
+    if (plan) {
+      toast.success(`Plan "${plan.name}" ${plan.isActive ? 'deactivated' : 'activated'}`);
+    }
   };
 
   const handleAddFeature = () => {
+    if (!currentPlan) return;
+    
     setCurrentPlan({
       ...currentPlan,
       features: [...currentPlan.features, ""]
     });
   };
 
-  const handleRemoveFeature = (index) => {
+  const handleRemoveFeature = (index: number) => {
+    if (!currentPlan) return;
+    
     const features = [...currentPlan.features];
     features.splice(index, 1);
     setCurrentPlan({
@@ -187,7 +223,9 @@ const SubscriptionPlans = () => {
     });
   };
 
-  const handleFeatureChange = (index, value) => {
+  const handleFeatureChange = (index: number, value: string) => {
+    if (!currentPlan) return;
+    
     const features = [...currentPlan.features];
     features[index] = value;
     setCurrentPlan({
@@ -196,7 +234,24 @@ const SubscriptionPlans = () => {
     });
   };
 
-  const formatPrice = (price, currency) => {
+  const handleModuleToggle = (moduleId: ApplicationModule) => {
+    if (!currentPlan) return;
+    
+    const modules = [...currentPlan.modules];
+    if (modules.includes(moduleId)) {
+      setCurrentPlan({
+        ...currentPlan,
+        modules: modules.filter(id => id !== moduleId)
+      });
+    } else {
+      setCurrentPlan({
+        ...currentPlan,
+        modules: [...modules, moduleId]
+      });
+    }
+  };
+
+  const formatPrice = (price: number, currency: string) => {
     const formatter = new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: currency,
@@ -248,6 +303,33 @@ const SubscriptionPlans = () => {
                 {formatPrice(plan.price, plan.currency)}
                 <span className="text-base font-normal text-muted-foreground">/{plan.interval}</span>
               </div>
+              
+              {/* User limit */}
+              <div className="flex items-center mb-3 text-sm">
+                <Users className="h-5 w-5 text-blue-500 mr-2 shrink-0" />
+                <span className="font-medium">
+                  {plan.userLimit === 0 ? 'Unlimited Users' : `${plan.userLimit} Users`}
+                </span>
+              </div>
+              
+              {/* Modules */}
+              <div className="mb-4">
+                <div className="flex items-center mb-2 text-sm">
+                  <Grid3X3 className="h-5 w-5 text-blue-500 mr-2 shrink-0" />
+                  <span className="font-medium">Available Modules:</span>
+                </div>
+                <div className="flex flex-wrap gap-1 ml-7 mb-4">
+                  {plan.modules.map(moduleId => {
+                    const module = availableModules.find(m => m.id === moduleId);
+                    return (
+                      <Badge key={moduleId} variant="outline" className="bg-blue-50">
+                        {module?.name || moduleId}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+              
               <ul className="space-y-2 mb-6">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex">
@@ -283,7 +365,7 @@ const SubscriptionPlans = () => {
 
       {/* Create/Edit Plan Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
             <DialogTitle>{isEditMode ? 'Edit' : 'Create'} Subscription Plan</DialogTitle>
             <DialogDescription>
@@ -291,13 +373,13 @@ const SubscriptionPlans = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
             <div className="grid gap-2">
               <Label htmlFor="plan-name">Plan Name</Label>
               <Input
                 id="plan-name"
                 value={currentPlan?.name || ''}
-                onChange={(e) => setCurrentPlan({...currentPlan, name: e.target.value})}
+                onChange={(e) => setCurrentPlan(currentPlan ? {...currentPlan, name: e.target.value} : null)}
                 placeholder="e.g. Basic, Standard, Premium"
               />
             </div>
@@ -307,7 +389,7 @@ const SubscriptionPlans = () => {
               <Textarea
                 id="plan-description"
                 value={currentPlan?.description || ''}
-                onChange={(e) => setCurrentPlan({...currentPlan, description: e.target.value})}
+                onChange={(e) => setCurrentPlan(currentPlan ? {...currentPlan, description: e.target.value} : null)}
                 placeholder="Brief description of what this plan offers"
                 rows={2}
               />
@@ -320,7 +402,7 @@ const SubscriptionPlans = () => {
                   id="plan-price"
                   type="number"
                   value={currentPlan?.price || ''}
-                  onChange={(e) => setCurrentPlan({...currentPlan, price: Number(e.target.value)})}
+                  onChange={(e) => setCurrentPlan(currentPlan ? {...currentPlan, price: Number(e.target.value)} : null)}
                   placeholder="0"
                 />
               </div>
@@ -330,7 +412,7 @@ const SubscriptionPlans = () => {
                   id="plan-currency"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                   value={currentPlan?.currency || 'INR'}
-                  onChange={(e) => setCurrentPlan({...currentPlan, currency: e.target.value})}
+                  onChange={(e) => setCurrentPlan(currentPlan ? {...currentPlan, currency: e.target.value} : null)}
                 >
                   <option value="INR">INR (₹)</option>
                   <option value="USD">USD ($)</option>
@@ -347,24 +429,56 @@ const SubscriptionPlans = () => {
                   id="plan-interval"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                   value={currentPlan?.interval || 'monthly'}
-                  onChange={(e) => setCurrentPlan({...currentPlan, interval: e.target.value})}
+                  onChange={(e) => setCurrentPlan(currentPlan ? {...currentPlan, interval: e.target.value as 'monthly' | 'quarterly' | 'yearly'} : null)}
                 >
                   <option value="monthly">Monthly</option>
                   <option value="quarterly">Quarterly</option>
                   <option value="yearly">Yearly</option>
                 </select>
               </div>
-              <div className="flex items-center space-x-2 pt-8">
-                <Switch
-                  id="plan-popular"
-                  checked={currentPlan?.isPopular || false}
-                  onCheckedChange={(checked) => setCurrentPlan({...currentPlan, isPopular: checked})}
+              <div className="grid gap-2">
+                <Label htmlFor="user-limit">User Limit</Label>
+                <Input
+                  id="user-limit"
+                  type="number"
+                  min="0"
+                  value={currentPlan?.userLimit || 0}
+                  onChange={(e) => setCurrentPlan(currentPlan ? {...currentPlan, userLimit: Number(e.target.value)} : null)}
+                  placeholder="Number of users"
                 />
-                <Label htmlFor="plan-popular">Mark as Popular</Label>
+                <p className="text-xs text-muted-foreground mt-1">Enter 0 for unlimited users</p>
               </div>
             </div>
             
-            <div className="grid gap-2">
+            <div className="flex items-center space-x-2 pt-2">
+              <Switch
+                id="plan-popular"
+                checked={currentPlan?.isPopular || false}
+                onCheckedChange={(checked) => setCurrentPlan(currentPlan ? {...currentPlan, isPopular: checked} : null)}
+              />
+              <Label htmlFor="plan-popular">Mark as Popular</Label>
+            </div>
+            
+            {/* Modules Selection */}
+            <div className="grid gap-3 pt-2">
+              <Label>Available Modules</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {availableModules.map(module => (
+                  <div key={module.id} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`module-${module.id}`}
+                      checked={currentPlan?.modules.includes(module.id)}
+                      onCheckedChange={() => handleModuleToggle(module.id)}
+                    />
+                    <Label htmlFor={`module-${module.id}`} className="text-sm font-normal">
+                      {module.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="grid gap-2 pt-2">
               <Label className="flex justify-between items-center">
                 <span>Features</span>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddFeature}>
