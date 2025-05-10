@@ -38,7 +38,7 @@ const SubscriptionPlans: React.FC = () => {
       // Process payment
       processSubscriptionPayment(
         order,
-        { name: user.displayName || user.email, email: user.email },
+        { name: user.name || user.email, email: user.email },
         async (paymentId) => {
           try {
             // Create subscription after successful payment
