@@ -30,10 +30,15 @@ const WhatsAppDashboard = () => {
   // Simulated verification status - this would come from your API
   const verificationStatus: SignupStatus = 'pending'; // Use the correct type
 
+  // Fix the border color conditional to avoid the 'bg' property error
+  const cardBorderClass = verificationStatus === 'verified' 
+    ? "border-green-200" 
+    : "border-amber-200";
+
   return (
     <div className="space-y-6">
       {/* Connection status card */}
-      <Card className={verificationStatus === 'verified' ? "border-green-200" : "border-amber-200"}>
+      <Card className={cardBorderClass}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Account Status</CardTitle>
