@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Building, Search, Plus, MoreHorizontal, Check, X, ArrowUpDown 
+  Building, Search, Plus, MoreHorizontal, Check, X, ArrowUpDown, Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +31,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { OrganizationCreationRequest } from '@/models/superadmin';
+import { createOrganization } from '@/services/organizationService';
 
 // Mock data for organizations
 const organizations = [
@@ -86,7 +87,8 @@ const OrganizationsList = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [newOrg, setNewOrg] = useState({
+  const [isCreating, setIsCreating] = useState(false);
+  const [newOrg, setNewOrg] = useState<OrganizationCreationRequest>({
     name: '',
     adminName: '',
     adminEmail: '',
@@ -98,22 +100,41 @@ const OrganizationsList = () => {
     org.admin.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleCreateOrganization = () => {
+  const handleCreateOrganization = async () => {
     // Validate form
     if (!newOrg.name || !newOrg.adminEmail) {
       toast.error("Please fill in all required fields");
       return;
     }
 
-    // In a real app, this would create the organization via API
-    toast.success(`Organization "${newOrg.name}" created successfully`);
-    setCreateDialogOpen(false);
-    setNewOrg({
-      name: '',
-      adminName: '',
-      adminEmail: '',
-      planId: 'standard'
-    });
+    try {
+      setIsCreating(true);
+      
+      // Call the organization creation service
+      await createOrganization(newOrg);
+      
+      toast.success(`Organization "${newOrg.name}" created successfully`, {
+        description: `Admin account created for ${newOrg.adminEmail}`,
+      });
+      
+      setCreateDialogOpen(false);
+      setNewOrg({
+        name: '',
+        adminName: '',
+        adminEmail: '',
+        planId: 'standard'
+      });
+      
+      // In a real app, we would refresh the organizations list here
+      // For now, we'll just keep the mock data
+      
+    } catch (error: any) {
+      toast.error("Failed to create organization", {
+        description: error.message || "Please try again later",
+      });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -280,7 +301,8 @@ const OrganizationsList = () => {
             <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleCreateOrganization}>
+            <Button onClick={handleCreateOrganization} disabled={isCreating}>
+              {isCreating && <span className="mr-2 h-4 w-4 animate-spin">⏳</span>}
               Create Organization
             </Button>
           </DialogFooter>
