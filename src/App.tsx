@@ -17,6 +17,7 @@ import SuperWebsite from "@/pages/SuperWebsite";
 
 // Auth Pages
 import Login from "@/pages/Login";
+import Registration from "@/pages/Registration";
 import Unauthorized from "@/pages/Unauthorized";
 
 // Dashboard
@@ -70,6 +71,7 @@ function App() {
                 
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Registration />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 
                 {/* Super Admin Routes - Now protected with admin role */}

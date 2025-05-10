@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -124,7 +124,12 @@ const Login = () => {
                 )}
               </Button>
               <div className="text-center text-sm text-slate-500">
-                <p>Use the admin account credentials for Super Admin access</p>
+                <p>
+                  Don't have an account?{" "}
+                  <Link to="/register" className="font-medium text-bizblue-500 hover:text-bizblue-700">
+                    Register now
+                  </Link>
+                </p>
               </div>
             </CardFooter>
           </form>
