@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { WhatsApp, Save, Globe, Link as LinkIcon, Download, Play } from 'lucide-react';
+import { Settings, Mail, Save, Globe, Link as LinkIcon, Download, Play } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -88,7 +88,7 @@ const WhatsAppSettingsPage = () => {
       <Tabs defaultValue="account" className="w-full">
         <TabsList className="grid grid-cols-3 mb-4">
           <TabsTrigger value="account" className="flex items-center gap-2">
-            <WhatsApp className="h-4 w-4" /> Account Settings
+            <Settings className="h-4 w-4" /> Account Settings
           </TabsTrigger>
           <TabsTrigger value="templates" className="flex items-center gap-2">
             <Globe className="h-4 w-4" /> Message Templates
@@ -102,7 +102,7 @@ const WhatsAppSettingsPage = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <WhatsApp className="mr-2 h-5 w-5" />
+                <Settings className="mr-2 h-5 w-5" />
                 WhatsApp Business API Connection
               </CardTitle>
               <CardDescription>
@@ -244,7 +244,7 @@ const WhatsAppSettingsPage = () => {
                     onChange={(e) => setTemplateContent(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Use {{1}}, {{2}}, etc. as placeholders for dynamic content
+                    Use {'{{'} 1 {'}}' }, {'{{'} 2 {'}}' }, etc. as placeholders for dynamic content
                   </p>
                 </div>
 
