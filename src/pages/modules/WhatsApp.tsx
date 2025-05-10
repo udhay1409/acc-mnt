@@ -7,9 +7,11 @@ import WhatsAppContacts from '@/components/whatsapp/WhatsAppContacts';
 import WhatsAppSettings from '@/components/whatsapp/WhatsAppSettings';
 import WhatsAppBroadcast from '@/components/whatsapp/WhatsAppBroadcast';
 import WhatsAppSignup from '@/components/whatsapp/WhatsAppSignup';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 const WhatsApp = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { isConnected } = useWhatsApp();
 
   useEffect(() => {
     // Add event listener for tab changes requested by child components
@@ -40,10 +42,10 @@ const WhatsApp = () => {
           <TabsTrigger value="dashboard" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" /> Dashboard
           </TabsTrigger>
-          <TabsTrigger value="contacts" className="flex items-center gap-2">
+          <TabsTrigger value="contacts" className="flex items-center gap-2" disabled={!isConnected}>
             <Users className="h-4 w-4" /> Contacts
           </TabsTrigger>
-          <TabsTrigger value="broadcasts" className="flex items-center gap-2">
+          <TabsTrigger value="broadcasts" className="flex items-center gap-2" disabled={!isConnected}>
             <Send className="h-4 w-4" /> Broadcasts
           </TabsTrigger>
           <TabsTrigger value="signup" className="flex items-center gap-2">

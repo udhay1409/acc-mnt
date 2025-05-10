@@ -11,14 +11,42 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, Users, Send, CheckCircle, RefreshCcw, ChevronRight, AlertCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { SignupStatus } from '@/models/whatsapp';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
+import { getWhatsAppService } from '@/services/whatsAppService';
 
 const WhatsAppDashboard = () => {
+  const { isConnected, connect } = useWhatsApp();
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
   
-  const checkWhatsAppStatus = () => {
-    toast({
-      title: "WhatsApp Connection",
-      description: "Your WhatsApp Business API is connected and active.",
-    });
+  const checkWhatsAppStatus = async () => {
+    if (!isConnected) {
+      toast({
+        title: "Not Connected",
+        description: "Please connect to WhatsApp Business API first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsRefreshing(true);
+    try {
+      const service = getWhatsAppService();
+      const response = await service.getBusinessProfile();
+      
+      toast({
+        title: "WhatsApp Connection",
+        description: "Your WhatsApp Business API is connected and active.",
+      });
+    } catch (error) {
+      console.error("Error checking WhatsApp status:", error);
+      toast({
+        title: "Connection Issue",
+        description: "There was a problem checking your WhatsApp connection.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const goToSignup = () => {
@@ -27,11 +55,14 @@ const WhatsAppDashboard = () => {
     document.dispatchEvent(event);
   };
 
-  // Simulated verification status - this would come from your API
-  const verificationStatus = 'pending' as SignupStatus;
+  const goToSettings = () => {
+    // Navigate to settings tab
+    const event = new CustomEvent('whatsapp-tab-change', { detail: 'settings' });
+    document.dispatchEvent(event);
+  };
 
   // Fix the border color conditional to avoid type errors
-  const cardBorderClass = verificationStatus === 'verified' 
+  const cardBorderClass = isConnected
     ? "border-green-200" 
     : "border-amber-200";
 
@@ -47,14 +78,16 @@ const WhatsAppDashboard = () => {
               size="sm" 
               className="flex gap-2" 
               onClick={checkWhatsAppStatus}
+              disabled={isRefreshing || !isConnected}
             >
-              <RefreshCcw className="h-4 w-4" /> Check Status
+              <RefreshCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} /> 
+              Check Status
             </Button>
           </div>
           <CardDescription>Your WhatsApp Business API connection</CardDescription>
         </CardHeader>
         <CardContent>
-          {verificationStatus === 'verified' ? (
+          {isConnected ? (
             <div className="flex items-center gap-2 text-green-600">
               <CheckCircle className="h-5 w-5" />
               <span className="font-medium">Connected and Active</span>
@@ -62,21 +95,21 @@ const WhatsAppDashboard = () => {
           ) : (
             <div className="flex items-center gap-2 text-amber-600">
               <AlertCircle className="h-5 w-5" />
-              <span className="font-medium">Verification Pending</span>
+              <span className="font-medium">Not Connected</span>
             </div>
           )}
           
-          {verificationStatus === 'verified' ? (
+          {isConnected ? (
             <p className="text-sm text-muted-foreground mt-2">
-              Phone Number: +91 98765 43210
+              Your WhatsApp Business API is connected and ready to use.
             </p>
           ) : (
             <div className="mt-2 space-y-2">
               <p className="text-sm text-muted-foreground">
-                Your WhatsApp Business account is awaiting verification. Please check your WhatsApp for a verification message.
+                You need to connect to the WhatsApp Business API before you can use this feature.
               </p>
-              <Button variant="outline" size="sm" onClick={goToSignup}>
-                Complete Registration
+              <Button variant="outline" size="sm" onClick={goToSettings}>
+                Go to Settings
               </Button>
             </div>
           )}
@@ -93,7 +126,7 @@ const WhatsAppDashboard = () => {
           <CardContent>
             <div className="flex items-center">
               <Users className="h-8 w-8 text-blue-500 mr-2" />
-              <div className="text-3xl font-bold">124</div>
+              <div className="text-3xl font-bold">{isConnected ? "124" : "-"}</div>
             </div>
           </CardContent>
         </Card>
@@ -106,7 +139,7 @@ const WhatsAppDashboard = () => {
           <CardContent>
             <div className="flex items-center">
               <Send className="h-8 w-8 text-purple-500 mr-2" />
-              <div className="text-3xl font-bold">532</div>
+              <div className="text-3xl font-bold">{isConnected ? "532" : "-"}</div>
             </div>
           </CardContent>
         </Card>
@@ -119,48 +152,100 @@ const WhatsAppDashboard = () => {
           <CardContent>
             <div className="flex items-center">
               <MessageSquare className="h-8 w-8 text-green-500 mr-2" />
-              <div className="text-3xl font-bold">18</div>
+              <div className="text-3xl font-bold">{isConnected ? "18" : "-"}</div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Recent messages */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Messages</CardTitle>
-          <CardDescription>Your latest WhatsApp conversations</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {[1, 2, 3].map((_, index) => (
-            <div 
-              key={index} 
-              className={`flex items-center justify-between p-3 ${
-                index !== 2 ? "border-b" : ""
-              } hover:bg-muted/50 cursor-pointer rounded-md`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Users className="h-5 w-5 text-primary" />
+      {isConnected && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Messages</CardTitle>
+            <CardDescription>Your latest WhatsApp conversations</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {[1, 2, 3].map((_, index) => (
+              <div 
+                key={index} 
+                className={`flex items-center justify-between p-3 ${
+                  index !== 2 ? "border-b" : ""
+                } hover:bg-muted/50 cursor-pointer rounded-md`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Customer #{index + 1}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {index === 0 
+                        ? "Thanks for your quick response!" 
+                        : index === 1 
+                        ? "Is the product still available?" 
+                        : "When will my order be delivered?"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">Customer #{index + 1}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {index === 0 
-                      ? "Thanks for your quick response!" 
-                      : index === 1 
-                      ? "Is the product still available?" 
-                      : "When will my order be delivered?"}
-                  </p>
-                </div>
+                <Button variant="ghost" size="icon">
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </Button>
               </div>
-              <Button variant="ghost" size="icon">
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </Button>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+      
+      {!isConnected && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Get Started with WhatsApp Business API</CardTitle>
+            <CardDescription>Follow these steps to integrate WhatsApp</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                1
+              </div>
+              <div>
+                <p className="font-medium">Create a Meta Developer Account</p>
+                <p className="text-sm text-muted-foreground">
+                  Sign up at developers.facebook.com and create a new app
+                </p>
+              </div>
             </div>
-          ))}
-        </CardContent>
-      </Card>
+            
+            <div className="flex items-start gap-3">
+              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                2
+              </div>
+              <div>
+                <p className="font-medium">Set up WhatsApp Business API</p>
+                <p className="text-sm text-muted-foreground">
+                  Add WhatsApp to your app and complete business verification
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                3
+              </div>
+              <div>
+                <p className="font-medium">Connect your account</p>
+                <p className="text-sm text-muted-foreground">
+                  Enter your API credentials in the Settings tab
+                </p>
+              </div>
+            </div>
+            
+            <Button onClick={goToSettings} className="w-full mt-2">
+              Go to WhatsApp Settings
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

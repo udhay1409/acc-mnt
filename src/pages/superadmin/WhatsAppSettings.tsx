@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { Settings, Mail, Save, Globe, Link as LinkIcon, Download, Play } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings, Mail, Save, Globe, Link as LinkIcon, Download, Play, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +11,18 @@ import { toast } from 'sonner';
 import { WhatsAppSettings as WhatsAppSettingsType } from '@/models/whatsapp';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
+import { getWhatsAppService } from '@/services/whatsAppService';
 
 const WhatsAppSettingsPage = () => {
+  const {
+    apiKey, setApiKey,
+    phoneNumberId, setPhoneNumberId,
+    businessAccountId, setBusinessAccountId,
+    isConnected, connect
+  } = useWhatsApp();
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [systemSettings, setSystemSettings] = useState<Partial<WhatsAppSettingsType>>({
     apiKey: '',
     phoneNumber: '+91 98765 43210',
@@ -32,31 +41,122 @@ const WhatsAppSettingsPage = () => {
 
   const [templateName, setTemplateName] = useState('');
   const [templateContent, setTemplateContent] = useState('');
+  const [templates, setTemplates] = useState<any[]>([]);
   
   const businessCategories = [
     "RETAIL", "FOOD_AND_GROCERY", "PROFESSIONAL_SERVICES", "BUSINESS_TO_BUSINESS",
     "EDUCATION", "HEALTH_AND_BEAUTY", "TRAVEL_AND_TRANSPORTATION", "ENTERTAINMENT"
   ];
 
-  const handleSaveSettings = () => {
-    // In a real app, this would save the settings to an API
-    toast.success('WhatsApp settings saved successfully');
+  // Fetch templates if connected
+  useEffect(() => {
+    if (isConnected) {
+      fetchTemplates();
+    }
+  }, [isConnected]);
+
+  const fetchTemplates = async () => {
+    if (!isConnected) return;
+
+    try {
+      setIsLoading(true);
+      const service = getWhatsAppService();
+      const response = await service.getTemplates();
+      
+      if (response && response.data) {
+        setTemplates(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch templates:', error);
+      toast.error('Failed to fetch message templates');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleAddTemplate = (e: React.FormEvent) => {
+  const handleSaveSettings = async () => {
+    try {
+      setIsLoading(true);
+      
+      // If connected to WhatsApp API, update through the API
+      if (isConnected) {
+        const service = getWhatsAppService();
+        await service.updateBusinessProfile({
+          about: systemSettings.businessName,
+          description: systemSettings.businessDescription
+        });
+        toast.success('WhatsApp settings saved through API successfully');
+      } else {
+        // Otherwise just update local state
+        toast.success('WhatsApp settings saved locally');
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast.error('Failed to save WhatsApp settings');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddTemplate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!templateName || !templateContent) {
       toast.error('Template name and content are required');
       return;
     }
     
-    toast.success(`Template "${templateName}" added successfully`);
-    setTemplateName('');
-    setTemplateContent('');
+    if (!isConnected) {
+      toast.error('You must connect to WhatsApp API first');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const service = getWhatsAppService();
+      
+      // Example template structure - this would need to be adjusted based on actual API docs
+      await service.createTemplate({
+        name: templateName,
+        category: "MARKETING", // Default category
+        components: [
+          {
+            type: "BODY",
+            text: templateContent
+          }
+        ],
+        language: "en_US"
+      });
+      
+      toast.success(`Template "${templateName}" added successfully`);
+      setTemplateName('');
+      setTemplateContent('');
+      
+      // Refresh templates
+      fetchTemplates();
+    } catch (error) {
+      console.error('Failed to add template:', error);
+      toast.error('Failed to add template');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDownloadQR = () => {
-    toast.info('QR code download initiated');
+  const handleVerifyConnection = async () => {
+    try {
+      setIsLoading(true);
+      const success = await connect();
+      
+      if (success) {
+        toast.success('Successfully connected to WhatsApp Business API');
+      } else {
+        toast.error('Failed to connect to WhatsApp API. Check credentials.');
+      }
+    } catch (error) {
+      console.error('Connection verification error:', error);
+      toast.error('Connection verification failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const updateSystemSetting = (key: string, value: any) => {
@@ -83,6 +183,18 @@ const WhatsAppSettingsPage = () => {
         <p className="text-muted-foreground">
           Configure system-wide WhatsApp Business API integration settings
         </p>
+        
+        {!isConnected && (
+          <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-md p-4 flex items-start gap-3">
+            <AlertTriangle className="text-yellow-600 h-5 w-5 mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="text-yellow-800 font-medium">Not connected to WhatsApp API</h3>
+              <p className="text-yellow-700">
+                Enter your API credentials and click "Verify Connection" to connect to the WhatsApp Business API.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       <Tabs defaultValue="account" className="w-full">
@@ -111,21 +223,55 @@ const WhatsAppSettingsPage = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="api-key">API Key</Label>
+                <Label htmlFor="api-key">API Key (Access Token)</Label>
                 <div className="flex gap-2">
                   <Input
                     id="api-key"
                     type="password"
                     placeholder="Enter your WhatsApp Business API key"
-                    value={systemSettings.apiKey}
-                    onChange={(e) => updateSystemSetting('apiKey', e.target.value)}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    disabled={isLoading || isConnected}
                   />
-                  <Button variant="secondary" size="sm" className="whitespace-nowrap">
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="whitespace-nowrap"
+                    disabled={isLoading || isConnected}
+                  >
                     Generate New
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   The API key is used to authenticate requests to the WhatsApp Business API
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone-number-id">Phone Number ID</Label>
+                <Input
+                  id="phone-number-id"
+                  placeholder="Enter your WhatsApp Phone Number ID"
+                  value={phoneNumberId}
+                  onChange={(e) => setPhoneNumberId(e.target.value)}
+                  disabled={isLoading || isConnected}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Found in the Meta Business Dashboard for your WhatsApp account
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="business-account-id">Business Account ID</Label>
+                <Input
+                  id="business-account-id"
+                  placeholder="Enter your WhatsApp Business Account ID"
+                  value={businessAccountId}
+                  onChange={(e) => setBusinessAccountId(e.target.value)}
+                  disabled={isLoading || isConnected}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Found in the Meta Business Dashboard for your WhatsApp account
                 </p>
               </div>
               
@@ -147,10 +293,25 @@ const WhatsAppSettingsPage = () => {
               </div>
 
               <div className="pt-4">
-                <Button onClick={handleDownloadQR} variant="outline" className="w-full">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download QR Code for Connection
-                </Button>
+                {!isConnected ? (
+                  <Button 
+                    onClick={handleVerifyConnection} 
+                    variant="default" 
+                    className="w-full"
+                    disabled={!apiKey || !phoneNumberId || !businessAccountId || isLoading}
+                  >
+                    {isLoading ? "Verifying..." : "Verify Connection"}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => toast.success("QR code download initiated")} 
+                    variant="outline" 
+                    className="w-full"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download QR Code for Connection
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -167,6 +328,7 @@ const WhatsAppSettingsPage = () => {
                   id="phone-number"
                   value={systemSettings.phoneNumber}
                   onChange={(e) => updateSystemSetting('phoneNumber', e.target.value)}
+                  disabled={isLoading || !isConnected}
                 />
               </div>
               
@@ -176,6 +338,7 @@ const WhatsAppSettingsPage = () => {
                   id="business-name"
                   value={systemSettings.businessName}
                   onChange={(e) => updateSystemSetting('businessName', e.target.value)}
+                  disabled={isLoading || !isConnected}
                 />
               </div>
 
@@ -184,6 +347,7 @@ const WhatsAppSettingsPage = () => {
                 <Select 
                   onValueChange={(value) => updateSystemSetting('businessCategory', value)}
                   defaultValue="RETAIL"
+                  disabled={isLoading || !isConnected}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
@@ -205,11 +369,16 @@ const WhatsAppSettingsPage = () => {
                   value={systemSettings.businessDescription}
                   onChange={(e) => updateSystemSetting('businessDescription', e.target.value)}
                   rows={3}
+                  disabled={isLoading || !isConnected}
                 />
               </div>
             </CardContent>
             <CardFooter className="border-t pt-4">
-              <Button onClick={handleSaveSettings} className="w-full">
+              <Button 
+                onClick={handleSaveSettings} 
+                className="w-full"
+                disabled={isLoading || !isConnected}
+              >
                 <Save className="mr-2 h-4 w-4" /> Save Business Profile
               </Button>
             </CardFooter>
@@ -231,6 +400,7 @@ const WhatsAppSettingsPage = () => {
                     placeholder="e.g., welcome_message"
                     value={templateName}
                     onChange={(e) => setTemplateName(e.target.value)}
+                    disabled={isLoading || !isConnected}
                   />
                 </div>
                 
@@ -242,6 +412,7 @@ const WhatsAppSettingsPage = () => {
                     rows={5}
                     value={templateContent}
                     onChange={(e) => setTemplateContent(e.target.value)}
+                    disabled={isLoading || !isConnected}
                   />
                   <p className="text-xs text-muted-foreground">
                     Use {'{{'} 1 {'}}' }, {'{{'} 2 {'}}' }, etc. as placeholders for dynamic content
@@ -250,18 +421,29 @@ const WhatsAppSettingsPage = () => {
 
                 <div className="flex justify-between items-center">
                   <div className="space-x-2">
-                    <select className="text-sm border rounded p-1">
+                    <select 
+                      className="text-sm border rounded p-1" 
+                      disabled={isLoading || !isConnected}
+                    >
                       <option value="marketing">Marketing</option>
                       <option value="utility">Utility</option>
                       <option value="authentication">Authentication</option>
                     </select>
-                    <select className="text-sm border rounded p-1">
+                    <select 
+                      className="text-sm border rounded p-1"
+                      disabled={isLoading || !isConnected}
+                    >
                       <option value="en_US">English (US)</option>
                       <option value="es">Spanish</option>
                       <option value="fr">French</option>
                     </select>
                   </div>
-                  <Button type="submit">Add Template</Button>
+                  <Button 
+                    type="submit"
+                    disabled={isLoading || !isConnected}
+                  >
+                    {isLoading ? "Adding..." : "Add Template"}
+                  </Button>
                 </div>
               </form>
 
@@ -269,12 +451,23 @@ const WhatsAppSettingsPage = () => {
 
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">System Templates</h3>
+                
+                {!isConnected && (
+                  <p className="text-muted-foreground text-sm">
+                    Connect to WhatsApp API to view and manage templates
+                  </p>
+                )}
+                
                 <div className="border rounded-md divide-y">
-                  {['welcome_message', 'order_confirmation', 'appointment_reminder'].map((template) => (
-                    <div key={template} className="flex justify-between items-center p-4">
+                  {(templates.length > 0 ? templates : isConnected ? ['welcome_message', 'order_confirmation', 'appointment_reminder'] : []).map((template, index) => (
+                    <div key={index} className="flex justify-between items-center p-4">
                       <div>
-                        <h4 className="font-medium">{template}</h4>
-                        <p className="text-sm text-muted-foreground">Utility • Approved</p>
+                        <h4 className="font-medium">
+                          {typeof template === 'string' ? template : template.name}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Utility • Approved
+                        </p>
                       </div>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm">Edit</Button>

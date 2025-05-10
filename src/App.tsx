@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TenantProvider } from "@/contexts/TenantContext";
+import { WhatsAppProvider } from "@/contexts/WhatsAppContext";
 
 // Layout
 import AppLayout from "@/components/layout/AppLayout";
@@ -65,92 +66,94 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <TenantProvider>
-              <Routes>
-                {/* Home/Landing Page */}
-                <Route path="/" element={<SuperWebsite />} />
-                
-                {/* Public Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Registration />} />
-                <Route path="/unauthorized" element={<Unauthorized />} />
-                
-                {/* Super Admin Routes - Now protected with admin role */}
-                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                  <Route path="/superadmin" element={<SuperAdminLayout />}>
-                    <Route index element={<SuperAdminDashboard />} />
-                    <Route path="organizations" element={<OrganizationsList />} />
-                    <Route path="subscription-plans" element={<SubscriptionPlans />} />
-                    <Route path="payment-gateways" element={<PaymentGateways />} />
-                    <Route path="smtp-settings" element={<SMTPSettings />} />
-                    <Route path="whatsapp-settings" element={<WhatsAppSettings />} />
-                    <Route path="settings" element={<AdvancedSettings />} />
-                  </Route>
-                </Route>
-                
-                {/* Protected Routes */}
-                <Route element={<AppLayout />}>
-                  {/* Dashboard is now at /dashboard instead of / */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                  </Route>
+              <WhatsAppProvider>
+                <Routes>
+                  {/* Home/Landing Page */}
+                  <Route path="/" element={<SuperWebsite />} />
                   
-                  {/* Organization Management - accessible to all authenticated users */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/organizations" element={<OrganizationsPage />} />
-                  </Route>
+                  {/* Public Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Registration />} />
+                  <Route path="/unauthorized" element={<Unauthorized />} />
                   
-                  {/* Role-specific routes */}
-                  
-                  {/* Admin Routes */}
+                  {/* Super Admin Routes - Now protected with admin role */}
                   <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                    <Route path="/users" element={<UserManagement />} />
-                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/superadmin" element={<SuperAdminLayout />}>
+                      <Route index element={<SuperAdminDashboard />} />
+                      <Route path="organizations" element={<OrganizationsList />} />
+                      <Route path="subscription-plans" element={<SubscriptionPlans />} />
+                      <Route path="payment-gateways" element={<PaymentGateways />} />
+                      <Route path="smtp-settings" element={<SMTPSettings />} />
+                      <Route path="whatsapp-settings" element={<WhatsAppSettings />} />
+                      <Route path="settings" element={<AdvancedSettings />} />
+                    </Route>
                   </Route>
                   
-                  {/* Cashier Routes */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin", "cashier"]} />}>
-                    <Route path="/pos" element={<PointOfSale />} />
+                  {/* Protected Routes */}
+                  <Route element={<AppLayout />}>
+                    {/* Dashboard is now at /dashboard instead of / */}
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                    </Route>
+                    
+                    {/* Organization Management - accessible to all authenticated users */}
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/organizations" element={<OrganizationsPage />} />
+                    </Route>
+                    
+                    {/* Role-specific routes */}
+                    
+                    {/* Admin Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                      <Route path="/users" element={<UserManagement />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                    </Route>
+                    
+                    {/* Cashier Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin", "cashier"]} />}>
+                      <Route path="/pos" element={<PointOfSale />} />
+                    </Route>
+                    
+                    {/* Accountant Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin", "accountant"]} />}>
+                      <Route path="/accounting" element={<Accounting />} />
+                      <Route path="/tax" element={<TaxManagement />} />
+                      <Route path="/reports" element={<Reports />} />
+                    </Route>
+                    
+                    {/* Inventory Manager Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin", "inventory_manager"]} />}>
+                      <Route path="/inventory" element={<Inventory />} />
+                    </Route>
+                    
+                    {/* Sales Manager Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                      <Route path="/sales" element={<Sales />} />
+                    </Route>
+                    
+                    {/* Purchase Manager Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin", "purchase_manager"]} />}>
+                      <Route path="/purchases" element={<Purchases />} />
+                    </Route>
+                    
+                    {/* CRM Routes - Accessible to multiple roles */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
+                      <Route path="/crm" element={<CRM />} />
+                    </Route>
+                    
+                    {/* WhatsApp Integration Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
+                      <Route path="/whatsapp" element={<WhatsApp />} />
+                    </Route>
+                    
+                    {/* Subscription Page */}
+                    <Route path="/subscription" element={<SubscriptionPage />} />
+                    
+                    {/* 404 Not Found */}
+                    <Route path="*" element={<NotFound />} />
                   </Route>
-                  
-                  {/* Accountant Routes */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin", "accountant"]} />}>
-                    <Route path="/accounting" element={<Accounting />} />
-                    <Route path="/tax" element={<TaxManagement />} />
-                    <Route path="/reports" element={<Reports />} />
-                  </Route>
-                  
-                  {/* Inventory Manager Routes */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin", "inventory_manager"]} />}>
-                    <Route path="/inventory" element={<Inventory />} />
-                  </Route>
-                  
-                  {/* Sales Manager Routes */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                    <Route path="/sales" element={<Sales />} />
-                  </Route>
-                  
-                  {/* Purchase Manager Routes */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin", "purchase_manager"]} />}>
-                    <Route path="/purchases" element={<Purchases />} />
-                  </Route>
-                  
-                  {/* CRM Routes - Accessible to multiple roles */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
-                    <Route path="/crm" element={<CRM />} />
-                  </Route>
-                  
-                  {/* WhatsApp Integration Routes */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
-                    <Route path="/whatsapp" element={<WhatsApp />} />
-                  </Route>
-                  
-                  {/* Subscription Page */}
-                  <Route path="/subscription" element={<SubscriptionPage />} />
-                  
-                  {/* 404 Not Found */}
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
+                </Routes>
+              </WhatsAppProvider>
             </TenantProvider>
           </AuthProvider>
         </BrowserRouter>
