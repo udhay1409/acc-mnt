@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -52,9 +51,12 @@ import WhatsAppSettings from "@/pages/superadmin/WhatsAppSettings";
 // Not Found
 import NotFound from "./pages/NotFound";
 
+// Subscription Page
+import SubscriptionPage from './pages/SubscriptionPage';
+
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -136,6 +138,9 @@ const App = () => {
                   <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
                     <Route path="/whatsapp" element={<WhatsApp />} />
                   </Route>
+                  
+                  {/* Subscription Page */}
+                  <Route path="/subscription" element={<SubscriptionPage />} />
                   
                   {/* 404 Not Found */}
                   <Route path="*" element={<NotFound />} />
