@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Shield } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -40,19 +40,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-bizblue-500">BizSuite</h2>
+          <div className="flex justify-center">
+            <Shield className="h-12 w-12 text-bizblue-500" />
+          </div>
+          <h2 className="mt-4 text-3xl font-bold bg-gradient-to-r from-bizblue-500 to-bizteal-500 bg-clip-text text-transparent">BizSuite</h2>
           <p className="mt-2 text-sm text-gray-600">
             Comprehensive Business Management Software
           </p>
         </div>
         
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl">Sign in to your account</CardTitle>
-            <CardDescription>
+        <Card className="shadow-xl border-slate-200">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Sign in to your account</CardTitle>
+            <CardDescription className="text-center">
               Enter your credentials to access the system
             </CardDescription>
           </CardHeader>
@@ -60,7 +63,7 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {error && (
-                <Alert variant="destructive">
+                <Alert variant="destructive" className="animate-fadeIn">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
@@ -73,6 +76,8 @@ const Login = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   autoComplete="username"
+                  className="bg-white"
+                  placeholder="Enter your username"
                   required
                 />
               </div>
@@ -85,26 +90,28 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
+                  className="bg-white"
+                  placeholder="Enter your password"
                   required
                 />
               </div>
               
-              <div className="text-xs text-gray-500 mt-2">
-                <p>Demo Accounts:</p>
-                <ul className="list-disc list-inside space-y-1 mt-1">
-                  <li>admin / admin123</li>
-                  <li>cashier / cashier123</li>
-                  <li>accountant / accountant123</li>
-                  <li>inventory / inventory123</li>
-                  <li>purchase / purchase123</li>
+              <div className="text-sm text-gray-600 border border-slate-200 rounded-lg p-3 bg-slate-50">
+                <p className="font-medium mb-1">Demo Accounts:</p>
+                <ul className="space-y-1 ml-4 list-disc">
+                  <li><span className="font-medium">Admin (with Super Admin access):</span> admin / admin123</li>
+                  <li>Cashier: cashier / cashier123</li>
+                  <li>Accountant: accountant / accountant123</li>
+                  <li>Inventory: inventory / inventory123</li>
+                  <li>Purchase: purchase / purchase123</li>
                 </ul>
               </div>
             </CardContent>
             
-            <CardFooter>
+            <CardFooter className="flex flex-col gap-3">
               <Button 
                 type="submit" 
-                className="w-full bg-bizblue-500 hover:bg-bizblue-700" 
+                className="w-full py-6 bg-gradient-to-r from-bizblue-500 to-bizteal-500 hover:from-bizblue-600 hover:to-bizteal-600" 
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -116,6 +123,9 @@ const Login = () => {
                   'Sign In'
                 )}
               </Button>
+              <div className="text-center text-sm text-slate-500">
+                <p>Use the admin account credentials for Super Admin access</p>
+              </div>
             </CardFooter>
           </form>
         </Card>

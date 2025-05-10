@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -71,15 +72,17 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 
-                {/* Super Admin Routes */}
-                <Route path="/superadmin" element={<SuperAdminLayout />}>
-                  <Route index element={<SuperAdminDashboard />} />
-                  <Route path="organizations" element={<OrganizationsList />} />
-                  <Route path="subscription-plans" element={<SubscriptionPlans />} />
-                  <Route path="payment-gateways" element={<PaymentGateways />} />
-                  <Route path="smtp-settings" element={<SMTPSettings />} />
-                  <Route path="whatsapp-settings" element={<WhatsAppSettings />} />
-                  <Route path="settings" element={<AdvancedSettings />} />
+                {/* Super Admin Routes - Now protected with admin role */}
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  <Route path="/superadmin" element={<SuperAdminLayout />}>
+                    <Route index element={<SuperAdminDashboard />} />
+                    <Route path="organizations" element={<OrganizationsList />} />
+                    <Route path="subscription-plans" element={<SubscriptionPlans />} />
+                    <Route path="payment-gateways" element={<PaymentGateways />} />
+                    <Route path="smtp-settings" element={<SMTPSettings />} />
+                    <Route path="whatsapp-settings" element={<WhatsAppSettings />} />
+                    <Route path="settings" element={<AdvancedSettings />} />
+                  </Route>
                 </Route>
                 
                 {/* Protected Routes */}
