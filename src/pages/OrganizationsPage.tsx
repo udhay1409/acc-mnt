@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTenant } from '@/contexts/TenantContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -136,11 +135,6 @@ const OrganizationCard = ({ organization, isActive, onSwitch }: OrganizationCard
         <p className="text-muted-foreground capitalize">
           Status: {organization.status}
         </p>
-        {organization.domain && (
-          <p className="text-muted-foreground mt-1">
-            Domain: {organization.domain}
-          </p>
-        )}
       </CardContent>
       <CardFooter className="flex justify-between border-t pt-3 pb-3">
         <div className="flex space-x-2">

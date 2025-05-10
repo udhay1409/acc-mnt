@@ -4,23 +4,24 @@ import { Organization } from "@/models/organization";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 import { createAdminUser } from "./userService";
+import { ApplicationModule } from "@/models/superadmin";
 
 // Mock plans data - in a real application, this would be fetched from a database
 const mockPlans = [
   {
     id: "basic",
     userLimit: 10,
-    modules: ['inventory', 'pos', 'sales']
+    modules: ['inventory', 'pos', 'sales'] as ApplicationModule[]
   },
   {
     id: "standard",
     userLimit: 25,
-    modules: ['inventory', 'pos', 'sales', 'purchases', 'crm', 'reports']
+    modules: ['inventory', 'pos', 'sales', 'purchases', 'crm', 'reports'] as ApplicationModule[]
   },
   {
     id: "premium", 
     userLimit: 0,  // Unlimited
-    modules: ['inventory', 'pos', 'sales', 'purchases', 'accounting', 'crm', 'whatsapp', 'reports']
+    modules: ['inventory', 'pos', 'sales', 'purchases', 'accounting', 'crm', 'whatsapp', 'reports'] as ApplicationModule[]
   }
 ];
 
