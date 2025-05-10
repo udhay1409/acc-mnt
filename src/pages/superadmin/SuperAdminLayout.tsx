@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { Shield, Building, Package, CreditCard, Settings } from 'lucide-react';
+import { Shield, Building, Package, CreditCard, Settings, Mail, WhatsApp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ const SuperAdminLayout = () => {
     { href: "/superadmin/organizations", label: "Organizations", icon: <Building className="mr-2 h-4 w-4" /> },
     { href: "/superadmin/subscription-plans", label: "Subscription Plans", icon: <Package className="mr-2 h-4 w-4" /> },
     { href: "/superadmin/payment-gateways", label: "Payment Gateways", icon: <CreditCard className="mr-2 h-4 w-4" /> },
+    { href: "/superadmin/smtp-settings", label: "SMTP Settings", icon: <Mail className="mr-2 h-4 w-4" /> },
+    { href: "/superadmin/whatsapp-settings", label: "WhatsApp Settings", icon: <WhatsApp className="mr-2 h-4 w-4" /> },
     { href: "/superadmin/settings", label: "Advanced Settings", icon: <Settings className="mr-2 h-4 w-4" /> },
   ];
 

@@ -48,6 +48,18 @@ export interface OrganizationSubscription {
   updatedAt: string;
 }
 
+export interface SMTPSettings {
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  fromEmail: string;
+  fromName: string;
+  secure: boolean;
+  isActive: boolean;
+  updatedAt: string;
+}
+
 export interface SuperAdminSettings {
   id: string;
   requireEmailVerification: boolean;
@@ -58,6 +70,7 @@ export interface SuperAdminSettings {
   faviconUrl?: string;
   lightThemeColors?: ThemeColors;
   darkThemeColors?: ThemeColors;
+  smtp?: SMTPSettings;
   updatedAt: string;
 }
 

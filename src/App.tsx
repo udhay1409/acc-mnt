@@ -43,6 +43,8 @@ import OrganizationsList from "@/pages/superadmin/OrganizationsList";
 import SubscriptionPlans from "@/pages/superadmin/SubscriptionPlans";
 import PaymentGateways from "@/pages/superadmin/PaymentGateways";
 import AdvancedSettings from "@/pages/superadmin/AdvancedSettings";
+import SMTPSettings from "@/pages/superadmin/SMTPSettings";
+import WhatsAppSettings from "@/pages/superadmin/WhatsAppSettings";
 
 // Not Found
 import NotFound from "./pages/NotFound";
@@ -67,6 +69,8 @@ const App = () => {
                   <Route path="organizations" element={<OrganizationsList />} />
                   <Route path="subscription-plans" element={<SubscriptionPlans />} />
                   <Route path="payment-gateways" element={<PaymentGateways />} />
+                  <Route path="smtp-settings" element={<SMTPSettings />} />
+                  <Route path="whatsapp-settings" element={<WhatsAppSettings />} />
                   <Route path="settings" element={<AdvancedSettings />} />
                 </Route>
                 
