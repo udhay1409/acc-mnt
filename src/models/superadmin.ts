@@ -1,0 +1,78 @@
+
+import { Organization } from './organization';
+
+export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid' | 'incomplete' | 'incomplete_expired';
+export type PaymentGateway = 'razorpay' | 'stripe' | 'none';
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string; // e.g., "INR", "USD"
+  interval: 'monthly' | 'quarterly' | 'yearly';
+  features: string[];
+  isPopular?: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaymentGatewaySettings {
+  gateway: PaymentGateway;
+  apiKey: string;
+  apiSecret: string;
+  isTestMode: boolean;
+  webhookSecret?: string;
+  isActive: boolean;
+}
+
+export interface OrganizationSubscription {
+  id: string;
+  organizationId: string;
+  planId: string;
+  planName: string;
+  price: number;
+  currency: string;
+  status: SubscriptionStatus;
+  startDate: string;
+  endDate: string;
+  trialEndDate?: string;
+  cancelAtPeriodEnd: boolean;
+  paymentGateway: PaymentGateway;
+  gatewaySubscriptionId?: string;
+  gatewayCustomerId?: string;
+  lastPaymentDate?: string;
+  nextPaymentDate?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SuperAdminSettings {
+  id: string;
+  requireEmailVerification: boolean;
+  allowOrganizationCreation: boolean;
+  defaultTrialDays: number;
+  enforceStrongPasswords: boolean;
+  logoUrl?: string;
+  faviconUrl?: string;
+  lightThemeColors?: ThemeColors;
+  darkThemeColors?: ThemeColors;
+  updatedAt: string;
+}
+
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+  background: string;
+  text: string;
+}
+
+export interface OrganizationCreationRequest {
+  name: string;
+  adminEmail: string;
+  adminName: string;
+  planId: string;
+  trialDays?: number;
+}

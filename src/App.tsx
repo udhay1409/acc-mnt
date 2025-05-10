@@ -10,6 +10,7 @@ import { TenantProvider } from "@/contexts/TenantContext";
 // Layout
 import AppLayout from "@/components/layout/AppLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import SuperAdminLayout from "@/pages/superadmin/SuperAdminLayout";
 
 // Auth Pages
 import Login from "@/pages/Login";
@@ -36,6 +37,13 @@ import TaxManagement from "@/pages/modules/TaxManagement";
 import Reports from "@/pages/modules/Reports";
 import SettingsPage from "@/pages/modules/Settings";
 
+// Super Admin Pages
+import SuperAdminDashboard from "@/pages/superadmin/SuperAdminDashboard";
+import OrganizationsList from "@/pages/superadmin/OrganizationsList";
+import SubscriptionPlans from "@/pages/superadmin/SubscriptionPlans";
+import PaymentGateways from "@/pages/superadmin/PaymentGateways";
+import AdvancedSettings from "@/pages/superadmin/AdvancedSettings";
+
 // Not Found
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +60,15 @@ const App = () => {
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
+                
+                {/* Super Admin Routes */}
+                <Route path="/superadmin" element={<SuperAdminLayout />}>
+                  <Route index element={<SuperAdminDashboard />} />
+                  <Route path="organizations" element={<OrganizationsList />} />
+                  <Route path="subscription-plans" element={<SubscriptionPlans />} />
+                  <Route path="payment-gateways" element={<PaymentGateways />} />
+                  <Route path="settings" element={<AdvancedSettings />} />
+                </Route>
                 
                 {/* Protected Routes */}
                 <Route element={<AppLayout />}>
