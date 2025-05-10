@@ -28,7 +28,7 @@ const WhatsAppDashboard = () => {
   };
 
   // Simulated verification status - this would come from your API
-  const verificationStatus: SignupStatus = 'pending';
+  const verificationStatus = 'pending' as SignupStatus;
 
   // Fix the border color conditional to avoid type errors
   const cardBorderClass = verificationStatus === 'verified' 
