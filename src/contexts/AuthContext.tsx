@@ -28,7 +28,7 @@ interface AuthContextType {
   checkAccess: (allowedRoles: UserRole[]) => boolean;
 }
 
-// Mock user data for demo (in real app this would come from API/backend)
+// Mock user data for demo (in a real app this would come from API/backend)
 const MOCK_USERS = [
   {
     id: "1",
@@ -152,9 +152,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('bizapp_user', JSON.stringify(safeUser));
       
       toast.success(`Welcome, ${safeUser.name}!`);
+      
+      // Navigate to dashboard after successful login
       navigate('/dashboard');
     } catch (error: any) {
+      console.error("Login error:", error);
       toast.error(error.message || "Login failed");
+      throw error; // Re-throw the error so it can be caught in the login component
     } finally {
       setIsLoading(false);
     }

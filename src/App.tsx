@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -69,7 +68,7 @@ function App() {
               <WhatsAppProvider>
                 <Routes>
                   {/* Home/Landing Page */}
-                  <Route path="/" element={<SuperWebsite />} />
+                  <Route path="/" element={<Navigate to="/login" replace />} />
                   
                   {/* Public Routes */}
                   <Route path="/login" element={<Login />} />
@@ -91,12 +90,12 @@ function App() {
                   
                   {/* Protected Routes */}
                   <Route element={<AppLayout />}>
-                    {/* Dashboard is now at /dashboard instead of / */}
+                    {/* Dashboard is accessible to all authenticated users */}
                     <Route element={<ProtectedRoute />}>
                       <Route path="/dashboard" element={<Dashboard />} />
                     </Route>
                     
-                    {/* Organization Management - accessible to all authenticated users */}
+                    {/* Other protected routes */}
                     <Route element={<ProtectedRoute />}>
                       <Route path="/organizations" element={<OrganizationsPage />} />
                     </Route>
