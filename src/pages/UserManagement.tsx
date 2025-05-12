@@ -18,7 +18,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
@@ -34,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { UserRole } from '@/contexts/AuthContext';
+import { UserRole, useAuth } from '@/contexts/AuthContext';
 import { 
   User as UserIcon, 
   Plus, 
@@ -113,6 +112,8 @@ const UserManagementPage: React.FC = () => {
   });
   
   const { toast } = useToast();
+  const { user: currentLoggedInUser } = useAuth();
+  const isSuperAdmin = currentLoggedInUser?.role === 'super_admin';
   
   // Pagination settings
   const usersPerPage = 6;
@@ -214,6 +215,26 @@ const UserManagementPage: React.FC = () => {
       });
       return;
     }
+
+    // Check if user is attempting to create an admin without being a super_admin
+    if (formData.role === 'admin' && !isSuperAdmin) {
+      toast({
+        title: "Permission denied",
+        description: "Only Super Admins can create Admin users.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user is attempting to create a super_admin
+    if (formData.role === 'super_admin') {
+      toast({
+        title: "Permission denied",
+        description: "Super Admin users cannot be created through the UI.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     // Add user logic
     const newUser: User = {
@@ -238,6 +259,26 @@ const UserManagementPage: React.FC = () => {
   // Update existing user
   const handleUpdateUser = () => {
     if (!currentUser) return;
+
+    // Check if user is attempting to change role to admin without being a super_admin
+    if (formData.role === 'admin' && currentUser.role !== 'admin' && !isSuperAdmin) {
+      toast({
+        title: "Permission denied",
+        description: "Only Super Admins can promote users to Admin role.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user is attempting to change role to super_admin
+    if (formData.role === 'super_admin') {
+      toast({
+        title: "Permission denied",
+        description: "Users cannot be promoted to Super Admin through the UI.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     const updatedUsers = users.map(user => {
       if (user.id === currentUser.id) {
@@ -335,6 +376,7 @@ const UserManagementPage: React.FC = () => {
   
   // Get formatted role text
   const formatRole = (role: UserRole) => {
+    if (role === 'super_admin') return 'Super Admin';
     return role.replace('_', ' ').split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
@@ -343,6 +385,8 @@ const UserManagementPage: React.FC = () => {
   // Get role badge color
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role) {
+      case 'super_admin':
+        return "bg-purple-200 text-purple-900 hover:bg-purple-300";
       case 'admin':
         return "bg-red-100 text-red-800 hover:bg-red-200";
       case 'cashier':
@@ -621,13 +665,18 @@ const UserManagementPage: React.FC = () => {
                   <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  {isSuperAdmin && <SelectItem value="admin">Admin</SelectItem>}
                   <SelectItem value="cashier">Cashier</SelectItem>
                   <SelectItem value="accountant">Accountant</SelectItem>
                   <SelectItem value="inventory_manager">Inventory Manager</SelectItem>
                   <SelectItem value="purchase_manager">Purchase Manager</SelectItem>
                 </SelectContent>
               </Select>
+              {isSuperAdmin && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  As a Super Admin, you can create Admin users
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -710,13 +759,18 @@ const UserManagementPage: React.FC = () => {
                   <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  {isSuperAdmin && <SelectItem value="admin">Admin</SelectItem>}
                   <SelectItem value="cashier">Cashier</SelectItem>
                   <SelectItem value="accountant">Accountant</SelectItem>
                   <SelectItem value="inventory_manager">Inventory Manager</SelectItem>
                   <SelectItem value="purchase_manager">Purchase Manager</SelectItem>
                 </SelectContent>
               </Select>
+              {isSuperAdmin && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  As a Super Admin, you can change users to Admin role
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-2 pt-2">
               <Switch 

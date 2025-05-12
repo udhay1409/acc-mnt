@@ -1,10 +1,9 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 // User roles 
-export type UserRole = 'admin' | 'cashier' | 'accountant' | 'inventory_manager' | 'purchase_manager';
+export type UserRole = 'super_admin' | 'admin' | 'cashier' | 'accountant' | 'inventory_manager' | 'purchase_manager';
 
 // User object structure
 export interface User {
@@ -32,6 +31,17 @@ interface AuthContextType {
 const MOCK_USERS = [
   {
     id: "1",
+    name: "Super Admin User",
+    email: "superadmin@bizapp.com",
+    phone: "123-456-7890",
+    username: "superadmin",
+    password: "superadmin123", // In a real app, this would be hashed
+    role: "super_admin" as UserRole,
+    status: "active" as const,
+    createdAt: "2023-01-01T00:00:00.000Z"
+  },
+  {
+    id: "2",
     name: "Admin User",
     email: "admin@bizapp.com",
     phone: "123-456-7890",
@@ -42,7 +52,7 @@ const MOCK_USERS = [
     createdAt: "2023-01-01T00:00:00.000Z"
   },
   {
-    id: "2",
+    id: "3",
     name: "Cashier User",
     email: "cashier@bizapp.com",
     phone: "123-456-7891", 
@@ -53,7 +63,7 @@ const MOCK_USERS = [
     createdAt: "2023-01-02T00:00:00.000Z"
   },
   {
-    id: "3",
+    id: "4",
     name: "Accountant User",
     email: "accountant@bizapp.com",
     phone: "123-456-7892",
@@ -64,7 +74,7 @@ const MOCK_USERS = [
     createdAt: "2023-01-03T00:00:00.000Z"
   },
   {
-    id: "4",
+    id: "5",
     name: "Inventory User",
     email: "inventory@bizapp.com",
     phone: "123-456-7893",
@@ -75,7 +85,7 @@ const MOCK_USERS = [
     createdAt: "2023-01-04T00:00:00.000Z"
   },
   {
-    id: "5",
+    id: "6",
     name: "Purchase User",
     email: "purchase@bizapp.com",
     phone: "123-456-7894",
@@ -86,7 +96,7 @@ const MOCK_USERS = [
     createdAt: "2023-01-05T00:00:00.000Z"
   },
   {
-    id: "6",
+    id: "7",
     name: "Inactive User",
     email: "inactive@bizapp.com",
     phone: "123-456-7895",

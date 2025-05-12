@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -75,8 +76,8 @@ function App() {
                   <Route path="/register" element={<Registration />} />
                   <Route path="/unauthorized" element={<Unauthorized />} />
                   
-                  {/* Super Admin Routes - Now protected with admin role */}
-                  <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  {/* Super Admin Routes - Now protected with super_admin role */}
+                  <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
                     <Route path="/superadmin" element={<SuperAdminLayout />}>
                       <Route index element={<SuperAdminDashboard />} />
                       <Route path="organizations" element={<OrganizationsList />} />
@@ -102,46 +103,46 @@ function App() {
                     
                     {/* Role-specific routes */}
                     
-                    {/* Admin Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                    {/* Admin Routes - Now both super_admin and admin can access these */}
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin"]} />}>
                       <Route path="/users" element={<UserManagement />} />
                       <Route path="/settings" element={<SettingsPage />} />
                     </Route>
                     
                     {/* Cashier Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin", "cashier"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "cashier"]} />}>
                       <Route path="/pos" element={<PointOfSale />} />
                     </Route>
                     
                     {/* Accountant Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin", "accountant"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "accountant"]} />}>
                       <Route path="/accounting" element={<Accounting />} />
                       <Route path="/tax" element={<TaxManagement />} />
                       <Route path="/reports" element={<Reports />} />
                     </Route>
                     
                     {/* Inventory Manager Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin", "inventory_manager"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "inventory_manager"]} />}>
                       <Route path="/inventory" element={<Inventory />} />
                     </Route>
                     
                     {/* Sales Manager Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin"]} />}>
                       <Route path="/sales" element={<Sales />} />
                     </Route>
                     
                     {/* Purchase Manager Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin", "purchase_manager"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "purchase_manager"]} />}>
                       <Route path="/purchases" element={<Purchases />} />
                     </Route>
                     
                     {/* CRM Routes - Accessible to multiple roles */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "accountant", "purchase_manager"]} />}>
                       <Route path="/crm" element={<CRM />} />
                     </Route>
                     
                     {/* WhatsApp Integration Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["admin", "accountant", "purchase_manager"]} />}>
+                    <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "accountant", "purchase_manager"]} />}>
                       <Route path="/whatsapp" element={<WhatsApp />} />
                     </Route>
                     
