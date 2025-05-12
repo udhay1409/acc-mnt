@@ -1,12 +1,15 @@
 
 import React from 'react';
-import { Outlet, NavLink, Link } from 'react-router-dom';
-import { Shield, Building, Package, CreditCard, Settings, Mail, Home } from 'lucide-react';
+import { Outlet, NavLink } from 'react-router-dom';
+import { Shield, Building, Package, CreditCard, Settings, Mail, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SuperAdminLayout = () => {
+  const { logout } = useAuth();
+  
   const navItems = [
     { href: "/superadmin", label: "Dashboard", icon: <Shield className="mr-2 h-4 w-4" /> },
     { href: "/superadmin/organizations", label: "Organizations", icon: <Building className="mr-2 h-4 w-4" /> },
@@ -49,6 +52,16 @@ const SuperAdminLayout = () => {
             </NavLink>
           ))}
         </div>
+        <div className="p-2 mt-auto">
+          <Button 
+            variant="ghost" 
+            className="flex items-center w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
+            onClick={logout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
       </div>
 
       {/* Main content */}
@@ -59,16 +72,14 @@ const SuperAdminLayout = () => {
             Super Admin
           </h1>
           <div className="flex items-center ml-auto gap-4">
-            <Button variant="outline" size="sm" className="mr-2" asChild>
-              <Link to="/">
-                <Home className="mr-2 h-4 w-4" />
-                Website
-              </Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/dashboard">
-                Return to Application
-              </Link>
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={logout}
+              className="flex items-center"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
             </Button>
           </div>
         </header>
