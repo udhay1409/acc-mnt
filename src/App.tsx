@@ -1,12 +1,14 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TenantProvider } from "@/contexts/TenantContext";
 import { WhatsAppProvider } from "@/contexts/WhatsAppContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 // Layout
 import AppLayout from "@/components/layout/AppLayout";
@@ -69,8 +71,11 @@ function App() {
             <TenantProvider>
               <WhatsAppProvider>
                 <Routes>
-                  {/* Home/Landing Page - Intelligent redirect based on role */}
+                  {/* Home/Landing Page is now the SuperWebsite component */}
                   <Route path="/" element={<Index />} />
+                  
+                  {/* Auth Check route - redirects based on auth status */}
+                  <Route path="/auth-check" element={<AuthCheck />} />
                   
                   {/* Public Routes */}
                   <Route path="/login" element={<Login />} />
@@ -164,6 +169,33 @@ function App() {
         <Sonner />
       </TooltipProvider>
     </QueryClientProvider>
+  );
+};
+
+// New AuthCheck component to handle redirects based on authentication status
+const AuthCheck = () => {
+  const { isAuthenticated, user, isLoading } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate('/login');
+      } else if (user?.role === 'super_admin') {
+        navigate('/superadmin');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [navigate, isAuthenticated, user, isLoading]);
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-bizblue-50">
+      <div className="text-center">
+        <Loader2 className="h-10 w-10 animate-spin text-bizblue-500 mx-auto mb-4" />
+        <h1 className="text-2xl font-bold">Loading BizSuite...</h1>
+      </div>
+    </div>
   );
 };
 
