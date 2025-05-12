@@ -7,6 +7,7 @@ import { CreditNote } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
 import { FilePlus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Document } from './types';
 
 const CreditNotesList = () => {
   const [creditNotes, setCreditNotes] = useState<CreditNote[]>(getCreditNotes());
@@ -87,7 +88,7 @@ const CreditNotesList = () => {
       title="Credit Notes"
       description="Manage credit notes from vendors"
       icon={<FilePlus className="h-5 w-5 text-muted-foreground mr-2" />}
-      documents={creditNotes}
+      documents={creditNotes as Document[]}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddCreditNote}
@@ -95,11 +96,14 @@ const CreditNotesList = () => {
       onDelete={(doc) => handleDeleteCreditNote(doc as CreditNote)}
       onView={(doc) => handleViewCreditNote(doc as CreditNote)}
       additionalAction={{
-        label: (doc) => (doc as CreditNote).status === 'approved' ? "Apply" : "Approve",
+        label: (doc) => (doc.status === 'approved' ? "Apply" : "Approve"),
         icon: <FilePlus className="h-4 w-4 text-blue-600" />,
-        onClick: (doc) => (doc as CreditNote).status === 'approved' ? 
-          handleApplyCreditNote(doc as CreditNote) : handleApproveCreditNote(doc as CreditNote),
-        showFor: (doc) => ['draft', 'pending', 'approved'].includes((doc as CreditNote).status)
+        onClick: (doc) => {
+          const creditNote = doc as CreditNote;
+          return creditNote.status === 'approved' ? 
+            handleApplyCreditNote(creditNote) : handleApproveCreditNote(creditNote);
+        },
+        showFor: (doc) => ['draft', 'pending', 'approved'].includes(doc.status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No credit notes found. Create your first credit note to get started."

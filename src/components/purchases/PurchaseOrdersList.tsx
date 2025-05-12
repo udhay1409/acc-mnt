@@ -8,6 +8,7 @@ import { PurchaseOrder } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
 import { ShoppingCart, CheckCircle, Truck } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Document } from './types';
 
 const PurchaseOrdersList = () => {
   const [orders, setOrders] = useState<PurchaseOrder[]>(getPurchaseOrders());
@@ -90,7 +91,7 @@ const PurchaseOrdersList = () => {
       title="Purchase Orders"
       description="Manage purchase orders to your vendors"
       icon={<ShoppingCart className="h-5 w-5 text-muted-foreground mr-2" />}
-      documents={orders}
+      documents={orders as Document[]}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddOrder}
@@ -113,7 +114,7 @@ const PurchaseOrdersList = () => {
           return order.status === 'sent' || order.status === 'approved' ? 
             handleReceiveOrder(order) : handleApproveOrder(order);
         },
-        showFor: (doc) => ['draft', 'pending', 'approved', 'sent'].includes((doc as PurchaseOrder).status)
+        showFor: (doc) => ['draft', 'pending', 'approved', 'sent'].includes(doc.status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No purchase orders found. Create your first purchase order to get started."

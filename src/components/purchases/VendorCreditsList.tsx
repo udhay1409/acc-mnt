@@ -7,6 +7,7 @@ import { VendorCredit } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
 import { FileMinus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Document } from './types';
 
 const VendorCreditsList = () => {
   const [credits, setCredits] = useState<VendorCredit[]>(getVendorCredits());
@@ -74,7 +75,7 @@ const VendorCreditsList = () => {
       title="Vendor Credits"
       description="Manage credits from vendors"
       icon={<FileMinus className="h-5 w-5 text-muted-foreground mr-2" />}
-      documents={credits}
+      documents={credits as Document[]}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddCredit}
@@ -85,7 +86,7 @@ const VendorCreditsList = () => {
         label: "Approve",
         icon: <FileMinus className="h-4 w-4 text-green-600" />,
         onClick: (doc) => handleApproveCredit(doc as VendorCredit),
-        showFor: (doc) => (doc as VendorCredit).status === 'draft' || (doc as VendorCredit).status === 'pending'
+        showFor: (doc) => (doc.status === 'draft' || doc.status === 'pending')
       }}
       statusColors={statusColors}
       emptyStateMessage="No vendor credits found. Create your first vendor credit to get started."

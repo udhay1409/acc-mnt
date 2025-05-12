@@ -7,6 +7,7 @@ import { PurchaseReturn } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
 import { RotateCcw } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Document } from './types';
 
 const PurchaseReturnsList = () => {
   const [returns, setReturns] = useState<PurchaseReturn[]>(getPurchaseReturns());
@@ -87,7 +88,7 @@ const PurchaseReturnsList = () => {
       title="Purchase Returns"
       description="Manage returns to vendors"
       icon={<RotateCcw className="h-5 w-5 text-muted-foreground mr-2" />}
-      documents={returns}
+      documents={returns as Document[]}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddReturn}
@@ -95,11 +96,14 @@ const PurchaseReturnsList = () => {
       onDelete={(doc) => handleDeleteReturn(doc as PurchaseReturn)}
       onView={(doc) => handleViewReturn(doc as PurchaseReturn)}
       additionalAction={{
-        label: (doc) => (doc as PurchaseReturn).status === 'approved' ? "Complete" : "Approve",
+        label: (doc) => (doc.status === 'approved' ? "Complete" : "Approve"),
         icon: <RotateCcw className="h-4 w-4 text-blue-600" />,
-        onClick: (doc) => (doc as PurchaseReturn).status === 'approved' ? 
-          handleCompleteReturn(doc as PurchaseReturn) : handleApproveReturn(doc as PurchaseReturn),
-        showFor: (doc) => ['draft', 'pending', 'approved'].includes((doc as PurchaseReturn).status)
+        onClick: (doc) => {
+          const returnItem = doc as PurchaseReturn;
+          return returnItem.status === 'approved' ? 
+            handleCompleteReturn(returnItem) : handleApproveReturn(returnItem);
+        },
+        showFor: (doc) => ['draft', 'pending', 'approved'].includes(doc.status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No purchase returns found. Create your first purchase return to get started."

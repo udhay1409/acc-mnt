@@ -7,6 +7,7 @@ import { DebitNote } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
 import { FileX } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Document } from './types';
 
 const DebitNotesList = () => {
   const [debitNotes, setDebitNotes] = useState<DebitNote[]>(getDebitNotes());
@@ -87,7 +88,7 @@ const DebitNotesList = () => {
       title="Debit Notes"
       description="Manage debit notes for vendors"
       icon={<FileX className="h-5 w-5 text-muted-foreground mr-2" />}
-      documents={debitNotes}
+      documents={debitNotes as Document[]}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddDebitNote}
@@ -95,11 +96,14 @@ const DebitNotesList = () => {
       onDelete={(doc) => handleDeleteDebitNote(doc as DebitNote)}
       onView={(doc) => handleViewDebitNote(doc as DebitNote)}
       additionalAction={{
-        label: (doc) => (doc as DebitNote).status === 'approved' ? "Apply" : "Approve",
+        label: (doc) => (doc.status === 'approved' ? "Apply" : "Approve"),
         icon: <FileX className="h-4 w-4 text-blue-600" />,
-        onClick: (doc) => (doc as DebitNote).status === 'approved' ? 
-          handleApplyDebitNote(doc as DebitNote) : handleApproveDebitNote(doc as DebitNote),
-        showFor: (doc) => ['draft', 'pending', 'approved'].includes((doc as DebitNote).status)
+        onClick: (doc) => {
+          const debitNote = doc as DebitNote;
+          return debitNote.status === 'approved' ? 
+            handleApplyDebitNote(debitNote) : handleApproveDebitNote(debitNote);
+        },
+        showFor: (doc) => ['draft', 'pending', 'approved'].includes(doc.status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No debit notes found. Create your first debit note to get started."
