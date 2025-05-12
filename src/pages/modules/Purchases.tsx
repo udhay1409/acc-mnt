@@ -26,7 +26,14 @@ import {
 import VendorsList from '@/components/purchases/VendorsList';
 import ExpensesList from '@/components/purchases/ExpensesList';
 import BillsList from '@/components/purchases/BillsList';
-import { Textarea } from '@/components/ui/textarea';
+import RecurringExpensesList from '@/components/purchases/RecurringExpensesList';
+import PurchaseOrdersList from '@/components/purchases/PurchaseOrdersList';
+import PaymentsList from '@/components/purchases/PaymentsList';
+import RecurringBillsList from '@/components/purchases/RecurringBillsList';
+import VendorCreditsList from '@/components/purchases/VendorCreditsList';
+import PurchaseReturnsList from '@/components/purchases/PurchaseReturnsList';
+import CreditNotesList from '@/components/purchases/CreditNotesList';
+import DebitNotesList from '@/components/purchases/DebitNotesList';
 
 // Tab interface for structured tab data
 interface PurchasesTab {
@@ -82,7 +89,6 @@ const Purchases = () => {
         </div>
         
         <div className="mt-6">
-          {/* Render actual components for the tabs we've implemented */}
           <TabsContent value="vendors" className="m-0">
             <VendorsList />
           </TabsContent>
@@ -91,52 +97,43 @@ const Purchases = () => {
             <ExpensesList />
           </TabsContent>
           
+          <TabsContent value="recurring-expenses" className="m-0">
+            <RecurringExpensesList />
+          </TabsContent>
+          
+          <TabsContent value="purchase-orders" className="m-0">
+            <PurchaseOrdersList />
+          </TabsContent>
+          
           <TabsContent value="bills" className="m-0">
             <BillsList />
           </TabsContent>
-
-          {/* Placeholder content for tabs we haven't fully implemented yet */}
-          {purchasesTabs
-            .filter(tab => !['vendors', 'expenses', 'bills'].includes(tab.id))
-            .map((tab) => (
-              <TabsContent key={tab.id} value={tab.id} className="m-0">
-                <PlaceholderContent tabId={tab.id} tabLabel={tab.label} icon={tab.icon} />
-              </TabsContent>
-            ))}
+          
+          <TabsContent value="payments-made" className="m-0">
+            <PaymentsList />
+          </TabsContent>
+          
+          <TabsContent value="recurring-bills" className="m-0">
+            <RecurringBillsList />
+          </TabsContent>
+          
+          <TabsContent value="vendor-credits" className="m-0">
+            <VendorCreditsList />
+          </TabsContent>
+          
+          <TabsContent value="purchase-returns" className="m-0">
+            <PurchaseReturnsList />
+          </TabsContent>
+          
+          <TabsContent value="credit-notes" className="m-0">
+            <CreditNotesList />
+          </TabsContent>
+          
+          <TabsContent value="debit-notes" className="m-0">
+            <DebitNotesList />
+          </TabsContent>
         </div>
       </Tabs>
-    </div>
-  );
-};
-
-// A placeholder component for each tab's content with improved design
-const PlaceholderContent = ({ tabId, tabLabel, icon }: { tabId: string, tabLabel: string, icon: React.ReactNode }) => {
-  return (
-    <div className="border rounded-lg p-8 text-center bg-muted/10">
-      <div className="flex flex-col items-center justify-center max-w-lg mx-auto">
-        <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-          <div className="h-8 w-8 text-primary">
-            {icon}
-          </div>
-        </div>
-        <h3 className="text-xl font-medium mb-2">{tabLabel} Module</h3>
-        <p className="text-muted-foreground mb-6">
-          This section will allow you to manage {tabLabel.toLowerCase()} in your business.
-          Future updates will add functionality to this area.
-        </p>
-        <div className="flex justify-center w-full">
-          <div className="bg-muted/20 w-full max-w-2xl h-64 rounded-lg flex items-center justify-center border border-dashed border-muted-foreground/30">
-            <div className="text-center px-4">
-              <p className="text-muted-foreground mb-4">
-                The {tabLabel} module is under development
-              </p>
-              <button disabled className="bg-primary/70 text-primary-foreground px-4 py-2 rounded opacity-50 cursor-not-allowed">
-                Coming Soon
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
