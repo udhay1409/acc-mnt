@@ -56,6 +56,7 @@ import NotFound from "./pages/NotFound";
 
 // Subscription Page
 import SubscriptionPage from './pages/SubscriptionPage';
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -68,8 +69,8 @@ function App() {
             <TenantProvider>
               <WhatsAppProvider>
                 <Routes>
-                  {/* Home/Landing Page */}
-                  <Route path="/" element={<Navigate to="/login" replace />} />
+                  {/* Home/Landing Page - Intelligent redirect based on role */}
+                  <Route path="/" element={<Index />} />
                   
                   {/* Public Routes */}
                   <Route path="/login" element={<Login />} />

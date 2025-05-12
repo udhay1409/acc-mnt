@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -163,8 +164,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       toast.success(`Welcome, ${safeUser.name}!`);
       
-      // Navigate to dashboard after successful login
-      navigate('/dashboard');
+      // Redirect based on user role
+      if (safeUser.role === 'super_admin') {
+        navigate('/superadmin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(error.message || "Login failed");
