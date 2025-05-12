@@ -94,17 +94,26 @@ const PurchaseOrdersList = () => {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddOrder}
-      onEdit={handleEditOrder}
-      onDelete={handleDeleteOrder}
-      onView={handleViewOrder}
+      onEdit={(doc) => handleEditOrder(doc as PurchaseOrder)}
+      onDelete={(doc) => handleDeleteOrder(doc as PurchaseOrder)}
+      onView={(doc) => handleViewOrder(doc as PurchaseOrder)}
       additionalAction={{
-        label: (order) => order.status === 'sent' || order.status === 'approved' ? "Mark as Received" : "Approve",
-        icon: (order) => order.status === 'sent' || order.status === 'approved' ? 
-          <Truck className="h-4 w-4 text-blue-600" /> : 
-          <CheckCircle className="h-4 w-4 text-green-600" />,
-        onClick: (order) => order.status === 'sent' || order.status === 'approved' ? 
-          handleReceiveOrder(order) : handleApproveOrder(order),
-        showFor: (order) => ['draft', 'pending', 'approved', 'sent'].includes(order.status)
+        label: (doc) => {
+          const order = doc as PurchaseOrder;
+          return order.status === 'sent' || order.status === 'approved' ? "Mark as Received" : "Approve";
+        },
+        icon: (doc) => {
+          const order = doc as PurchaseOrder;
+          return order.status === 'sent' || order.status === 'approved' ? 
+            <Truck className="h-4 w-4 text-blue-600" /> : 
+            <CheckCircle className="h-4 w-4 text-green-600" />;
+        },
+        onClick: (doc) => {
+          const order = doc as PurchaseOrder;
+          return order.status === 'sent' || order.status === 'approved' ? 
+            handleReceiveOrder(order) : handleApproveOrder(order);
+        },
+        showFor: (doc) => ['draft', 'pending', 'approved', 'sent'].includes((doc as PurchaseOrder).status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No purchase orders found. Create your first purchase order to get started."

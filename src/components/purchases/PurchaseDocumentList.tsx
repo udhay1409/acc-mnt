@@ -54,8 +54,8 @@ interface PurchaseDocumentListProps {
   onDelete: (document: Document) => void;
   onView?: (document: Document) => void;
   additionalAction?: {
-    label: string;
-    icon: React.ReactNode;
+    label: ((document: Document) => string) | string;
+    icon: ((document: Document) => React.ReactNode) | React.ReactNode;
     onClick: (document: Document) => void;
     showFor?: (document: Document) => boolean;
   };
@@ -117,6 +117,22 @@ const PurchaseDocumentList: React.FC<PurchaseDocumentListProps> = ({
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amount);
+  };
+
+  // Helper function to get label text
+  const getActionLabel = (doc: Document) => {
+    if (!additionalAction) return '';
+    return typeof additionalAction.label === 'function' 
+      ? additionalAction.label(doc) 
+      : additionalAction.label;
+  };
+
+  // Helper function to get icon
+  const getActionIcon = (doc: Document) => {
+    if (!additionalAction) return null;
+    return typeof additionalAction.icon === 'function'
+      ? additionalAction.icon(doc)
+      : additionalAction.icon;
   };
 
   return (
@@ -215,10 +231,10 @@ const PurchaseDocumentList: React.FC<PurchaseDocumentListProps> = ({
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => additionalAction.onClick(doc)}
-                                title={additionalAction.label}
+                                title={getActionLabel(doc)}
                                 className="h-8 w-8 p-0"
                               >
-                                {additionalAction.icon}
+                                {getActionIcon(doc)}
                               </Button>
                             )}
                             

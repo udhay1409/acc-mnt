@@ -78,14 +78,14 @@ const VendorCreditsList = () => {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddCredit}
-      onEdit={handleEditCredit}
-      onDelete={handleDeleteCredit}
-      onView={handleViewCredit}
+      onEdit={(doc) => handleEditCredit(doc as VendorCredit)}
+      onDelete={(doc) => handleDeleteCredit(doc as VendorCredit)}
+      onView={(doc) => handleViewCredit(doc as VendorCredit)}
       additionalAction={{
         label: "Approve",
         icon: <FileMinus className="h-4 w-4 text-green-600" />,
-        onClick: handleApproveCredit,
-        showFor: (credit) => credit.status === 'draft' || credit.status === 'pending'
+        onClick: (doc) => handleApproveCredit(doc as VendorCredit),
+        showFor: (doc) => (doc as VendorCredit).status === 'draft' || (doc as VendorCredit).status === 'pending'
       }}
       statusColors={statusColors}
       emptyStateMessage="No vendor credits found. Create your first vendor credit to get started."

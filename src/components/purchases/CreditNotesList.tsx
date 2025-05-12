@@ -91,15 +91,15 @@ const CreditNotesList = () => {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddCreditNote}
-      onEdit={handleEditCreditNote}
-      onDelete={handleDeleteCreditNote}
-      onView={handleViewCreditNote}
+      onEdit={(doc) => handleEditCreditNote(doc as CreditNote)}
+      onDelete={(doc) => handleDeleteCreditNote(doc as CreditNote)}
+      onView={(doc) => handleViewCreditNote(doc as CreditNote)}
       additionalAction={{
-        label: (creditNote) => creditNote.status === 'approved' ? "Apply" : "Approve",
+        label: (doc) => (doc as CreditNote).status === 'approved' ? "Apply" : "Approve",
         icon: <FilePlus className="h-4 w-4 text-blue-600" />,
-        onClick: (creditNote) => creditNote.status === 'approved' ? 
-          handleApplyCreditNote(creditNote) : handleApproveCreditNote(creditNote),
-        showFor: (creditNote) => ['draft', 'pending', 'approved'].includes(creditNote.status)
+        onClick: (doc) => (doc as CreditNote).status === 'approved' ? 
+          handleApplyCreditNote(doc as CreditNote) : handleApproveCreditNote(doc as CreditNote),
+        showFor: (doc) => ['draft', 'pending', 'approved'].includes((doc as CreditNote).status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No credit notes found. Create your first credit note to get started."

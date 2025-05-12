@@ -91,15 +91,15 @@ const DebitNotesList = () => {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddDebitNote}
-      onEdit={handleEditDebitNote}
-      onDelete={handleDeleteDebitNote}
-      onView={handleViewDebitNote}
+      onEdit={(doc) => handleEditDebitNote(doc as DebitNote)}
+      onDelete={(doc) => handleDeleteDebitNote(doc as DebitNote)}
+      onView={(doc) => handleViewDebitNote(doc as DebitNote)}
       additionalAction={{
-        label: (debitNote) => debitNote.status === 'approved' ? "Apply" : "Approve",
+        label: (doc) => (doc as DebitNote).status === 'approved' ? "Apply" : "Approve",
         icon: <FileX className="h-4 w-4 text-blue-600" />,
-        onClick: (debitNote) => debitNote.status === 'approved' ? 
-          handleApplyDebitNote(debitNote) : handleApproveDebitNote(debitNote),
-        showFor: (debitNote) => ['draft', 'pending', 'approved'].includes(debitNote.status)
+        onClick: (doc) => (doc as DebitNote).status === 'approved' ? 
+          handleApplyDebitNote(doc as DebitNote) : handleApproveDebitNote(doc as DebitNote),
+        showFor: (doc) => ['draft', 'pending', 'approved'].includes((doc as DebitNote).status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No debit notes found. Create your first debit note to get started."

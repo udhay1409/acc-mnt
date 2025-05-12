@@ -91,15 +91,15 @@ const PurchaseReturnsList = () => {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       onAdd={handleAddReturn}
-      onEdit={handleEditReturn}
-      onDelete={handleDeleteReturn}
-      onView={handleViewReturn}
+      onEdit={(doc) => handleEditReturn(doc as PurchaseReturn)}
+      onDelete={(doc) => handleDeleteReturn(doc as PurchaseReturn)}
+      onView={(doc) => handleViewReturn(doc as PurchaseReturn)}
       additionalAction={{
-        label: (returnItem) => returnItem.status === 'approved' ? "Complete" : "Approve",
+        label: (doc) => (doc as PurchaseReturn).status === 'approved' ? "Complete" : "Approve",
         icon: <RotateCcw className="h-4 w-4 text-blue-600" />,
-        onClick: (returnItem) => returnItem.status === 'approved' ? 
-          handleCompleteReturn(returnItem) : handleApproveReturn(returnItem),
-        showFor: (returnItem) => ['draft', 'pending', 'approved'].includes(returnItem.status)
+        onClick: (doc) => (doc as PurchaseReturn).status === 'approved' ? 
+          handleCompleteReturn(doc as PurchaseReturn) : handleApproveReturn(doc as PurchaseReturn),
+        showFor: (doc) => ['draft', 'pending', 'approved'].includes((doc as PurchaseReturn).status)
       }}
       statusColors={statusColors}
       emptyStateMessage="No purchase returns found. Create your first purchase return to get started."
