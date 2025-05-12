@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  allowedRoles = ["admin", "cashier", "accountant", "inventory_manager", "purchase_manager"],
+  allowedRoles = ["super_admin", "admin", "cashier", "accountant", "inventory_manager", "purchase_manager"],
   redirectTo = "/login" 
 }) => {
   const { isAuthenticated, isLoading, user, checkAccess } = useAuth();

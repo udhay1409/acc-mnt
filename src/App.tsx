@@ -76,7 +76,7 @@ function App() {
                   <Route path="/register" element={<Registration />} />
                   <Route path="/unauthorized" element={<Unauthorized />} />
                   
-                  {/* Super Admin Routes - Now protected with super_admin role */}
+                  {/* Super Admin Routes - Protected with super_admin role */}
                   <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
                     <Route path="/superadmin" element={<SuperAdminLayout />}>
                       <Route index element={<SuperAdminDashboard />} />
@@ -103,7 +103,7 @@ function App() {
                     
                     {/* Role-specific routes */}
                     
-                    {/* Admin Routes - Now both super_admin and admin can access these */}
+                    {/* Admin Routes - Both super_admin and admin can access these */}
                     <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin"]} />}>
                       <Route path="/users" element={<UserManagement />} />
                       <Route path="/settings" element={<SettingsPage />} />

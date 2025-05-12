@@ -9,6 +9,12 @@ const Unauthorized = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Format role for display
+  const formatRole = (role?: string) => {
+    if (!role) return 'unknown';
+    return role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full text-center space-y-6">
@@ -18,7 +24,7 @@ const Unauthorized = () => {
           Sorry, you don't have permission to access this page.
         </p>
         <p className="text-sm text-gray-500">
-          Your role ({user?.role.replace('_', ' ')}) does not have the necessary permissions.
+          Your role ({formatRole(user?.role)}) does not have the necessary permissions.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
           <Button 
