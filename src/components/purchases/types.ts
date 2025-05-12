@@ -8,6 +8,7 @@ export interface Document {
   vendor: string;
   date: string;
   status: string;
+  total: number; // Added the total property that was missing
   [key: string]: any;
 }
 
