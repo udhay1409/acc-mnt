@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 
+// Fixed statusColors mapping to ensure all payment statuses are covered
 const statusColors: Record<string, { bg: string, text: string }> = {
   draft: { bg: "bg-slate-100", text: "text-slate-800" },
   sent: { bg: "bg-blue-100", text: "text-blue-800" },
@@ -31,7 +32,8 @@ const statusColors: Record<string, { bg: string, text: string }> = {
   paid: { bg: "bg-green-100", text: "text-green-800" },
   partially_paid: { bg: "bg-emerald-100", text: "text-emerald-800" },
   overdue: { bg: "bg-red-100", text: "text-red-800" },
-  cancelled: { bg: "bg-slate-100", text: "text-slate-800" }
+  cancelled: { bg: "bg-slate-100", text: "text-slate-800" },
+  unpaid: { bg: "bg-amber-100", text: "text-amber-800" }
 };
 
 const InvoicesList = () => {
@@ -138,7 +140,8 @@ const InvoicesList = () => {
                       ${invoice.total.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Badge className={`${statusColors[invoice.paymentStatus].bg} ${statusColors[invoice.paymentStatus].text}`}>
+                      {/* Fixed the access to statusColors to ensure it never tries to access an undefined status */}
+                      <Badge className={`${statusColors[invoice.paymentStatus]?.bg || "bg-gray-100"} ${statusColors[invoice.paymentStatus]?.text || "text-gray-800"}`}>
                         {invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1).replace('_', ' ')}
                       </Badge>
                     </TableCell>
