@@ -1,131 +1,124 @@
 
-import { toast } from "sonner";
-
-// Common interface for payment processing across modules
-export interface PaymentRequest {
+// Define types for razorpay integration
+interface RazorpayOrder {
+  id: string;
   amount: number;
   currency: string;
-  receipt?: string;
-  notes?: Record<string, string>;
+  receipt: string;
+  orderId?: string;
+}
+
+interface RazorpayOptions {
+  name: string;
+  description?: string;
   customerInfo?: {
     name: string;
     email: string;
     contact?: string;
   };
-  callbackUrl?: string;
 }
 
-export interface PaymentResponse {
-  id: string;
+interface RazorpayResponse {
+  id?: string;
   paymentId?: string;
   orderId?: string;
   signature?: string;
-  status: 'success' | 'failed' | 'cancelled';
+  status: 'success' | 'cancelled' | 'failed';
   method?: string;
 }
 
-// Get Razorpay configuration
-export const getRazorpayConfig = () => {
-  // In a real app, these would be fetched from your secure storage or state
-  return {
-    keyId: "rzp_test_1DP5mmOlF5G5ag", // Using a known test key for Razorpay
-    apiBaseUrl: "/api/razorpay" // API proxy path
-  };
-};
-
-// Create a Razorpay order via your backend
-export const createRazorpayOrder = async (
-  paymentRequest: PaymentRequest
-): Promise<{ id: string; amount: number; currency: string; receipt?: string; orderId?: string }> => {
-  try {
-    // In a real app, this would call your backend API which would then create a Razorpay order
-    // For demo purposes, we're mocking the response
-    console.log("Creating Razorpay order with:", paymentRequest);
-    
-    // Ensure amount is a proper number without too many decimal places
-    const safeAmount = parseFloat(paymentRequest.amount.toFixed(2));
-    
-    const order = {
-      id: `order_${Math.random().toString(36).substring(2, 15)}`,
-      amount: safeAmount,
-      currency: paymentRequest.currency,
-      receipt: paymentRequest.receipt || `rcpt_${Date.now()}`,
-      orderId: `order_${Date.now()}` // Adding this for consistency
-    };
-    
-    console.log("Order created successfully:", order);
-    return order;
-  } catch (error) {
-    console.error("Error creating Razorpay order:", error);
-    toast.error("Failed to create payment order");
-    throw error;
-  }
-};
-
-// Load Razorpay script if not already loaded
-export const loadRazorpayScript = (): Promise<boolean> => {
+// Create a function to load the Razorpay script
+const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
     if ((window as any).Razorpay) {
-      console.log("Razorpay already loaded");
+      console.info("Razorpay already loaded");
       resolve(true);
       return;
     }
-    
-    console.log("Loading Razorpay script...");
+
+    console.info("Loading Razorpay script...");
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
+    
     script.onload = () => {
-      console.log("Razorpay script loaded successfully");
+      console.info("Razorpay script loaded successfully");
       resolve(true);
     };
+
     script.onerror = () => {
       console.error("Failed to load Razorpay script");
-      toast.error("Failed to load Razorpay. Please check your internet connection.");
       resolve(false);
     };
+
     document.body.appendChild(script);
   });
 };
 
-// Process payment using Razorpay checkout
+// Create an order with Razorpay
+export const createRazorpayOrder = async (
+  orderData: {
+    amount: number;
+    currency: string;
+    receipt: string;
+    customerInfo?: {
+      name: string;
+      email: string;
+      contact?: string;
+    };
+    notes?: Record<string, string>;
+  }
+): Promise<RazorpayOrder> => {
+  try {
+    console.info(`Creating Razorpay order with:`, orderData);
+    
+    // In a real application, you would call your backend API to create an order
+    // For this demo, we'll simulate the API response
+    const order: RazorpayOrder = {
+      id: `order_${Date.now()}`,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      receipt: orderData.receipt,
+      orderId: `order_${Date.now()}`
+    };
+    
+    console.info('Order created:', order);
+    
+    return order;
+  } catch (error) {
+    console.error("Error creating Razorpay order:", error);
+    throw new Error("Failed to create order");
+  }
+};
+
+// Process payment with Razorpay
 export const processRazorpayPayment = async (
-  order: { id: string; amount: number; currency: string; orderId?: string },
-  options: {
-    name: string;
-    description?: string;
-    customerInfo: { name: string; email: string; contact?: string };
-    theme?: { color?: string };
-  }
-): Promise<PaymentResponse> => {
-  // Make sure Razorpay script is loaded
-  const isScriptLoaded = await loadRazorpayScript();
-  if (!isScriptLoaded) {
-    toast.error("Failed to load payment gateway");
-    throw new Error("Razorpay script failed to load");
-  }
-  
-  const { keyId } = getRazorpayConfig();
-  console.log("Initializing Razorpay payment with key:", keyId);
-  
-  return new Promise((resolve, reject) => {
-    try {
-      // Ensure we have a clean number for the amount
-      const finalAmount = Math.round(parseFloat(order.amount.toFixed(2)) * 100);
-      console.log(`Processing payment of ${order.amount} (${finalAmount} paise)`);
-      
-      // Configure Razorpay options
+  order: RazorpayOrder, 
+  options: RazorpayOptions
+): Promise<RazorpayResponse> => {
+  try {
+    const isScriptLoaded = await loadRazorpayScript();
+    if (!isScriptLoaded) {
+      throw new Error("Failed to load Razorpay script");
+    }
+
+    // Convert amount to paisa (1 INR = 100 paisa)
+    const amountInPaise = Math.round(order.amount * 100);
+    
+    console.info(`Processing payment of ${order.amount} (${amountInPaise} paise)`);
+
+    return new Promise((resolve, reject) => {
       const razorpayOptions = {
-        key: keyId,
-        amount: finalAmount, // Razorpay expects amount in paise (rounded to avoid decimal issues)
+        key: "rzp_test_1DP5mmOlF5G5ag", // Replace with your actual test key
+        amount: amountInPaise,
         currency: order.currency,
-        name: options.name || "Your Business Name",
-        description: options.description || "Payment for products/services",
-        order_id: order.orderId || order.id,
+        name: options.name,
+        description: options.description || "Payment",
+        order_id: order.orderId,
         prefill: {
-          name: options.customerInfo.name || "Customer",
-          email: options.customerInfo.email || "customer@example.com",
-          contact: options.customerInfo.contact || "",
+          name: options.customerInfo?.name || "",
+          email: options.customerInfo?.email || "",
+          contact: options.customerInfo?.contact || "",
         },
         handler: function(response: any) {
           console.log("Payment successful:", response);
@@ -150,65 +143,25 @@ export const processRazorpayPayment = async (
           escape: false,
           animation: true
         },
-        theme: options.theme?.color 
-          ? { color: options.theme.color } 
-          : { color: "#4f46e5" }, // Default indigo color
-      };
-
-      console.log("Razorpay options:", razorpayOptions);
-
-      // Initialize Razorpay checkout
-      const razorpay = new (window as any).Razorpay(razorpayOptions);
-      console.log("Opening Razorpay modal");
-      
-      // Handle potential errors during modal open
-      window.setTimeout(() => {
-        try {
-          razorpay.open();
-          console.log("Razorpay modal opened successfully");
-        } catch (err) {
-          console.error("Error when opening Razorpay modal:", err);
-          reject({
-            id: order.id,
-            status: 'failed',
-            message: 'Failed to open payment modal'
-          });
+        theme: {
+          color: "#4f46e5"
         }
-      }, 100);
-    } catch (error) {
-      console.error("Razorpay initialization error:", error);
-      toast.error(`Razorpay error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      reject({
-        id: order.id,
-        status: 'failed',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  });
-};
-
-// Verify payment with your backend
-export const verifyRazorpayPayment = async (
-  paymentId: string, 
-  orderId: string, 
-  signature: string
-): Promise<boolean> => {
-  try {
-    // In a production app, this would call your backend to verify the payment
-    // For demo purposes, we'll assume it's successful
-    console.log("Verifying payment:", { paymentId, orderId, signature });
-    toast.success("Payment verified successfully");
-    return true;
+      };
+      
+      console.info("Razorpay options:", razorpayOptions);
+      console.info("Opening Razorpay modal");
+      
+      try {
+        const razorpay = new (window as any).Razorpay(razorpayOptions);
+        razorpay.open();
+        console.info("Razorpay modal opened successfully");
+      } catch (error) {
+        console.error("Error opening Razorpay modal:", error);
+        reject(error);
+      }
+    });
   } catch (error) {
-    console.error("Payment verification failed:", error);
-    toast.error("Payment verification failed");
-    return false;
+    console.error("Error processing payment:", error);
+    throw error;
   }
 };
-
-// Add type definition for Razorpay to avoid TypeScript errors
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}

@@ -40,18 +40,28 @@ const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
     
     // Simulate a network request
     setTimeout(() => {
-      // Pass the new customer to the parent component
-      onCustomerAdded(newCustomer);
-      
-      // Show a success toast
-      toast({
-        title: "Customer Added",
-        description: `${newCustomer.name} has been added successfully.`,
-      });
-      
-      // Reset submission state and close dialog
-      setIsSubmitting(false);
-      onOpenChange(false);
+      try {
+        // Pass the new customer to the parent component
+        onCustomerAdded(newCustomer);
+        
+        // Show a success toast
+        toast({
+          title: "Customer Added",
+          description: `${newCustomer.name} has been added successfully.`,
+        });
+        
+        // Reset submission state and close dialog
+        onOpenChange(false);
+      } catch (error) {
+        console.error("Error adding customer:", error);
+        toast({
+          title: "Error",
+          description: "Failed to add customer. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
     }, 600);
   };
   
