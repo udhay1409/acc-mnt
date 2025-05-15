@@ -11,8 +11,6 @@ import {
   Truck, 
   FileText, 
   FileMinus, 
-  FilePlus, 
-  FileX, 
   RotateCcw, 
   ShoppingCart, 
   Calendar, 
@@ -32,8 +30,6 @@ import PaymentsList from '@/components/purchases/PaymentsList';
 import RecurringBillsList from '@/components/purchases/RecurringBillsList';
 import VendorCreditsList from '@/components/purchases/VendorCreditsList';
 import PurchaseReturnsList from '@/components/purchases/PurchaseReturnsList';
-import CreditNotesList from '@/components/purchases/CreditNotesList';
-import DebitNotesList from '@/components/purchases/DebitNotesList';
 
 // Tab interface for structured tab data
 interface PurchasesTab {
@@ -46,7 +42,7 @@ const Purchases = () => {
   // State for active tab
   const [activeTab, setActiveTab] = useState('vendors');
 
-  // Define all purchases tabs with icons
+  // Define all purchases tabs with icons (removed credit-notes and debit-notes)
   const purchasesTabs: PurchasesTab[] = [
     { id: 'vendors', label: 'Vendors', icon: <Users className="h-4 w-4" /> },
     { id: 'expenses', label: 'Expenses', icon: <FileText className="h-4 w-4" /> },
@@ -57,8 +53,6 @@ const Purchases = () => {
     { id: 'recurring-bills', label: 'Recurring Bills', icon: <Calendar className="h-4 w-4" /> },
     { id: 'vendor-credits', label: 'Vendor Credits', icon: <FileMinus className="h-4 w-4" /> },
     { id: 'purchase-returns', label: 'Purchase Returns', icon: <RotateCcw className="h-4 w-4" /> },
-    { id: 'credit-notes', label: 'Credit Notes', icon: <FilePlus className="h-4 w-4" /> },
-    { id: 'debit-notes', label: 'Debit Notes', icon: <FileX className="h-4 w-4" /> },
   ];
 
   return (
@@ -123,14 +117,6 @@ const Purchases = () => {
           
           <TabsContent value="purchase-returns" className="m-0">
             <PurchaseReturnsList />
-          </TabsContent>
-          
-          <TabsContent value="credit-notes" className="m-0">
-            <CreditNotesList />
-          </TabsContent>
-          
-          <TabsContent value="debit-notes" className="m-0">
-            <DebitNotesList />
           </TabsContent>
         </div>
       </Tabs>
