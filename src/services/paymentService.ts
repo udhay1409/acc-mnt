@@ -36,18 +36,24 @@ export const getRazorpayConfig = () => {
 // Create a Razorpay order via your backend
 export const createRazorpayOrder = async (
   paymentRequest: PaymentRequest
-): Promise<{ id: string; amount: number; currency: string; receipt?: string }> => {
+): Promise<{ id: string; amount: number; currency: string; receipt?: string; orderId?: string }> => {
   try {
     // In a real app, this would call your backend API which would then create a Razorpay order
     // For demo purposes, we're mocking the response
     console.log("Creating Razorpay order with:", paymentRequest);
+    
+    // Ensure amount is a proper number without too many decimal places
+    const safeAmount = parseFloat(paymentRequest.amount.toFixed(2));
+    
     const order = {
       id: `order_${Math.random().toString(36).substring(2, 15)}`,
-      amount: paymentRequest.amount,
+      amount: safeAmount,
       currency: paymentRequest.currency,
-      receipt: paymentRequest.receipt || `rcpt_${Date.now()}`
+      receipt: paymentRequest.receipt || `rcpt_${Date.now()}`,
+      orderId: `order_${Date.now()}` // Adding this for consistency
     };
     
+    console.log("Order created successfully:", order);
     return order;
   } catch (error) {
     console.error("Error creating Razorpay order:", error);
@@ -60,15 +66,21 @@ export const createRazorpayOrder = async (
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
     if ((window as any).Razorpay) {
+      console.log("Razorpay already loaded");
       resolve(true);
       return;
     }
     
+    console.log("Loading Razorpay script...");
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
-    script.onload = () => resolve(true);
+    script.onload = () => {
+      console.log("Razorpay script loaded successfully");
+      resolve(true);
+    };
     script.onerror = () => {
+      console.error("Failed to load Razorpay script");
       toast.error("Failed to load Razorpay. Please check your internet connection.");
       resolve(false);
     };
@@ -78,7 +90,7 @@ export const loadRazorpayScript = (): Promise<boolean> => {
 
 // Process payment using Razorpay checkout
 export const processRazorpayPayment = async (
-  order: { id: string; amount: number; currency: string },
+  order: { id: string; amount: number; currency: string; orderId?: string },
   options: {
     name: string;
     description?: string;
@@ -89,6 +101,7 @@ export const processRazorpayPayment = async (
   // Make sure Razorpay script is loaded
   const isScriptLoaded = await loadRazorpayScript();
   if (!isScriptLoaded) {
+    toast.error("Failed to load payment gateway");
     throw new Error("Razorpay script failed to load");
   }
   
@@ -97,14 +110,18 @@ export const processRazorpayPayment = async (
   
   return new Promise((resolve, reject) => {
     try {
+      // Ensure we have a clean number for the amount
+      const finalAmount = Math.round(parseFloat(order.amount.toFixed(2)) * 100);
+      console.log(`Processing payment of ${order.amount} (${finalAmount} paise)`);
+      
       // Configure Razorpay options
       const razorpayOptions = {
         key: keyId,
-        amount: Math.round(order.amount * 100), // Razorpay expects amount in paise (rounded to avoid decimal issues)
+        amount: finalAmount, // Razorpay expects amount in paise (rounded to avoid decimal issues)
         currency: order.currency,
         name: options.name || "Your Business Name",
         description: options.description || "Payment for products/services",
-        order_id: order.id,
+        order_id: order.orderId || order.id,
         prefill: {
           name: options.customerInfo.name || "Customer",
           email: options.customerInfo.email || "customer@example.com",
@@ -130,6 +147,8 @@ export const processRazorpayPayment = async (
               status: 'cancelled'
             });
           },
+          escape: false,
+          animation: true
         },
         theme: options.theme?.color 
           ? { color: options.theme.color } 
@@ -141,13 +160,28 @@ export const processRazorpayPayment = async (
       // Initialize Razorpay checkout
       const razorpay = new (window as any).Razorpay(razorpayOptions);
       console.log("Opening Razorpay modal");
-      razorpay.open();
+      
+      // Handle potential errors during modal open
+      window.setTimeout(() => {
+        try {
+          razorpay.open();
+          console.log("Razorpay modal opened successfully");
+        } catch (err) {
+          console.error("Error when opening Razorpay modal:", err);
+          reject({
+            id: order.id,
+            status: 'failed',
+            message: 'Failed to open payment modal'
+          });
+        }
+      }, 100);
     } catch (error) {
       console.error("Razorpay initialization error:", error);
       toast.error(`Razorpay error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       reject({
         id: order.id,
-        status: 'failed'
+        status: 'failed',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });

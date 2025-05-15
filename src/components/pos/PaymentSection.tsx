@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,10 +13,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { IndianRupee, CreditCard, Percent, Plus } from 'lucide-react';
+import { IndianRupee, CreditCard, Percent, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils';
-import { createRazorpayOrder, processRazorpayPayment } from '@/services/paymentService';
+import { createRazorpayOrder, processRazorpayPayment, loadRazorpayScript } from '@/services/paymentService';
 
 const PaymentSection: React.FC = () => {
   const { 
@@ -32,9 +32,20 @@ const PaymentSection: React.FC = () => {
   const [showChange, setShowChange] = useState(false);
   const [changeAmount, setChangeAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   
   const totalAmount = calculateTotal();
   const { paymentMethod, cashAmount, cardAmount, upiAmount } = state;
+  
+  // Check if Razorpay is loaded
+  useEffect(() => {
+    const checkRazorpayLoaded = async () => {
+      const isLoaded = await loadRazorpayScript();
+      setRazorpayLoaded(isLoaded);
+    };
+    
+    checkRazorpayLoaded();
+  }, []);
   
   const handleTabChange = (value: string) => {
     setPaymentMethod(value as 'cash' | 'card' | 'upi' | 'split');
@@ -85,9 +96,11 @@ const PaymentSection: React.FC = () => {
     console.log("Starting online payment process for amount:", totalAmount);
     
     try {
-      // Create a Razorpay order
+      // Create a Razorpay order with a sanitized amount
+      const safeAmount = parseFloat(totalAmount.toFixed(2));
+      
       const order = await createRazorpayOrder({
-        amount: totalAmount,
+        amount: safeAmount,
         currency: "INR",
         receipt: `pos-${Date.now()}`,
         customerInfo: {
@@ -107,7 +120,7 @@ const PaymentSection: React.FC = () => {
       const paymentResult = await processRazorpayPayment(
         order,
         {
-          name: "Your Business Name",
+          name: "BizSuite POS",
           description: `Payment for POS order`,
           customerInfo: {
             name: state.customer?.name || "Walk-in Customer",
@@ -264,9 +277,21 @@ const PaymentSection: React.FC = () => {
               <Button 
                 onClick={handleOnlinePayment} 
                 className="w-full" 
-                disabled={isProcessing || totalAmount <= 0}
+                disabled={isProcessing || totalAmount <= 0 || !razorpayLoaded}
               >
-                {isProcessing ? "Processing..." : "Pay Online with Razorpay"}
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : !razorpayLoaded ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading Razorpay...
+                  </>
+                ) : (
+                  "Pay Online with Razorpay"
+                )}
               </Button>
             </div>
           </TabsContent>
@@ -301,9 +326,21 @@ const PaymentSection: React.FC = () => {
               <Button 
                 onClick={handleOnlinePayment} 
                 className="w-full" 
-                disabled={isProcessing || totalAmount <= 0}
+                disabled={isProcessing || totalAmount <= 0 || !razorpayLoaded}
               >
-                {isProcessing ? "Processing..." : "Pay with UPI via Razorpay"}
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : !razorpayLoaded ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading Razorpay...
+                  </>
+                ) : (
+                  "Pay with UPI via Razorpay"
+                )}
               </Button>
             </div>
           </TabsContent>
@@ -373,9 +410,14 @@ const PaymentSection: React.FC = () => {
         <Button 
           className="flex-1" 
           onClick={paymentMethod === 'cash' ? handleCompleteSale : handleOnlinePayment}
-          disabled={isProcessing}
+          disabled={isProcessing || (paymentMethod !== 'cash' && !razorpayLoaded)}
         >
-          {isProcessing ? 'Processing...' : (paymentMethod === 'cash' ? 'Complete Sale' : 'Process Payment')}
+          {isProcessing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (paymentMethod === 'cash' ? 'Complete Sale' : 'Process Payment')}
         </Button>
       </CardFooter>
     </Card>
