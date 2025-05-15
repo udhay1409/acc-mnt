@@ -7,7 +7,7 @@ import {
 import { PurchaseOrder } from '@/models/purchases';
 import PurchaseDocumentList from './PurchaseDocumentList';
 import { ShoppingCart, CheckCircle, Truck } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Document } from './types';
 
 const PurchaseOrdersList = () => {
@@ -99,19 +99,11 @@ const PurchaseOrdersList = () => {
       onDelete={(doc) => handleDeleteOrder(doc as PurchaseOrder)}
       onView={(doc) => handleViewOrder(doc as PurchaseOrder)}
       additionalAction={{
-        label: (doc) => {
-          const order = doc as PurchaseOrder;
-          return order.status === 'sent' || order.status === 'approved' ? "Mark as Received" : "Approve";
-        },
-        icon: (doc) => {
-          const order = doc as PurchaseOrder;
-          return order.status === 'sent' || order.status === 'approved' ? 
-            <Truck className="h-4 w-4 text-blue-600" /> : 
-            <CheckCircle className="h-4 w-4 text-green-600" />;
-        },
+        label: (doc) => ((doc.status === 'approved' || doc.status === 'sent') ? "Receive" : "Approve"),
+        icon: <Truck className="h-4 w-4 text-blue-600" />,
         onClick: (doc) => {
           const order = doc as PurchaseOrder;
-          return order.status === 'sent' || order.status === 'approved' ? 
+          return (order.status === 'approved' || order.status === 'sent') ? 
             handleReceiveOrder(order) : handleApproveOrder(order);
         },
         showFor: (doc) => ['draft', 'pending', 'approved', 'sent'].includes(doc.status)
