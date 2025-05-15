@@ -33,7 +33,6 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 const Index = () => {
   const { isAuthenticated, user } = useAuth();
   
-  // Add Login route and proper navigation based on authentication
   return (
     <Routes>
       <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" replace />} />
@@ -74,8 +73,8 @@ const Index = () => {
         </Route>
       </Route>
       
-      {/* Default routes */}
-      <Route path="/" element={<Navigate to={isAuthenticated ? (user?.role === 'super_admin' ? '/superadmin' : '/dashboard') : '/login'} replace />} />
+      {/* Default app routes - only used when accessing /app directly */}
+      <Route path="/app" element={<Navigate to={isAuthenticated ? (user?.role === 'super_admin' ? '/superadmin' : '/dashboard') : '/login'} replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
