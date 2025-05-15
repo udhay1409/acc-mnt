@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { Toast } from "sonner";
+import { toast as sonnerToast } from "sonner";
 
 import {
   Toast as ToastPrimitive,
