@@ -45,6 +45,7 @@ import EWaybill from "@/pages/modules/EWaybill";
 import TaxManagement from "@/pages/modules/TaxManagement";
 import Reports from "@/pages/modules/Reports";
 import SettingsPage from "@/pages/modules/Settings";
+import GSTEFiling from "@/pages/modules/GSTEFiling";
 
 // Super Admin Pages
 import SuperAdminDashboard from "@/pages/superadmin/SuperAdminDashboard";
@@ -127,6 +128,7 @@ function App() {
                       <Route path="/accounting" element={<Accounting />} />
                       <Route path="/tax" element={<TaxManagement />} />
                       <Route path="/reports" element={<Reports />} />
+                      <Route path="/gst-efiling" element={<GSTEFiling />} />
                     </Route>
                     
                     {/* Inventory Manager Routes */}

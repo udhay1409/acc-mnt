@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
@@ -20,7 +19,8 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageSquare,
-  FileText
+  FileText,
+  FileInvoice
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -90,6 +90,12 @@ const navigationItems = [
     path: '/e-waybill', 
     icon: FileText, 
     roles: ['admin', 'accountant', 'inventory_manager'] as UserRole[] 
+  },
+  { 
+    name: 'GST E-Filing', 
+    path: '/gst-efiling', 
+    icon: FileInvoice, 
+    roles: ['admin', 'accountant'] as UserRole[] 
   },
   { 
     name: 'Tax', 
