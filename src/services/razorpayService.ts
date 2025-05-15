@@ -41,7 +41,7 @@ const subscriptionPlans: SubscriptionPlan[] = [
 const getRazorpayConfig = () => {
   // In a real app, these would be fetched from your secure storage or state
   return {
-    keyId: "rzp_test_1234567890123456", // This is your public key, safe for client
+    keyId: "rzp_test_1DP5mmOlF5G5ag", // Updated to match keyId in paymentService
     apiBaseUrl: "/api/razorpay" // API proxy path
   };
 };
@@ -97,7 +97,7 @@ export const processSubscriptionPayment = (
   // Configure Razorpay options
   const options = {
     key: keyId,
-    amount: order.amount * 100, // Razorpay amount in paise
+    amount: Math.round(order.amount * 100), // Razorpay amount in paise (rounded to avoid decimal issues)
     currency: order.currency,
     name: "Your App Name",
     description: `Subscription for ${customerInfo.name}`,
@@ -109,12 +109,13 @@ export const processSubscriptionPayment = (
     handler: (response: any) => {
       // This function is called when payment is successful
       const paymentId = response.razorpay_payment_id;
+      console.log("Subscription payment successful:", response);
       onSuccess(paymentId);
     },
     modal: {
       ondismiss: () => {
-        console.log("Checkout form closed");
-        toast.info("Payment cancelled");
+        console.log("Subscription checkout form closed");
+        toast.info("Subscription payment cancelled");
       },
     },
     theme: {
@@ -222,4 +223,3 @@ export const cancelSubscription = async (subscriptionId: string): Promise<boolea
     return false;
   }
 };
-

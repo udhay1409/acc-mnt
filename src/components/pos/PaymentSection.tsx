@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { Button } from '@/components/ui/button';
@@ -250,14 +251,6 @@ const PaymentSection: React.FC = () => {
                 <Button onClick={handleExactAmount} variant="outline">Exact</Button>
               </div>
               
-              <Button 
-                onClick={handleOnlinePayment} 
-                className="w-full" 
-                disabled={isProcessing || totalAmount <= 0}
-              >
-                {isProcessing ? "Processing..." : "Pay Online with Razorpay"}
-              </Button>
-              
               <div className="space-y-1">
                 <Label htmlFor="card-reference">Reference/Transaction ID</Label>
                 <Input
@@ -267,6 +260,14 @@ const PaymentSection: React.FC = () => {
                   onChange={handleReferenceChange}
                 />
               </div>
+              
+              <Button 
+                onClick={handleOnlinePayment} 
+                className="w-full" 
+                disabled={isProcessing || totalAmount <= 0}
+              >
+                {isProcessing ? "Processing..." : "Pay Online with Razorpay"}
+              </Button>
             </div>
           </TabsContent>
           
@@ -287,14 +288,6 @@ const PaymentSection: React.FC = () => {
                 <Button onClick={handleExactAmount} variant="outline">Exact</Button>
               </div>
               
-              <Button 
-                onClick={handleOnlinePayment} 
-                className="w-full" 
-                disabled={isProcessing || totalAmount <= 0}
-              >
-                {isProcessing ? "Processing..." : "Pay with UPI via Razorpay"}
-              </Button>
-              
               <div className="space-y-1">
                 <Label htmlFor="upi-reference">Transaction ID/Reference</Label>
                 <Input
@@ -304,6 +297,14 @@ const PaymentSection: React.FC = () => {
                   onChange={handleReferenceChange}
                 />
               </div>
+              
+              <Button 
+                onClick={handleOnlinePayment} 
+                className="w-full" 
+                disabled={isProcessing || totalAmount <= 0}
+              >
+                {isProcessing ? "Processing..." : "Pay with UPI via Razorpay"}
+              </Button>
             </div>
           </TabsContent>
           

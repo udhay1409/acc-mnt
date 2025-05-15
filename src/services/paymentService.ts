@@ -100,7 +100,7 @@ export const processRazorpayPayment = async (
       // Configure Razorpay options
       const razorpayOptions = {
         key: keyId,
-        amount: order.amount * 100, // Razorpay expects amount in paise
+        amount: Math.round(order.amount * 100), // Razorpay expects amount in paise (rounded to avoid decimal issues)
         currency: order.currency,
         name: options.name || "Your Business Name",
         description: options.description || "Payment for products/services",
