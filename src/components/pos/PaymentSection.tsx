@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IndianRupee, CreditCard, Percent, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils';
+import { createRazorpayOrder, processRazorpayPayment } from '@/services/paymentService';
 
 const PaymentSection: React.FC = () => {
   const { 
@@ -30,6 +31,7 @@ const PaymentSection: React.FC = () => {
   
   const [showChange, setShowChange] = useState(false);
   const [changeAmount, setChangeAmount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const totalAmount = calculateTotal();
   const { paymentMethod, cashAmount, cardAmount, upiAmount } = state;
@@ -69,6 +71,68 @@ const PaymentSection: React.FC = () => {
       setPaymentAmount('cardAmount', totalAmount);
     } else if (paymentMethod === 'upi') {
       setPaymentAmount('upiAmount', totalAmount);
+    }
+  };
+
+  // New function to handle Razorpay payment for card and UPI
+  const handleOnlinePayment = async () => {
+    if (totalAmount <= 0) {
+      toast.error("Cannot process a zero amount payment");
+      return;
+    }
+    
+    setIsProcessing(true);
+    
+    try {
+      // Create a Razorpay order
+      const order = await createRazorpayOrder({
+        amount: totalAmount,
+        currency: "INR",
+        receipt: `pos-${Date.now()}`,
+        customerInfo: {
+          name: state.customer?.name || "Walk-in Customer",
+          email: state.customer?.email || "customer@example.com",
+          contact: state.customer?.phone
+        }
+      });
+      
+      // Process payment with Razorpay
+      const paymentResult = await processRazorpayPayment(
+        order,
+        {
+          name: "Your Business Name",
+          description: `Payment for POS order`,
+          customerInfo: {
+            name: state.customer?.name || "Walk-in Customer",
+            email: state.customer?.email || "customer@example.com",
+            contact: state.customer?.phone
+          }
+        }
+      );
+      
+      if (paymentResult.status === 'success') {
+        // Set payment details in the state
+        if (paymentMethod === 'card') {
+          setPaymentAmount('cardAmount', totalAmount);
+          setReference(paymentResult.paymentId || '');
+        } else if (paymentMethod === 'upi') {
+          setPaymentAmount('upiAmount', totalAmount);
+          setReference(paymentResult.paymentId || '');
+        }
+        
+        toast.success("Payment successful!");
+        // Complete the sale after successful payment
+        handleCompleteSale();
+      } else if (paymentResult.status === 'cancelled') {
+        toast.info("Payment was cancelled");
+      } else {
+        toast.error("Payment failed");
+      }
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      toast.error("Error processing payment");
+    } finally {
+      setIsProcessing(false);
     }
   };
   
@@ -176,11 +240,19 @@ const PaymentSection: React.FC = () => {
                 <Button onClick={handleExactAmount} variant="outline">Exact</Button>
               </div>
               
+              <Button 
+                onClick={handleOnlinePayment} 
+                className="w-full" 
+                disabled={isProcessing || totalAmount <= 0}
+              >
+                {isProcessing ? "Processing..." : "Pay Online with Razorpay"}
+              </Button>
+              
               <div className="space-y-1">
-                <Label htmlFor="card-reference">Reference/Last 4 Digits</Label>
+                <Label htmlFor="card-reference">Reference/Transaction ID</Label>
                 <Input
                   id="card-reference"
-                  placeholder="Enter card reference or last 4 digits"
+                  placeholder="Enter card reference or transaction ID"
                   value={state.reference}
                   onChange={handleReferenceChange}
                 />
@@ -204,6 +276,14 @@ const PaymentSection: React.FC = () => {
                 </div>
                 <Button onClick={handleExactAmount} variant="outline">Exact</Button>
               </div>
+              
+              <Button 
+                onClick={handleOnlinePayment} 
+                className="w-full" 
+                disabled={isProcessing || totalAmount <= 0}
+              >
+                {isProcessing ? "Processing..." : "Pay with UPI via Razorpay"}
+              </Button>
               
               <div className="space-y-1">
                 <Label htmlFor="upi-reference">Transaction ID/Reference</Label>
@@ -279,8 +359,8 @@ const PaymentSection: React.FC = () => {
         <Button variant="outline" className="flex-1" onClick={holdSale}>
           Hold Sale
         </Button>
-        <Button className="flex-1" onClick={handleCompleteSale}>
-          Complete Sale
+        <Button className="flex-1" onClick={paymentMethod === 'cash' ? handleCompleteSale : handleOnlinePayment}>
+          {paymentMethod === 'cash' ? 'Complete Sale' : 'Process Payment'}
         </Button>
       </CardFooter>
     </Card>
@@ -288,4 +368,3 @@ const PaymentSection: React.FC = () => {
 };
 
 export default PaymentSection;
-
