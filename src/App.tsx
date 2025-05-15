@@ -11,7 +11,11 @@ const App: React.FC = () => {
     <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/*" element={<Index />} />
+        <Route path="/app/*" element={<Index />} />
+        <Route path="/login" element={<Index />} />
+        <Route path="/dashboard/*" element={<Index />} />
+        <Route path="/superadmin/*" element={<Index />} />
+        <Route path="/unauthorized" element={<Index />} />
       </Routes>
       <Toaster position="top-right" richColors />
     </>

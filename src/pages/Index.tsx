@@ -35,20 +35,20 @@ const Index = () => {
   
   return (
     <Routes>
-      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" replace />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" replace />} />
+      <Route path="unauthorized" element={<Unauthorized />} />
       
       {/* Super Admin Routes */}
       {user?.role === 'super_admin' && (
         <Route element={<ProtectedRoute allowedRoles={['super_admin']} />}>
-          <Route element={<SuperAdminLayout />}>
-            <Route path="/superadmin" element={<SuperAdminDashboard />} />
-            <Route path="/superadmin/organizations" element={<OrganizationsList />} />
-            <Route path="/superadmin/subscription-plans" element={<SubscriptionPlans />} />
-            <Route path="/superadmin/payment-gateways" element={<PaymentGateways />} />
-            <Route path="/superadmin/smtp-settings" element={<SMTPSettings />} />
-            <Route path="/superadmin/whatsapp-settings" element={<WhatsAppSettings />} />
-            <Route path="/superadmin/settings" element={<AdvancedSettings />} />
+          <Route path="superadmin" element={<SuperAdminLayout />}>
+            <Route index element={<SuperAdminDashboard />} />
+            <Route path="organizations" element={<OrganizationsList />} />
+            <Route path="subscription-plans" element={<SubscriptionPlans />} />
+            <Route path="payment-gateways" element={<PaymentGateways />} />
+            <Route path="smtp-settings" element={<SMTPSettings />} />
+            <Route path="whatsapp-settings" element={<WhatsAppSettings />} />
+            <Route path="settings" element={<AdvancedSettings />} />
           </Route>
         </Route>
       )}
@@ -56,25 +56,25 @@ const Index = () => {
       {/* Regular User Routes - Only show when authenticated */}
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/pos" element={<PointOfSale />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/sales" element={<Sales />} />
-          <Route path="/purchases" element={<Purchases />} />
-          <Route path="/accounting" element={<Accounting />} />
-          <Route path="/crm" element={<CRM />} />
-          <Route path="/whatsapp" element={<WhatsApp />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/tax" element={<TaxManagement />} />
-          <Route path="/e-waybill" element={<EWaybill />} />
-          <Route path="/gst-efiling" element={<GSTEFiling />} />
-          <Route path="/users" element={<UserManagement />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="pos" element={<PointOfSale />} />
+          <Route path="inventory" element={<Inventory />} />
+          <Route path="sales" element={<Sales />} />
+          <Route path="purchases" element={<Purchases />} />
+          <Route path="accounting" element={<Accounting />} />
+          <Route path="crm" element={<CRM />} />
+          <Route path="whatsapp" element={<WhatsApp />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="tax" element={<TaxManagement />} />
+          <Route path="e-waybill" element={<EWaybill />} />
+          <Route path="gst-efiling" element={<GSTEFiling />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Route>
       
-      {/* Default app routes - only used when accessing /app directly */}
-      <Route path="/app" element={<Navigate to={isAuthenticated ? (user?.role === 'super_admin' ? '/superadmin' : '/dashboard') : '/login'} replace />} />
+      {/* Default route */}
+      <Route path="" element={<Navigate to={isAuthenticated ? (user?.role === 'super_admin' ? '/superadmin' : '/dashboard') : '/login'} replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
