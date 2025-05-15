@@ -20,7 +20,7 @@ import {
   ChevronRight,
   MessageSquare,
   FileText,
-  FileInvoice
+  File
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -94,7 +94,7 @@ const navigationItems = [
   { 
     name: 'GST E-Filing', 
     path: '/gst-efiling', 
-    icon: FileInvoice, 
+    icon: File, 
     roles: ['admin', 'accountant'] as UserRole[] 
   },
   { 

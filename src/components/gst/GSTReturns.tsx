@@ -109,7 +109,7 @@ const GSTReturns = () => {
                 </Button>
               </div>
               
-              <Alert variant="warning" className="bg-amber-50 text-amber-800 border-amber-200">
+              <Alert className="bg-amber-50 text-amber-800 border-amber-200">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Upcoming Due Date</AlertTitle>
                 <AlertDescription>
@@ -137,9 +137,9 @@ const GSTReturns = () => {
                         <TableCell>{new Date(returnItem.dueDate).toLocaleDateString('en-IN')}</TableCell>
                         <TableCell>
                           <Badge variant={
-                            returnItem.status === 'Pending' ? 'warning' : 
+                            returnItem.status === 'Pending' ? 'secondary' : 
                             returnItem.status === 'Not Due' ? 'outline' : 'default'
-                          } as any>
+                          }>
                             {returnItem.status}
                           </Badge>
                         </TableCell>
@@ -197,7 +197,7 @@ const GSTReturns = () => {
                         <TableCell className="font-medium">{returnItem.type}</TableCell>
                         <TableCell>{returnItem.periodDesc}</TableCell>
                         <TableCell>
-                          <Badge variant={returnItem.dataStatus === 'Complete' ? 'success' : 'warning'} as any>
+                          <Badge variant={returnItem.dataStatus === 'Complete' ? 'default' : 'secondary'}>
                             {returnItem.dataStatus}
                           </Badge>
                         </TableCell>
@@ -284,7 +284,7 @@ const GSTReturns = () => {
                         <TableCell>{selectedFY === "2022-2023" ? "2022-23" : "2021-22"}</TableCell>
                         <TableCell>{selectedFY === "2022-2023" ? "31-12-2023" : "31-12-2022"}</TableCell>
                         <TableCell>
-                          <Badge variant={selectedFY === "2022-2023" ? "destructive" : "success"} as any>
+                          <Badge variant={selectedFY === "2022-2023" ? "destructive" : "default"}>
                             {selectedFY === "2022-2023" ? "Not Filed" : "Filed"}
                           </Badge>
                         </TableCell>

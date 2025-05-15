@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { FileInvoice } from 'lucide-react';
+import { File } from 'lucide-react';
 import GSTInvoiceUpload from '@/components/gst/GSTInvoiceUpload';
 import GSTFilingStatus from '@/components/gst/GSTFilingStatus';
 import GSTReturns from '@/components/gst/GSTReturns';
@@ -17,7 +17,7 @@ const GSTEFiling = () => {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-bold tracking-tight flex items-center">
-            <FileInvoice className="h-6 w-6 mr-2 text-primary" />
+            <File className="h-6 w-6 mr-2 text-primary" />
             GST E-Filing
           </h2>
           <p className="text-muted-foreground">
