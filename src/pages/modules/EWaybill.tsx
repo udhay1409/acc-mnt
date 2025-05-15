@@ -4,6 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Truck, ClipboardCheck, History } from 'lucide-react';
 
+// Import the components we created
+import GenerateWaybill from '@/components/e-waybill/GenerateWaybill';
+import ActiveWaybills from '@/components/e-waybill/ActiveWaybills';
+import ValidateWaybill from '@/components/e-waybill/ValidateWaybill';
+import WaybillHistory from '@/components/e-waybill/WaybillHistory';
+
 const EWaybill = () => {
   return (
     <div className="space-y-6">
@@ -38,14 +44,7 @@ const EWaybill = () => {
               <CardDescription>Create a new electronic way bill for goods transportation</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Use this section to generate new e-waybills for intrastate or interstate goods transportation.
-                Fill in the required details and submit to generate an e-waybill with a valid number from the GST portal.
-              </p>
-              {/* Placeholder for form content */}
-              <div className="h-80 border rounded-md border-dashed border-muted-foreground/25 mt-6 flex items-center justify-center text-muted-foreground">
-                E-Waybill generation form will be implemented here
-              </div>
+              <GenerateWaybill />
             </CardContent>
           </Card>
         </TabsContent>
@@ -57,13 +56,7 @@ const EWaybill = () => {
               <CardDescription>Monitor and manage ongoing transportation with active e-waybills</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Track all active e-waybills, extend validity if needed, and update vehicle information for goods in transit.
-              </p>
-              {/* Placeholder for active waybills list */}
-              <div className="h-80 border rounded-md border-dashed border-muted-foreground/25 mt-6 flex items-center justify-center text-muted-foreground">
-                Active e-waybills list will be displayed here
-              </div>
+              <ActiveWaybills />
             </CardContent>
           </Card>
         </TabsContent>
@@ -75,13 +68,7 @@ const EWaybill = () => {
               <CardDescription>Check validity of e-waybill numbers</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Verify the authenticity and current status of any e-waybill by entering its number.
-              </p>
-              {/* Placeholder for validation form */}
-              <div className="h-80 border rounded-md border-dashed border-muted-foreground/25 mt-6 flex items-center justify-center text-muted-foreground">
-                E-Waybill validation tool will be implemented here
-              </div>
+              <ValidateWaybill />
             </CardContent>
           </Card>
         </TabsContent>
@@ -93,13 +80,7 @@ const EWaybill = () => {
               <CardDescription>View and download past e-waybills</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Access your complete e-waybill history, download copies for record keeping, and check delivery status.
-              </p>
-              {/* Placeholder for history list */}
-              <div className="h-80 border rounded-md border-dashed border-muted-foreground/25 mt-6 flex items-center justify-center text-muted-foreground">
-                E-Waybill history will be displayed here
-              </div>
+              <WaybillHistory />
             </CardContent>
           </Card>
         </TabsContent>
