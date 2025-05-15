@@ -22,7 +22,7 @@ import { Invoice } from '@/models/sales';
 import { getInvoices } from '@/data/mockSales';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 // Fixed statusColors mapping to ensure all payment statuses are covered
 const statusColors: Record<string, { bg: string, text: string }> = {
@@ -190,4 +190,3 @@ const InvoicesList = () => {
 };
 
 export default InvoicesList;
-
