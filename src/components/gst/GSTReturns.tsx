@@ -73,7 +73,7 @@ const preparableReturns = [
 const GSTReturns = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [selectedFY, setSelectedFY] = useState("2023-2024");
-  const [selectedQuarter, setSelectedQuarter] = useState("");
+  const [selectedQuarter, setSelectedQuarter] = useState("all");
   
   const handlePrepareReturn = (returnId: string) => {
     toast({

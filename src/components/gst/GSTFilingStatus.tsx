@@ -77,8 +77,8 @@ const getStatusBadgeVariant = (status: string) => {
 };
 
 const GSTFilingStatus = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedPeriod, setSelectedPeriod] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
   const [arnSearch, setArnSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [filingData, setFilingData] = useState(mockFilings);
@@ -90,11 +90,11 @@ const GSTFilingStatus = () => {
     setTimeout(() => {
       let filtered = mockFilings;
       
-      if (selectedPeriod) {
+      if (selectedPeriod && selectedPeriod !== "all") {
         filtered = filtered.filter(filing => filing.period === selectedPeriod);
       }
       
-      if (selectedType) {
+      if (selectedType && selectedType !== "all") {
         filtered = filtered.filter(filing => filing.returnType === selectedType);
       }
       
@@ -160,7 +160,7 @@ const GSTFilingStatus = () => {
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Periods</SelectItem>
+                  <SelectItem value="all">All Periods</SelectItem>
                   <SelectItem value="Apr 2023">April 2023</SelectItem>
                   <SelectItem value="May 2023">May 2023</SelectItem>
                   <SelectItem value="Jun 2023">June 2023</SelectItem>
@@ -175,7 +175,7 @@ const GSTFilingStatus = () => {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="GSTR-1">GSTR-1</SelectItem>
                   <SelectItem value="GSTR-3B">GSTR-3B</SelectItem>
                   <SelectItem value="GSTR-9">GSTR-9</SelectItem>
@@ -232,7 +232,11 @@ const GSTFilingStatus = () => {
                       <TableCell>{filing.period}</TableCell>
                       <TableCell>{filing.filingDate || "-"}</TableCell>
                       <TableCell>
-                        <Badge variant={getStatusBadgeVariant(filing.status) as any}>
+                        <Badge variant={
+                          filing.status === 'Filed' ? 'default' : 
+                          filing.status === 'Error' ? 'destructive' : 
+                          'secondary'
+                        }>
                           {filing.status}
                         </Badge>
                       </TableCell>
