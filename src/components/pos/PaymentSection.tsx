@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { Button } from '@/components/ui/button';
@@ -74,7 +73,7 @@ const PaymentSection: React.FC = () => {
     }
   };
 
-  // New function to handle Razorpay payment for card and UPI
+  // Function to handle Razorpay payment for card and UPI
   const handleOnlinePayment = async () => {
     if (totalAmount <= 0) {
       toast.error("Cannot process a zero amount payment");
@@ -82,6 +81,7 @@ const PaymentSection: React.FC = () => {
     }
     
     setIsProcessing(true);
+    console.log("Starting online payment process for amount:", totalAmount);
     
     try {
       // Create a Razorpay order
@@ -92,9 +92,15 @@ const PaymentSection: React.FC = () => {
         customerInfo: {
           name: state.customer?.name || "Walk-in Customer",
           email: state.customer?.email || "customer@example.com",
-          contact: state.customer?.phone
+          contact: state.customer?.phone || ""
+        },
+        notes: {
+          paymentType: paymentMethod,
+          organizationId: "demo-org"
         }
       });
+      
+      console.log("Order created:", order);
       
       // Process payment with Razorpay
       const paymentResult = await processRazorpayPayment(
@@ -105,10 +111,13 @@ const PaymentSection: React.FC = () => {
           customerInfo: {
             name: state.customer?.name || "Walk-in Customer",
             email: state.customer?.email || "customer@example.com",
-            contact: state.customer?.phone
-          }
+            contact: state.customer?.phone || ""
+          },
+          theme: { color: "#4f46e5" }
         }
       );
+      
+      console.log("Payment result:", paymentResult);
       
       if (paymentResult.status === 'success') {
         // Set payment details in the state
@@ -130,7 +139,7 @@ const PaymentSection: React.FC = () => {
       }
     } catch (error) {
       console.error("Payment processing error:", error);
-      toast.error("Error processing payment");
+      toast.error("Error processing payment: " + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsProcessing(false);
     }
@@ -154,7 +163,8 @@ const PaymentSection: React.FC = () => {
       return;
     }
     
-    completeSale();
+    const sale = completeSale();
+    console.log("Sale completed:", sale);
     
     // Set change amount display for cash payments
     if (paymentMethod === 'cash' && cashAmount > totalAmount) {
@@ -359,8 +369,12 @@ const PaymentSection: React.FC = () => {
         <Button variant="outline" className="flex-1" onClick={holdSale}>
           Hold Sale
         </Button>
-        <Button className="flex-1" onClick={paymentMethod === 'cash' ? handleCompleteSale : handleOnlinePayment}>
-          {paymentMethod === 'cash' ? 'Complete Sale' : 'Process Payment'}
+        <Button 
+          className="flex-1" 
+          onClick={paymentMethod === 'cash' ? handleCompleteSale : handleOnlinePayment}
+          disabled={isProcessing}
+        >
+          {isProcessing ? 'Processing...' : (paymentMethod === 'cash' ? 'Complete Sale' : 'Process Payment')}
         </Button>
       </CardFooter>
     </Card>
