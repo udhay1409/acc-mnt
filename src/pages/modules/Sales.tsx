@@ -17,8 +17,7 @@ import {
   ShoppingCart, 
   Calendar, 
   Wallet,
-  Repeat,
-  Receipt
+  Repeat
 } from 'lucide-react';
 
 // Import our sales components
@@ -31,8 +30,6 @@ import PaymentsList from '@/components/sales/PaymentsList';
 import RecurringInvoicesList from '@/components/sales/RecurringInvoicesList';
 import CreditNotesList from '@/components/sales/CreditNotesList';
 import SalesReturnsList from '@/components/sales/SalesReturnsList';
-import ReceiptsList from '@/components/sales/ReceiptsList';
-import DebitNotesList from '@/components/sales/DebitNotesList';
 import { getRetainerInvoices, getSalesOrders } from '@/data/mockSales';
 
 // Tab interface for structured tab data
@@ -53,7 +50,7 @@ const Sales = () => {
   const retainerInvoices = getRetainerInvoices();
   const salesOrders = getSalesOrders();
 
-  // Define all sales tabs with icons
+  // Define all sales tabs with icons - removed receipts and debits tabs
   const salesTabs: SalesTab[] = [
     { id: 'customers', label: 'Customers', icon: <Users className="h-4 w-4" /> },
     { id: 'estimates', label: 'Estimates', icon: <FileText className="h-4 w-4" /> },
@@ -65,8 +62,6 @@ const Sales = () => {
     { id: 'recurring', label: 'Recurring', icon: <Repeat className="h-4 w-4" /> },
     { id: 'credits', label: 'Credits', icon: <FilePlus className="h-4 w-4" /> },
     { id: 'returns', label: 'Returns', icon: <FileX className="h-4 w-4" /> },
-    { id: 'receipts', label: 'Receipts', icon: <Receipt className="h-4 w-4" /> },
-    { id: 'debits', label: 'Debits', icon: <FileMinus className="h-4 w-4" /> },
   ];
 
   return (
@@ -152,14 +147,6 @@ const Sales = () => {
           
           <TabsContent value="returns">
             <SalesReturnsList />
-          </TabsContent>
-          
-          <TabsContent value="receipts">
-            <ReceiptsList />
-          </TabsContent>
-          
-          <TabsContent value="debits">
-            <DebitNotesList />
           </TabsContent>
         </div>
       </Tabs>
