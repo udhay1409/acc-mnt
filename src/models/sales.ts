@@ -107,7 +107,7 @@ export interface Payment {
   customer: Customer;
   date: Date;
   amount: number;
-  paymentMethod: 'cash' | 'bank_transfer' | 'credit_card' | 'check' | 'online' | 'other';
+  paymentMethod: 'cash' | 'bank_transfer' | 'credit_card' | 'check' | 'online' | 'other' | 'razorpay';
   reference?: string;
   description?: string;
   invoiceIds: string[]; // Invoices this payment applies to

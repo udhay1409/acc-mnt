@@ -107,7 +107,7 @@ export interface Payment {
   vendor: string;
   date: string;
   amount: number;
-  method: 'cash' | 'check' | 'credit_card' | 'bank_transfer' | 'online_payment';
+  method: 'cash' | 'check' | 'credit_card' | 'bank_transfer' | 'online_payment' | 'razorpay';
   reference: string;
   notes?: string;
   status: 'pending' | 'completed' | 'failed' | 'cancelled';

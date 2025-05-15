@@ -153,16 +153,13 @@ const PaymentsList = () => {
 
   const handleDeletePayment = (payment: Payment) => {
     setPayments(payments.filter(p => p.id !== payment.id));
-    toast({
-      title: "Payment Deleted",
-      description: `Payment ${payment.reference} has been deleted`,
-      variant: "destructive"
+    toast.error("Payment Deleted", {
+      description: `Payment ${payment.reference} has been deleted`
     });
   };
 
   const handleViewPayment = (payment: Payment) => {
-    toast({
-      title: "View Payment Details",
+    toast.info("View Payment Details", {
       description: `Viewing details for payment ${payment.reference}`
     });
   };
