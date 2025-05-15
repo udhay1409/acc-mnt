@@ -19,7 +19,8 @@ import {
   Receipt,
   ChevronLeft,
   ChevronRight,
-  MessageSquare
+  MessageSquare,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -83,6 +84,12 @@ const navigationItems = [
     path: '/whatsapp', 
     icon: MessageSquare, 
     roles: ['admin', 'accountant', 'purchase_manager'] as UserRole[] 
+  },
+  { 
+    name: 'E-Waybill', 
+    path: '/e-waybill', 
+    icon: FileText, 
+    roles: ['admin', 'accountant', 'inventory_manager'] as UserRole[] 
   },
   { 
     name: 'Tax', 
