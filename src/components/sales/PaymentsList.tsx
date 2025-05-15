@@ -94,7 +94,7 @@ const PaymentsList = () => {
                         {payment.customer.name}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">${payment.amount.toFixed(2)}</TableCell>
+                    <TableCell className="font-medium">₹{payment.amount.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge className={paymentMethodColors[payment.paymentMethod] || "bg-gray-100"}>
                         {payment.paymentMethod.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -131,3 +131,4 @@ const PaymentsList = () => {
 };
 
 export default PaymentsList;
+

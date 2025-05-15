@@ -137,10 +137,9 @@ const InvoicesList = () => {
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">
-                      ${invoice.total.toFixed(2)}
+                      ₹{invoice.total.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      {/* Fixed the access to statusColors to ensure it never tries to access an undefined status */}
                       <Badge className={`${statusColors[invoice.paymentStatus]?.bg || "bg-gray-100"} ${statusColors[invoice.paymentStatus]?.text || "text-gray-800"}`}>
                         {invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1).replace('_', ' ')}
                       </Badge>
@@ -191,3 +190,4 @@ const InvoicesList = () => {
 };
 
 export default InvoicesList;
+

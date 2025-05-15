@@ -13,8 +13,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DollarSign, CreditCard, Percent, Plus } from 'lucide-react';
+import { IndianRupee, CreditCard, Percent, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCurrency } from '@/lib/utils';
 
 const PaymentSection: React.FC = () => {
   const { 
@@ -85,7 +86,7 @@ const PaymentSection: React.FC = () => {
     }
     
     if (paidAmount < totalAmount) {
-      toast.error(`Payment amount (${paidAmount.toFixed(2)}) is less than the total (${totalAmount.toFixed(2)})`);
+      toast.error(`Payment amount (₹${paidAmount.toFixed(2)}) is less than the total (₹${totalAmount.toFixed(2)})`);
       return;
     }
     
@@ -104,7 +105,7 @@ const PaymentSection: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex justify-between">
           <span>Payment</span>
-          <span>${totalAmount.toFixed(2)}</span>
+          <span>₹{totalAmount.toFixed(2)}</span>
         </CardTitle>
         <CardDescription>Select payment method and enter amount</CardDescription>
       </CardHeader>
@@ -116,7 +117,7 @@ const PaymentSection: React.FC = () => {
         >
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="cash" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
+              <IndianRupee className="h-4 w-4" />
               Cash
             </TabsTrigger>
             <TabsTrigger value="card" className="flex items-center gap-2">
@@ -152,7 +153,7 @@ const PaymentSection: React.FC = () => {
               
               {showChange && (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                  <div className="font-semibold text-green-800">Change: ${changeAmount.toFixed(2)}</div>
+                  <div className="font-semibold text-green-800">Change: ₹{changeAmount.toFixed(2)}</div>
                 </div>
               )}
             </div>
@@ -266,8 +267,8 @@ const PaymentSection: React.FC = () => {
               
               <div className={`p-3 rounded-md ${isSplitValid ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
                 <div className={`font-semibold ${isSplitValid ? 'text-green-800' : 'text-amber-800'}`}>
-                  Total Paid: ${(cashAmount + cardAmount + upiAmount).toFixed(2)}
-                  {!isSplitValid && ` (Short: $${(totalAmount - cashAmount - cardAmount - upiAmount).toFixed(2)})`}
+                  Total Paid: ₹{(cashAmount + cardAmount + upiAmount).toFixed(2)}
+                  {!isSplitValid && ` (Short: ₹${(totalAmount - cashAmount - cardAmount - upiAmount).toFixed(2)})`}
                 </div>
               </div>
             </div>
@@ -287,3 +288,4 @@ const PaymentSection: React.FC = () => {
 };
 
 export default PaymentSection;
+

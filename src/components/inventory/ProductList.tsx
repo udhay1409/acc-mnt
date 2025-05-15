@@ -129,7 +129,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onViewProduct }) =>
                         <div className="text-xs text-muted-foreground">{product.barcode}</div>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">₹{product.price.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
                       <Badge 
                         variant={product.stock_quantity > 5 ? "outline" : 
@@ -162,3 +162,4 @@ const ProductList: React.FC<ProductListProps> = ({ products, onViewProduct }) =>
 };
 
 export default ProductList;
+

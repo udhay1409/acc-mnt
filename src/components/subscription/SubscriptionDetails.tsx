@@ -122,6 +122,7 @@ const SubscriptionDetails: React.FC = () => {
                 {new Intl.NumberFormat('en-IN', {
                   style: 'currency',
                   currency: plan.currency,
+                  currencyDisplay: 'narrowSymbol'
                 }).format(plan.price)}/{plan.interval}
               </span>
             </div>
@@ -212,3 +213,4 @@ const SubscriptionDetails: React.FC = () => {
 };
 
 export default SubscriptionDetails;
+

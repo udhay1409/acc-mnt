@@ -66,7 +66,7 @@ const CartItemRow: React.FC<CartItemProps> = ({ item }) => {
           </Button>
         </div>
       </td>
-      <td className="py-1.5 px-1 text-right text-xs">${item.unit_price.toFixed(2)}</td>
+      <td className="py-1.5 px-1 text-right text-xs">₹{item.unit_price.toFixed(2)}</td>
       <td className="py-1.5 px-1 text-right">
         <Popover open={isDiscountPopoverOpen} onOpenChange={setIsDiscountPopoverOpen}>
           <PopoverTrigger asChild>
@@ -100,9 +100,10 @@ const CartItemRow: React.FC<CartItemProps> = ({ item }) => {
           </PopoverContent>
         </Popover>
       </td>
-      <td className="py-1.5 px-1 text-right font-medium text-xs">${item.total.toFixed(2)}</td>
+      <td className="py-1.5 px-1 text-right font-medium text-xs">₹{item.total.toFixed(2)}</td>
     </tr>
   );
 };
 
 export default CartItemRow;
+

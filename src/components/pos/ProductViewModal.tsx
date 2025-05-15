@@ -67,7 +67,7 @@ const ProductViewModal: React.FC<ProductViewModalProps> = ({
           <div className="flex flex-col justify-between">
             <div>
               <div className="text-2xl font-semibold mb-2">
-                ${product.price.toFixed(2)}
+                ₹{product.price.toFixed(2)}
               </div>
               
               <div className="flex items-center gap-2 mb-2">
@@ -136,3 +136,4 @@ const ProductViewModal: React.FC<ProductViewModalProps> = ({
 };
 
 export default ProductViewModal;
+

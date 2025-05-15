@@ -130,7 +130,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
             <div className="space-y-2">
               <div>
                 <div className="text-2xl font-bold">
-                  ${product.price.toFixed(2)}
+                  ₹{product.price.toFixed(2)}
                 </div>
                 <span className="text-xs text-muted-foreground">
                   Selling Price
@@ -140,7 +140,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
               <div className="text-sm pt-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Cost Price:</span>
-                  <span className="font-medium">${product.cost_price.toFixed(2)}</span>
+                  <span className="font-medium">₹{product.cost_price.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Margin:</span>
@@ -203,3 +203,4 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
 };
 
 export default ProductDetail;
+

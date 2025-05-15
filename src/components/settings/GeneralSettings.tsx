@@ -40,9 +40,9 @@ const GeneralSettings = () => {
     email: 'contact@businesssolutions.com',
     website: 'www.businesssolutions.com',
     taxId: 'TX-12345678',
-    currency: 'USD',
-    dateFormat: 'MM/DD/YYYY',
-    fiscalYearStart: '01/01',
+    currency: 'INR',
+    dateFormat: 'DD/MM/YYYY',
+    fiscalYearStart: '01/04',
   });
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -194,11 +194,14 @@ const GeneralSettings = () => {
                 <SelectValue placeholder="Select currency" />
               </SelectTrigger>
               <SelectContent>
-                {currencies.map(currency => (
-                  <SelectItem key={currency.value} value={currency.value}>
-                    {currency.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="INR">Indian Rupee (INR)</SelectItem>
+                <SelectItem value="USD">US Dollar (USD)</SelectItem>
+                <SelectItem value="EUR">Euro (EUR)</SelectItem>
+                <SelectItem value="GBP">British Pound (GBP)</SelectItem>
+                <SelectItem value="AUD">Australian Dollar (AUD)</SelectItem>
+                <SelectItem value="CAD">Canadian Dollar (CAD)</SelectItem>
+                <SelectItem value="SGD">Singapore Dollar (SGD)</SelectItem>
+                <SelectItem value="JPY">Japanese Yen (JPY)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -213,23 +216,21 @@ const GeneralSettings = () => {
                 <SelectValue placeholder="Select date format" />
               </SelectTrigger>
               <SelectContent>
-                {dateFormats.map(format => (
-                  <SelectItem key={format.value} value={format.value}>
-                    {format.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
+                <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
+                <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="fiscalYearStart">Fiscal Year Start (MM/DD)</Label>
+            <Label htmlFor="fiscalYearStart">Fiscal Year Start (DD/MM)</Label>
             <Input
               id="fiscalYearStart"
               name="fiscalYearStart"
               value={formData.fiscalYearStart}
               onChange={handleInputChange}
-              placeholder="MM/DD"
+              placeholder="DD/MM"
             />
           </div>
         </div>
@@ -255,3 +256,4 @@ const GeneralSettings = () => {
 };
 
 export default GeneralSettings;
+

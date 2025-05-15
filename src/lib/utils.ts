@@ -11,3 +11,9 @@ export function cn(...inputs: ClassValue[]) {
 export function generateId(): string {
   return uuidv4();
 }
+
+// Format currency to INR
+export function formatCurrency(amount: number): string {
+  return `₹${amount.toFixed(2)}`;
+}
+

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ShoppingBag } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 const Cart: React.FC = () => {
   const { 
@@ -97,16 +98,16 @@ const Cart: React.FC = () => {
         
         <div className="grid grid-cols-2 gap-1 text-xs py-1">
           <div>Subtotal:</div>
-          <div className="text-right">${subtotal.toFixed(2)}</div>
+          <div className="text-right">₹{subtotal.toFixed(2)}</div>
           
           <div>Tax:</div>
-          <div className="text-right">${tax.toFixed(2)}</div>
+          <div className="text-right">₹{tax.toFixed(2)}</div>
           
           <div>Discount:</div>
-          <div className="text-right text-red-500">-${discount.toFixed(2)}</div>
+          <div className="text-right text-red-500">-₹{discount.toFixed(2)}</div>
           
           <div className="font-bold text-sm">Total:</div>
-          <div className="text-right font-bold text-sm">${total.toFixed(2)}</div>
+          <div className="text-right font-bold text-sm">₹{total.toFixed(2)}</div>
         </div>
         
         <div className="pt-1">
@@ -120,3 +121,4 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+

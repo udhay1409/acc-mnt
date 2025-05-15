@@ -160,7 +160,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                         {doc.dueDate ? format(doc.dueDate, 'MMM dd, yyyy') : '-'}
                       </TableCell>
                     )}
-                    <TableCell className="font-medium">${doc.total.toFixed(2)}</TableCell>
+                    <TableCell className="font-medium">₹{doc.total.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge className={`${statusColors[doc.status]?.bg || 'bg-gray-100'} ${statusColors[doc.status]?.text || 'text-gray-800'}`}>
                         {doc.status.charAt(0).toUpperCase() + doc.status.slice(1).replace('_', ' ')}
@@ -212,3 +212,4 @@ const DocumentList: React.FC<DocumentListProps> = ({
 };
 
 export default DocumentList;
+
