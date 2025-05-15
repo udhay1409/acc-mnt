@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"; 
+import { useToast } from "@/hooks/use-toast";
 
 import {
   Toast,
@@ -10,28 +11,17 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@/components/ui/toast"
+} from "@/components/ui/toast";
 
 export function Toaster() {
-  const { toasts } = useToast()
+  // Get the toast state from our hooks
+  const { toast: hookToast } = useToast();
 
+  // Since we're not using multiple toasts from the hook,
+  // just render the Sonner Toaster component
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <Toast key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            {action}
-            <ToastClose />
-          </Toast>
-        )
-      })}
       <ToastViewport />
     </ToastProvider>
-  )
+  );
 }

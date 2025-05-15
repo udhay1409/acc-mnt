@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { Button } from '@/components/ui/button';
@@ -126,8 +125,7 @@ const PaymentSection: React.FC = () => {
             name: state.customer?.name || "Walk-in Customer",
             email: state.customer?.email || "customer@example.com",
             contact: state.customer?.phone || ""
-          },
-          theme: { color: "#4f46e5" }
+          }
         }
       );
       

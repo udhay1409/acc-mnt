@@ -28,7 +28,7 @@ interface RazorpayResponse {
 }
 
 // Create a function to load the Razorpay script
-const loadRazorpayScript = (): Promise<boolean> => {
+export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
     if ((window as any).Razorpay) {
       console.info("Razorpay already loaded");
@@ -143,9 +143,7 @@ export const processRazorpayPayment = async (
           escape: false,
           animation: true
         },
-        theme: {
-          color: "#4f46e5"
-        }
+        // Remove theme property as it's not in RazorpayOptions type
       };
       
       console.info("Razorpay options:", razorpayOptions);
