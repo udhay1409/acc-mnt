@@ -27,6 +27,7 @@ import AdvancedSettings from '@/pages/superadmin/AdvancedSettings';
 import Login from '@/pages/Login';
 import { useAuth } from '@/contexts/AuthContext';
 import NotFound from '@/pages/NotFound';
+import Unauthorized from '@/pages/Unauthorized';
 
 const Index = () => {
   const { isAuthenticated, user } = useAuth();
@@ -35,8 +36,8 @@ const Index = () => {
     return <Login />;
   }
 
-  // Check if user has superadmin role
-  if (user?.role === 'superadmin') {
+  // Check if user has super_admin role
+  if (user?.role === 'super_admin') {
     return (
       <Routes>
         <Route element={<SuperAdminLayout />}>
